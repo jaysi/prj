@@ -1,0 +1,233 @@
+# depslib dependency file v1.0
+1496295357 source:c:\intel\sid\prj\testmonet\clt.c
+	"../libmonetr/monetR.h"
+	"../libmonetr/monet_pkt.h"
+
+1496294598 c:\intel\sid\prj\libmonetr\monetr.h
+	"../infolink/include/infolink.h"
+	"monet_fifo.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+
+1496322241 c:\intel\sid\prj\infolink\include\infolink.h
+	"ilink_types.h"
+	"ilink_conf.h"
+
+1496132083 c:\intel\sid\prj\infolink\include\ilink_types.h
+	"../../lib13/include/lib13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<string.h>
+	<wchar.h>
+	<stdio.h>
+	<stdlib.h>
+	<signal.h>
+	<errno.h>
+	<error.h>
+	<sys/wait.h>
+	<ctype.h>
+	<string.h>
+	<stdint.h>
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<errno.h>
+	<string.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<netdb.h>
+	<arpa/inet.h>
+	<sys/wait.h>
+	<signal.h>
+	<w32api.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<ws2spi.h>
+
+1419232919 c:\intel\sid\prj\lib13\include\lib13.h
+	"acc13.h"
+	"arg13.h"
+	"bit13.h"
+	"const13.h"
+	"crypt13.h"
+	"day13.h"
+	"debug13.h"
+	"end13.h"
+	"error13.h"
+	"hash13.h"
+	"io13.h"
+	"lock13.h"
+	"mem13.h"
+	"pack13.h"
+	"path13.h"
+	"rr13.h"
+	"str13.h"
+	"thread13.h"
+	"type13.h"
+	"db13.h"
+
+1477832286 c:\intel\sid\prj\lib13\include\acc13.h
+	"type13.h"
+	"hash13.h"
+
+1419515764 c:\intel\sid\prj\lib13\include\type13.h
+	<sys/types.h>
+	<stdlib.h>
+	<stdint.h>
+	<stddef.h>
+
+1380023190 c:\intel\sid\prj\lib13\include\hash13.h
+	"error13.h"
+	"sha256.h"
+
+1435581864 c:\intel\sid\prj\lib13\include\error13.h
+	<sys/types.h>
+	"bit13.h"
+	"type13.h"
+	"const13.h"
+
+1377165792 c:\intel\sid\prj\lib13\include\bit13.h
+	"type13.h"
+
+1481612513 c:\intel\sid\prj\lib13\include\const13.h
+	"type13.h"
+
+1359982546 c:\intel\sid\prj\lib13\include\sha256.h
+	"type13.h"
+
+1360744520 c:\intel\sid\prj\lib13\include\arg13.h
+	"type13.h"
+	"error13.h"
+
+1432640963 c:\intel\sid\prj\lib13\include\crypt13.h
+	"type13.h"
+	"error13.h"
+
+1481630189 c:\intel\sid\prj\lib13\include\day13.h
+	<sys/types.h>
+	<sys/time.h>
+	<time.h>
+	"error13.h"
+
+1437019268 c:\intel\sid\prj\lib13\include\debug13.h
+	<stdio.h>
+	"const13.h"
+
+1359193430 c:\intel\sid\prj\lib13\include\end13.h
+	<sys/param.h>
+	<endian.h>
+
+1438088545 c:\intel\sid\prj\lib13\include\io13.h
+	"type13.h"
+	"error13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<io.h>
+	<stdlib.h>
+	<stdio.h>
+
+1475141711 c:\intel\sid\prj\lib13\include\lock13.h
+	"type13.h"
+	"thread13.h"
+	"obj13.h"
+
+1495599803 c:\intel\sid\prj\lib13\include\thread13.h
+	"const13.h"
+	<semaphore.h>
+	<pthread.h>
+
+1462433129 c:\intel\sid\prj\lib13\include\obj13.h
+	<assert.h>
+	"error13.h"
+	"type13.h"
+	"const13.h"
+	"thread13.h"
+
+1475141728 c:\intel\sid\prj\lib13\include\mem13.h
+	<string.h>
+	"type13.h"
+	"error13.h"
+	"const13.h"
+	"lock13.h"
+
+1477820209 c:\intel\sid\prj\lib13\include\pack13.h
+	<sys/types.h>
+	"base64.h"
+
+1405755686 c:\intel\sid\prj\lib13\include\base64.h
+
+1478513848 c:\intel\sid\prj\lib13\include\path13.h
+	<dirent.h>
+	<sys/stat.h>
+
+1475141776 c:\intel\sid\prj\lib13\include\rr13.h
+	"type13.h"
+	"error13.h"
+	"thread13.h"
+	"mem13.h"
+	"obj13.h"
+
+1422866428 c:\intel\sid\prj\lib13\include\str13.h
+	<string.h>
+	<stdio.h>
+	<wchar.h>
+	"error13.h"
+	"mem13.h"
+
+1462971825 c:\intel\sid\prj\lib13\include\db13.h
+	"../../sqlite/sqlite3.h"
+	"type13.h"
+	"const13.h"
+	"error13.h"
+	"obj13.h"
+
+1420986682 c:\intel\sid\prj\sqlite\sqlite3.h
+	<stdarg.h>
+
+1434203225 c:\intel\sid\prj\infolink\include\ilink_conf.h
+	"ilink_intern.h"
+
+1496132026 c:\intel\sid\prj\infolink\include\ilink_intern.h
+	"../../lib13/include/lib13.h"
+	"infolink.h"
+
+1437043779 c:\intel\sid\prj\libmonetr\monet_fifo.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1437042850 c:\intel\sid\prj\libmonetr\monet_poll.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1477321439 c:\intel\sid\prj\libmonetr\monet_sess.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_mod.h"
+	"monet_fifo.h"
+	"monet_cont.h"
+
+1477833696 c:\intel\sid\prj\libmonetr\monet_user.h
+	"../lib13/include/lib13.h"
+
+1481116227 c:\intel\sid\prj\libmonetr\monet_mod.h
+	"../lib13/include/lib13.h"
+	<windows.h>
+
+1481203449 c:\intel\sid\prj\libmonetr\monet_cont.h
+	<c:/intel/sid/prj/lib13/include/db13.h>
+
+1478510244 c:\intel\sid\prj\libmonetr\monet_pkt.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_sess.h"
+	"../infolink/include/ilink_intern.h"
+
+1438232772 source:c:\intel\sid\prj\testmonet\main.c
+	"main.h"
+
+1444229916 c:\intel\sid\prj\testmonet\main.h
+

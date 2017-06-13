@@ -238,6 +238,9 @@ struct monet {
     error13_t mn_clog(struct monet* mn, mn_clogid_t id, char* format, ...);
     char* mn_msg(struct monet* mn, enum mn_msgid_t msgid);
 
+    //info
+    char* mn_link_username(struct monet* mn, struct infolink* link);
+
 #ifdef __cplusplus
     }
 #endif

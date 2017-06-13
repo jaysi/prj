@@ -1,0 +1,42 @@
+EXPORTS
+    _get_output_format @1
+    _mn_add_mod_ptr @2
+    _mn_find_mod_ptr @3
+    _mn_handle_open_sess @4
+    _mn_init_ctldb @5
+    _mn_init_mod_list @6
+    _mn_login_recv @7
+    _mn_login_send @8
+    _mn_make_ctldb @9
+    _mn_register_all_mods @10
+    _mn_register_mod @11
+    _mn_rm_mod_ptr @12
+    _mn_select_mod @13
+    _mn_tmp_accept @14
+    _mn_tmp_console @15
+    _monet_add_poll_link @16
+    _monet_allocate_session @17
+    _monet_check_perm @18
+    _monet_create_session @19
+    _monet_init_session @20
+    _monet_poll_thread @21
+    _monet_proc_pkt @22
+    _monet_request_send @23
+    _monet_session_thread @24
+    def_conf @25 DATA
+    mn_clog @26
+    mn_clog_add @27
+    mn_clog_init @28
+    mn_clog_rm @29
+    mn_connect @30
+    mn_def_conf @31
+    mn_destroy @32
+    mn_init @33
+    mn_install @34
+    mn_mod_fn_name @35 DATA
+    mn_msg @36
+    mn_open_sess @37
+    mn_reconf @38
+    mn_uninstall @39
+    mn_wait @40
+    msg_en @41 DATA

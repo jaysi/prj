@@ -290,7 +290,6 @@ char* p13_get_abs_path(char* root, char* abs_path){
     return abs_path;
 }
 
-
 char* p13_merge_path(char* path1, char* path2, char* buf){
 
     char* unix_path1, *unix_path2, *end;

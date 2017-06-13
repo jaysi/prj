@@ -2,8 +2,9 @@
 #include "main.h"
 
 void* wait_thread(void* arg){
+        error13_t ret;
 
-        if((ret = mn_wait(&mn)) != E13_OK){
+        if((ret=mn_wait((struct monet*)arg)) != E13_OK){
             printo("\nmn_wait(): %s\n", e13_codemsg(ret));
         }
         return NULL;
