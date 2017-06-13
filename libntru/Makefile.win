@@ -1,0 +1,57 @@
+# Project: libntru
+# Makefile created by Dev-C++ 5.3.0.4
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = src/bitstring.o src/encparams.o src/hash.o src/idxgen.o src/key.o src/mgf.o src/ntru.o src/poly.o src/sha2.o src/sha2big.o $(RES)
+LINKOBJ  = src/bitstring.o src/encparams.o src/hash.o src/idxgen.o src/key.o src/mgf.o src/ntru.o src/poly.o src/sha2.o src/sha2big.o $(RES)
+LIBS     = -L"C:/Program Files/Dev-Cpp/MinGW32/lib" -static-libstdc++ -static-libgcc --static -lws2_32 -ladvapi32 
+INCS     = -I"C:/Program Files/Dev-Cpp/MinGW32/include"
+CXXINCS  = -I"C:/Program Files/Dev-Cpp/MinGW32/include"
+BIN      = libntru.a
+CXXFLAGS = $(CXXINCS)  -DCONSOLE -O3
+CFLAGS   = $(INCS)  -DCONSOLE -O3
+RM       = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(LINKOBJ)
+	ar r $(BIN) $(LINKOBJ)
+	ranlib $(BIN)
+
+src/bitstring.o: src/bitstring.c
+	$(CC) -c src/bitstring.c -o src/bitstring.o $(CFLAGS)
+
+src/encparams.o: src/encparams.c
+	$(CC) -c src/encparams.c -o src/encparams.o $(CFLAGS)
+
+src/hash.o: src/hash.c
+	$(CC) -c src/hash.c -o src/hash.o $(CFLAGS)
+
+src/idxgen.o: src/idxgen.c
+	$(CC) -c src/idxgen.c -o src/idxgen.o $(CFLAGS)
+
+src/key.o: src/key.c
+	$(CC) -c src/key.c -o src/key.o $(CFLAGS)
+
+src/mgf.o: src/mgf.c
+	$(CC) -c src/mgf.c -o src/mgf.o $(CFLAGS)
+
+src/ntru.o: src/ntru.c
+	$(CC) -c src/ntru.c -o src/ntru.o $(CFLAGS)
+
+src/poly.o: src/poly.c
+	$(CC) -c src/poly.c -o src/poly.o $(CFLAGS)
+
+src/sha2.o: src/sha2.c
+	$(CC) -c src/sha2.c -o src/sha2.o $(CFLAGS)
+
+src/sha2big.o: src/sha2big.c
+	$(CC) -c src/sha2big.c -o src/sha2big.o $(CFLAGS)

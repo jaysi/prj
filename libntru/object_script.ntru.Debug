@@ -1,0 +1,12 @@
+INPUT(
+./debug/sha2big.o
+./debug/sha2.o
+./debug/poly.o
+./debug/ntru.o
+./debug/mgf.o
+./debug/key.o
+./debug/idxgen.o
+./debug/hash.o
+./debug/encparams.o
+./debug/bitstring.o
+);

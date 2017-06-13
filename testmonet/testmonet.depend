@@ -1,0 +1,3050 @@
+# depslib dependency file v1.0
+1475126402 source:c:\intel\bak\prj\infolink\ilink_crypt.c
+
+1432120670 source:c:\intel\bak\prj\infolink\ilink_hs.c
+
+1475138982 source:c:\intel\bak\prj\infolink\ilink_io.c
+
+1436613591 source:c:\intel\bak\prj\infolink\ilink_pkt.c
+
+1474963439 source:c:\intel\bak\prj\infolink\ilink_poll.c
+	"ilink_poll_select.c"
+	"ilink_poll_poll.c"
+	"ilink_poll_epoll.c"
+
+1475136283 c:\intel\bak\prj\infolink\ilink_poll_select.c
+	"include/ilink_intern.h"
+
+1449720436 source:c:\intel\bak\prj\infolink\ilink_poll_select.c
+
+1434456972 source:c:\intel\bak\prj\infolink\ilink_sock.c
+
+1435406171 source:c:\intel\bak\prj\infolink\infolink.c
+
+1474951159 source:c:\intel\bak\prj\lib13\acc13.c
+
+1360160010 source:c:\intel\bak\prj\lib13\aes.c
+	"include/aes.h"
+	<string.h>
+	<stdio.h>
+
+1359978940 c:\intel\bak\prj\lib13\include\aes.h
+	"type13.h"
+
+1419512164 c:\intel\bak\prj\lib13\include\type13.h
+	<sys/types.h>
+	<stdlib.h>
+	<stdint.h>
+	<stddef.h>
+
+1377279608 source:c:\intel\bak\prj\lib13\arg13.c
+	"include/str13.h"
+	"include/mem13.h"
+	<string.h>
+	<assert.h>
+
+1422862828 c:\intel\bak\prj\lib13\include\str13.h
+	<string.h>
+	<stdio.h>
+	<wchar.h>
+	"error13.h"
+	"mem13.h"
+
+1435578264 c:\intel\bak\prj\lib13\include\error13.h
+	<sys/types.h>
+	"bit13.h"
+	"type13.h"
+	"const13.h"
+
+1377162192 c:\intel\bak\prj\lib13\include\bit13.h
+	"type13.h"
+
+1419505431 c:\intel\bak\prj\lib13\include\const13.h
+	"type13.h"
+
+1475138128 c:\intel\bak\prj\lib13\include\mem13.h
+	<string.h>
+	"type13.h"
+	"error13.h"
+	"const13.h"
+	"lock13.h"
+
+1475138111 c:\intel\bak\prj\lib13\include\lock13.h
+	"type13.h"
+	"thread13.h"
+	"obj13.h"
+
+1435206663 c:\intel\bak\prj\lib13\include\thread13.h
+	"const13.h"
+	<semaphore.h>
+	<pthread.h>
+
+1462429529 c:\intel\bak\prj\lib13\include\obj13.h
+	<assert.h>
+	"error13.h"
+	"type13.h"
+	"const13.h"
+	"thread13.h"
+
+1418300948 source:c:\intel\bak\prj\lib13\base64.c
+	"stdlib.h"
+	"include/base64.h"
+
+1405752086 c:\intel\bak\prj\lib13\include\base64.h
+
+1360160000 source:c:\intel\bak\prj\lib13\const13.c
+
+1435406276 source:c:\intel\bak\prj\lib13\crypt13.c
+	"include/mem13.h"
+	"include/debug13.h"
+	"include/sha256.h"
+
+1437015668 c:\intel\bak\prj\lib13\include\debug13.h
+	<stdio.h>
+	"const13.h"
+
+1359978946 c:\intel\bak\prj\lib13\include\sha256.h
+	"type13.h"
+
+1420986685 source:c:\intel\bak\prj\lib13\day13.c
+	"include/str13.h"
+	<stdio.h>
+	<stdlib.h>
+
+1422335940 source:c:\intel\bak\prj\lib13\db13.c
+	<string.h>
+	"include/db13i.h"
+	"include/msg13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/bit13.h"
+	"include/day13.h"
+	"include/debug13.h"
+
+1420287320 c:\intel\bak\prj\lib13\include\db13i.h
+	"db13.h"
+	"error13.h"
+
+1462968225 c:\intel\bak\prj\lib13\include\db13.h
+	"../../sqlite/sqlite3.h"
+	"type13.h"
+	"const13.h"
+	"error13.h"
+	"obj13.h"
+
+1420983082 c:\intel\bak\prj\sqlite\sqlite3.h
+	<stdarg.h>
+
+1418220592 c:\intel\bak\prj\lib13\include\msg13.h
+
+1420986683 c:\intel\bak\prj\lib13\include\day13.h
+	<sys/types.h>
+	<sys/time.h>
+	<time.h>
+	"error13.h"
+
+1360160274 source:c:\intel\bak\prj\lib13\des.c
+	"include/des.h"
+	<string.h>
+	<stdio.h>
+
+1359978930 c:\intel\bak\prj\lib13\include\des.h
+	"type13.h"
+
+1463315542 source:c:\intel\bak\prj\lib13\error13.c
+	<error.h>
+	<errno.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	"include/error13.h"
+	"include/str13.h"
+	"include/mem13.h"
+	"include/debug13.h"
+
+1393569072 source:c:\intel\bak\prj\lib13\hash13.c
+	"include/hash13i.h"
+	"include/end13.h"
+
+1358863864 c:\intel\bak\prj\lib13\include\hash13i.h
+	"hash13.h"
+
+1380019590 c:\intel\bak\prj\lib13\include\hash13.h
+	"error13.h"
+	"sha256.h"
+
+1359189830 c:\intel\bak\prj\lib13\include\end13.h
+	<sys/param.h>
+	<endian.h>
+
+1360003550 source:c:\intel\bak\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1438084975 source:c:\intel\bak\prj\lib13\io13.c
+	<unistd.h>
+	<errno.h>
+	<sys/types.h>
+	<stdio.h>
+	<string.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<sys/time.h>
+	<io.h>
+	<fcntl.h>
+	"include/io13i.h"
+	"include/path13.h"
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/pack13.h"
+
+1360217502 c:\intel\bak\prj\lib13\include\io13i.h
+	"io13.h"
+
+1438084945 c:\intel\bak\prj\lib13\include\io13.h
+	"type13.h"
+	"error13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<io.h>
+	<stdlib.h>
+	<stdio.h>
+
+1449757338 c:\intel\bak\prj\lib13\include\path13.h
+	<dirent.h>
+	<sys/stat.h>
+
+1402144664 c:\intel\bak\prj\lib13\include\pack13.h
+	<sys/types.h>
+	"base64.h"
+
+1422872510 source:c:\intel\bak\prj\lib13\io13i.c
+
+1418300922 source:c:\intel\bak\prj\lib13\lib13.c
+
+1475139188 source:c:\intel\bak\prj\monetr\monet.c
+	<unistd.h>
+
+1475139401 source:c:\intel\bak\prj\monetr\monet_ctl.c
+
+1475071911 source:c:\intel\bak\prj\monetr\monet_mod.c
+	"monet_internal.h"
+	<dlfcn.h>
+	<windows.h>
+
+1475139090 c:\intel\bak\prj\monetr\monet_internal.h
+	"monet_fifo.h"
+	"monet_mod.h"
+	"monet_pkt.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+	"monet_perm.h"
+	"monetR.h"
+	"../lib13/include/debug13.h"
+
+1437040179 c:\intel\bak\prj\monetr\monet_fifo.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1419229319 c:\intel\bak\prj\lib13\include\lib13.h
+	"acc13.h"
+	"arg13.h"
+	"bit13.h"
+	"const13.h"
+	"crypt13.h"
+	"day13.h"
+	"debug13.h"
+	"end13.h"
+	"error13.h"
+	"hash13.h"
+	"io13.h"
+	"lock13.h"
+	"mem13.h"
+	"pack13.h"
+	"path13.h"
+	"rr13.h"
+	"str13.h"
+	"thread13.h"
+	"type13.h"
+	"db13.h"
+
+1474725342 c:\intel\bak\prj\lib13\include\acc13.h
+	"type13.h"
+	"hash13.h"
+
+1360740920 c:\intel\bak\prj\lib13\include\arg13.h
+	"type13.h"
+	"error13.h"
+
+1432637363 c:\intel\bak\prj\lib13\include\crypt13.h
+	"type13.h"
+	"error13.h"
+
+1475138176 c:\intel\bak\prj\lib13\include\rr13.h
+	"type13.h"
+	"error13.h"
+	"thread13.h"
+	"mem13.h"
+	"obj13.h"
+
+1475135972 c:\intel\bak\prj\infolink\include\infolink.h
+	"ilink_types.h"
+	"ilink_conf.h"
+
+1432380916 c:\intel\bak\prj\infolink\include\ilink_types.h
+	"../../lib13/include/lib13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<string.h>
+	<wchar.h>
+	<stdio.h>
+	<stdlib.h>
+	<signal.h>
+	<errno.h>
+	<error.h>
+	<sys/wait.h>
+	<ctype.h>
+	<string.h>
+	<stdint.h>
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<errno.h>
+	<string.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<netdb.h>
+	<arpa/inet.h>
+	<sys/wait.h>
+	<signal.h>
+	<w32api.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<ws2spi.h>
+
+1434199625 c:\intel\bak\prj\infolink\include\ilink_conf.h
+	"ilink_intern.h"
+
+1475138864 c:\intel\bak\prj\infolink\include\ilink_intern.h
+	"../../lib13/include/lib13.h"
+	"infolink.h"
+
+1449901538 c:\intel\bak\prj\monetr\monet_mod.h
+	"../lib13/include/lib13.h"
+	<windows.h>
+
+1463488277 c:\intel\bak\prj\monetr\monet_pkt.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_sess.h"
+	"../infolink/include/ilink_intern.h"
+
+1438230727 c:\intel\bak\prj\monetr\monet_user.h
+	"../lib13/include/lib13.h"
+
+1449901254 c:\intel\bak\prj\monetr\monet_sess.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_mod.h"
+	"monet_fifo.h"
+	"monet_cont.h"
+
+1475485362 c:\intel\bak\prj\monetr\monet_cont.h
+	<../lib13/include/db13.h>
+
+1437039250 c:\intel\bak\prj\monetr\monet_poll.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1474867511 c:\intel\bak\prj\monetr\monet_perm.h
+	"../lib13/include/error13.h"
+	"../infolink/include/ilink_types.h"
+
+1450005550 c:\intel\bak\prj\monetr\monetr.h
+	"../infolink/include/infolink.h"
+	"monet_fifo.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+
+1464007756 source:c:\intel\bak\prj\monetr\monet_poll.c
+
+1463489011 source:c:\intel\bak\prj\monetr\monet_sess.c
+	"monet_internal.h"
+	"../lib13/include/lib13.h"
+
+1463488363 source:c:\intel\bak\prj\testmonet\clt.c
+	"../monetR/monetR.h"
+	"../monetR/monet_pkt.h"
+
+1438229172 source:c:\intel\bak\prj\testmonet\main.c
+	"main.h"
+
+1444226316 c:\intel\bak\prj\testmonet\main.h
+
+1448541558 source:c:\intel\bak\prj\testmonet\svr.c
+	"main.h"
+
+1475137780 source:c:\intel\bak\prj\lib13\lock13.c
+	"include/const13.h"
+	"include/mem13.h"
+
+1475137994 source:c:\intel\bak\prj\lib13\mem13.c
+	<stddef.h>
+	<string.h>
+	<stdarg.h>
+	<stdlib.h>
+	"include/mem13.h"
+	"include/error13.h"
+	"include/bit13.h"
+
+1420983092 source:c:\intel\bak\prj\lib13\num2text.c
+	"include/str13.h"
+	<stdio.h>
+	<string.h>
+	<assert.h>
+
+1444225611 source:c:\intel\bak\prj\lib13\obj13.c
+	"include/mem13.h"
+	<assert.h>
+	<stdlib.h>
+
+1438428517 source:c:\intel\bak\prj\lib13\pack13.c
+	<string.h>
+	<ctype.h>
+	"include/pack13.h"
+	"include/error13.h"
+	"include/debug13.h"
+	"include/pack13i.c"
+
+1360003550 c:\intel\bak\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1449757403 source:c:\intel\bak\prj\lib13\path13.c
+	<sys/types.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stdio.h>
+	<unistd.h>
+	"include/path13.h"
+	"include/debug13.h"
+
+1360659378 source:c:\intel\bak\prj\lib13\rand13.c
+
+1360160028 source:c:\intel\bak\prj\lib13\rc4.c
+	<string.h>
+	"include/rc4.h"
+
+1359978952 c:\intel\bak\prj\lib13\include\rc4.h
+	"type13.h"
+
+1475138262 source:c:\intel\bak\prj\lib13\rr13.c
+	"include/rr13.h"
+
+1360160018 source:c:\intel\bak\prj\lib13\sha256.c
+	<string.h>
+	"include/sha256.h"
+	<stdlib.h>
+	<stdio.h>
+
+1423050549 source:c:\intel\bak\prj\lib13\str13.c
+	<stdlib.h>
+	<assert.h>
+	"include/str13.h"
+	"include/debug13.h"
+
+1401967952 source:c:\intel\bak\prj\lib13\xtea.c
+	"include/xtea.h"
+
+1401968549 c:\intel\bak\prj\lib13\include\xtea.h
+	"type13.h"
+	"pack13i.c"
+
+1352601774 source:c:\intel\bak\prj\libntru\src\bitstring.c
+	<string.h>
+	"bitstring.h"
+
+1352601774 c:\intel\bak\prj\libntru\src\bitstring.h
+	"encparams.h"
+
+1352601774 c:\intel\bak\prj\libntru\src\encparams.h
+	"hash.h"
+
+1352601774 c:\intel\bak\prj\libntru\src\hash.h
+
+1352601774 source:c:\intel\bak\prj\libntru\src\encparams.c
+	"encparams.h"
+
+1352601774 source:c:\intel\bak\prj\libntru\src\hash.c
+	"sph_sha2.h"
+	"hash.h"
+
+1352601774 c:\intel\bak\prj\libntru\src\sph_sha2.h
+	<stddef.h>
+	"sph_types.h"
+
+1352601774 c:\intel\bak\prj\libntru\src\sph_types.h
+	<limits.h>
+	<stdint.h>
+
+1352601774 source:c:\intel\bak\prj\libntru\src\idxgen.c
+	<string.h>
+	"idxgen.h"
+
+1352601774 c:\intel\bak\prj\libntru\src\idxgen.h
+	"idxgen.h"
+	"encparams.h"
+	"bitstring.h"
+
+1423569920 source:c:\intel\bak\prj\libntru\src\key.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"ntru.h"
+
+1352601774 c:\intel\bak\prj\libntru\src\ntru.h
+	"poly.h"
+	"encparams.h"
+
+1352601774 c:\intel\bak\prj\libntru\src\poly.h
+
+1423569935 source:c:\intel\bak\prj\libntru\src\mgf.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"encparams.h"
+	"poly.h"
+
+1352601774 source:c:\intel\bak\prj\libntru\src\ntru.c
+	<stdlib.h>
+	<string.h>
+	"ntru.h"
+	"poly.h"
+	"idxgen.h"
+	"mgf.h"
+	"err.h"
+
+1352601774 c:\intel\bak\prj\libntru\src\mgf.h
+
+1352601774 c:\intel\bak\prj\libntru\src\err.h
+
+1352601774 source:c:\intel\bak\prj\libntru\src\poly.c
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<Windows.h>
+	<Wincrypt.h>
+	"poly.h"
+	"err.h"
+
+1352601774 source:c:\intel\bak\prj\libntru\src\sha2.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1352601774 c:\intel\bak\prj\libntru\src\md_helper.h
+
+1352601774 source:c:\intel\bak\prj\libntru\src\sha2big.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1332265818 source:c:\intel\bak\prj\sqlite\sqlite3.c
+	"config.h"
+	<stdint.h>
+	<inttypes.h>
+	<tcl.h>
+	<stdarg.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stddef.h>
+	<windows.h>
+	<os2safe.h>
+	<os2.h>
+	<uconv.h>
+	<ctype.h>
+	<time.h>
+	<sys/sysctl.h>
+	<malloc/malloc.h>
+	<libkern/OSAtomic.h>
+	<malloc.h>
+	<pthread.h>
+	<math.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<unistd.h>
+	<sys/time.h>
+	<errno.h>
+	<sys/mman.h>
+	<sys/ioctl.h>
+	<semaphore.h>
+	<limits.h>
+	<sys/file.h>
+	<sys/param.h>
+	<sys/mount.h>
+	<utime.h>
+	<dlfcn.h>
+	<sys/cygwin.h>
+	"sqlite3rtree.h"
+	<unicode/utypes.h>
+	<unicode/uregex.h>
+	<unicode/ustring.h>
+	<unicode/ucol.h>
+	<unicode/ubrk.h>
+	<unicode/utf16.h>
+
+1479735943 source:c:\users\admin\prj\infolink\ilink_crypt.c
+
+1432120670 source:c:\users\admin\prj\infolink\ilink_hs.c
+
+1479812360 source:c:\users\admin\prj\infolink\ilink_io.c
+
+1479735775 source:c:\users\admin\prj\infolink\ilink_pkt.c
+
+1474963439 source:c:\users\admin\prj\infolink\ilink_poll.c
+	"ilink_poll_select.c"
+	"ilink_poll_poll.c"
+	"ilink_poll_epoll.c"
+
+1475136283 c:\users\admin\prj\infolink\ilink_poll_select.c
+	"include/ilink_intern.h"
+
+1475138864 c:\users\admin\prj\infolink\include\ilink_intern.h
+	"../../lib13/include/lib13.h"
+	"infolink.h"
+
+1419229319 c:\users\admin\prj\lib13\include\lib13.h
+	"acc13.h"
+	"arg13.h"
+	"bit13.h"
+	"const13.h"
+	"crypt13.h"
+	"day13.h"
+	"debug13.h"
+	"end13.h"
+	"error13.h"
+	"hash13.h"
+	"io13.h"
+	"lock13.h"
+	"mem13.h"
+	"pack13.h"
+	"path13.h"
+	"rr13.h"
+	"str13.h"
+	"thread13.h"
+	"type13.h"
+	"db13.h"
+
+1477828686 c:\users\admin\prj\lib13\include\acc13.h
+	"type13.h"
+	"hash13.h"
+
+1419512164 c:\users\admin\prj\lib13\include\type13.h
+	<sys/types.h>
+	<stdlib.h>
+	<stdint.h>
+	<stddef.h>
+
+1380019590 c:\users\admin\prj\lib13\include\hash13.h
+	"error13.h"
+	"sha256.h"
+
+1435578264 c:\users\admin\prj\lib13\include\error13.h
+	<sys/types.h>
+	"bit13.h"
+	"type13.h"
+	"const13.h"
+
+1377162192 c:\users\admin\prj\lib13\include\bit13.h
+	"type13.h"
+
+1419505431 c:\users\admin\prj\lib13\include\const13.h
+	"type13.h"
+
+1359978946 c:\users\admin\prj\lib13\include\sha256.h
+	"type13.h"
+
+1360740920 c:\users\admin\prj\lib13\include\arg13.h
+	"type13.h"
+	"error13.h"
+
+1432637363 c:\users\admin\prj\lib13\include\crypt13.h
+	"type13.h"
+	"error13.h"
+
+1475735101 c:\users\admin\prj\lib13\include\day13.h
+	<sys/types.h>
+	<sys/time.h>
+	<time.h>
+	"error13.h"
+
+1437015668 c:\users\admin\prj\lib13\include\debug13.h
+	<stdio.h>
+	"const13.h"
+
+1359189830 c:\users\admin\prj\lib13\include\end13.h
+	<sys/param.h>
+	<endian.h>
+
+1438084945 c:\users\admin\prj\lib13\include\io13.h
+	"type13.h"
+	"error13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<io.h>
+	<stdlib.h>
+	<stdio.h>
+
+1475138111 c:\users\admin\prj\lib13\include\lock13.h
+	"type13.h"
+	"thread13.h"
+	"obj13.h"
+
+1435206663 c:\users\admin\prj\lib13\include\thread13.h
+	"const13.h"
+	<semaphore.h>
+	<pthread.h>
+
+1462429529 c:\users\admin\prj\lib13\include\obj13.h
+	<assert.h>
+	"error13.h"
+	"type13.h"
+	"const13.h"
+	"thread13.h"
+
+1475138128 c:\users\admin\prj\lib13\include\mem13.h
+	<string.h>
+	"type13.h"
+	"error13.h"
+	"const13.h"
+	"lock13.h"
+
+1477816609 c:\users\admin\prj\lib13\include\pack13.h
+	<sys/types.h>
+	"base64.h"
+
+1405752086 c:\users\admin\prj\lib13\include\base64.h
+
+1478510248 c:\users\admin\prj\lib13\include\path13.h
+	<dirent.h>
+	<sys/stat.h>
+
+1475138176 c:\users\admin\prj\lib13\include\rr13.h
+	"type13.h"
+	"error13.h"
+	"thread13.h"
+	"mem13.h"
+	"obj13.h"
+
+1422862828 c:\users\admin\prj\lib13\include\str13.h
+	<string.h>
+	<stdio.h>
+	<wchar.h>
+	"error13.h"
+	"mem13.h"
+
+1462968225 c:\users\admin\prj\lib13\include\db13.h
+	"../../sqlite/sqlite3.h"
+	"type13.h"
+	"const13.h"
+	"error13.h"
+	"obj13.h"
+
+1420983082 c:\users\admin\prj\sqlite\sqlite3.h
+	<stdarg.h>
+
+1478505594 c:\users\admin\prj\infolink\include\infolink.h
+	"ilink_types.h"
+	"ilink_conf.h"
+
+1432380916 c:\users\admin\prj\infolink\include\ilink_types.h
+	"../../lib13/include/lib13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<string.h>
+	<wchar.h>
+	<stdio.h>
+	<stdlib.h>
+	<signal.h>
+	<errno.h>
+	<error.h>
+	<sys/wait.h>
+	<ctype.h>
+	<string.h>
+	<stdint.h>
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<errno.h>
+	<string.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<netdb.h>
+	<arpa/inet.h>
+	<sys/wait.h>
+	<signal.h>
+	<w32api.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<ws2spi.h>
+
+1434199625 c:\users\admin\prj\infolink\include\ilink_conf.h
+	"ilink_intern.h"
+
+1475562073 source:c:\users\admin\prj\infolink\ilink_sock.c
+
+1479796119 source:c:\users\admin\prj\infolink\infolink.c
+
+1478688109 source:c:\users\admin\prj\lib13\acc13.c
+
+1360160010 source:c:\users\admin\prj\lib13\aes.c
+	"include/aes.h"
+	<string.h>
+	<stdio.h>
+
+1359978940 c:\users\admin\prj\lib13\include\aes.h
+	"type13.h"
+
+1377279608 source:c:\users\admin\prj\lib13\arg13.c
+	"include/str13.h"
+	"include/mem13.h"
+	<string.h>
+	<assert.h>
+
+1418300948 source:c:\users\admin\prj\lib13\base64.c
+	"stdlib.h"
+	"include/base64.h"
+
+1360160000 source:c:\users\admin\prj\lib13\const13.c
+
+1479799243 source:c:\users\admin\prj\lib13\crypt13.c
+	"include/mem13.h"
+	"include/debug13.h"
+	"include/sha256.h"
+
+1420986685 source:c:\users\admin\prj\lib13\day13.c
+	"include/str13.h"
+	<stdio.h>
+	<stdlib.h>
+
+1478518752 source:c:\users\admin\prj\lib13\db13.c
+	<string.h>
+	"include/db13i.h"
+	"include/msg13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/bit13.h"
+	"include/day13.h"
+	"include/debug13.h"
+
+1420287320 c:\users\admin\prj\lib13\include\db13i.h
+	"db13.h"
+	"error13.h"
+
+1418220592 c:\users\admin\prj\lib13\include\msg13.h
+
+1360160274 source:c:\users\admin\prj\lib13\des.c
+	"include/des.h"
+	<string.h>
+	<stdio.h>
+
+1359978930 c:\users\admin\prj\lib13\include\des.h
+	"type13.h"
+
+1480600880 source:c:\users\admin\prj\lib13\error13.c
+	<error.h>
+	<errno.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	"include/error13.h"
+	"include/str13.h"
+	"include/mem13.h"
+	"include/debug13.h"
+
+1393569072 source:c:\users\admin\prj\lib13\hash13.c
+	"include/hash13i.h"
+	"include/end13.h"
+
+1358863864 c:\users\admin\prj\lib13\include\hash13i.h
+	"hash13.h"
+
+1360003550 source:c:\users\admin\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1438084975 source:c:\users\admin\prj\lib13\io13.c
+	<unistd.h>
+	<errno.h>
+	<sys/types.h>
+	<stdio.h>
+	<string.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<sys/time.h>
+	<io.h>
+	<fcntl.h>
+	"include/io13i.h"
+	"include/path13.h"
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/pack13.h"
+
+1360217502 c:\users\admin\prj\lib13\include\io13i.h
+	"io13.h"
+
+1422872510 source:c:\users\admin\prj\lib13\io13i.c
+
+1418300922 source:c:\users\admin\prj\lib13\lib13.c
+
+1475137780 source:c:\users\admin\prj\lib13\lock13.c
+	"include/const13.h"
+	"include/mem13.h"
+
+1480600328 source:c:\users\admin\prj\lib13\mem13.c
+	<stddef.h>
+	<string.h>
+	<stdarg.h>
+	<stdlib.h>
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/error13.h"
+	"include/bit13.h"
+
+1420983092 source:c:\users\admin\prj\lib13\num2text.c
+	"include/str13.h"
+	<stdio.h>
+	<string.h>
+	<assert.h>
+
+1444225611 source:c:\users\admin\prj\lib13\obj13.c
+	"include/mem13.h"
+	<assert.h>
+	<stdlib.h>
+
+1479798926 source:c:\users\admin\prj\lib13\pack13.c
+	<string.h>
+	<ctype.h>
+	"include/pack13.h"
+	"include/error13.h"
+	"include/debug13.h"
+	"include/pack13i.c"
+
+1360003550 c:\users\admin\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1478510360 source:c:\users\admin\prj\lib13\path13.c
+	<sys/types.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stdio.h>
+	<unistd.h>
+	"include/path13.h"
+	"include/debug13.h"
+
+1360659378 source:c:\users\admin\prj\lib13\rand13.c
+
+1360160028 source:c:\users\admin\prj\lib13\rc4.c
+	<string.h>
+	"include/rc4.h"
+
+1359978952 c:\users\admin\prj\lib13\include\rc4.h
+	"type13.h"
+
+1475138262 source:c:\users\admin\prj\lib13\rr13.c
+	"include/rr13.h"
+
+1360160018 source:c:\users\admin\prj\lib13\sha256.c
+	<string.h>
+	"include/sha256.h"
+	<stdlib.h>
+	<stdio.h>
+
+1477816561 source:c:\users\admin\prj\lib13\str13.c
+	<stdlib.h>
+	<assert.h>
+	"include/str13.h"
+	"include/debug13.h"
+
+1401967952 source:c:\users\admin\prj\lib13\xtea.c
+	"include/xtea.h"
+
+1401968549 c:\users\admin\prj\lib13\include\xtea.h
+	"type13.h"
+	"pack13i.c"
+
+1479801169 source:c:\users\admin\prj\libmonetr\monet.c
+	<unistd.h>
+
+1478507135 source:c:\users\admin\prj\libmonetr\monet_ctl.c
+
+1478507993 source:c:\users\admin\prj\libmonetr\monet_mod.c
+	"monet_internal.h"
+	<dlfcn.h>
+	<windows.h>
+
+1475139090 c:\users\admin\prj\libmonetr\monet_internal.h
+	"monet_fifo.h"
+	"monet_mod.h"
+	"monet_pkt.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+	"monet_perm.h"
+	"monetR.h"
+	"../lib13/include/debug13.h"
+
+1437040179 c:\users\admin\prj\libmonetr\monet_fifo.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1478507944 c:\users\admin\prj\libmonetr\monet_mod.h
+	"../lib13/include/lib13.h"
+	<windows.h>
+
+1478506644 c:\users\admin\prj\libmonetr\monet_pkt.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_sess.h"
+	"../infolink/include/ilink_intern.h"
+
+1477830096 c:\users\admin\prj\libmonetr\monet_user.h
+	"../lib13/include/lib13.h"
+
+1477317839 c:\users\admin\prj\libmonetr\monet_sess.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_mod.h"
+	"monet_fifo.h"
+	"monet_cont.h"
+
+1480596488 c:\users\admin\prj\libmonetr\monet_cont.h
+	<c:/users/admin/Local/prj/lib13/include/db13.h>
+
+1437039250 c:\users\admin\prj\libmonetr\monet_poll.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1474867511 c:\users\admin\prj\libmonetr\monet_perm.h
+	"../lib13/include/error13.h"
+	"../infolink/include/ilink_types.h"
+
+1475566754 c:\users\admin\prj\libmonetr\monetr.h
+	"../infolink/include/infolink.h"
+	"monet_fifo.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+
+1479822458 source:c:\users\admin\prj\libmonetr\monet_poll.c
+
+1477318329 source:c:\users\admin\prj\libmonetr\monet_sess.c
+	"monet_internal.h"
+	"../lib13/include/lib13.h"
+
+1352601774 source:c:\users\admin\prj\libntru\src\bitstring.c
+	<string.h>
+	"bitstring.h"
+
+1352601774 c:\users\admin\prj\libntru\src\bitstring.h
+	"encparams.h"
+
+1352601774 c:\users\admin\prj\libntru\src\encparams.h
+	"hash.h"
+
+1352601774 c:\users\admin\prj\libntru\src\hash.h
+
+1352601774 source:c:\users\admin\prj\libntru\src\encparams.c
+	"encparams.h"
+
+1352601774 source:c:\users\admin\prj\libntru\src\hash.c
+	"sph_sha2.h"
+	"hash.h"
+
+1352601774 c:\users\admin\prj\libntru\src\sph_sha2.h
+	<stddef.h>
+	"sph_types.h"
+
+1352601774 c:\users\admin\prj\libntru\src\sph_types.h
+	<limits.h>
+	<stdint.h>
+
+1352601774 source:c:\users\admin\prj\libntru\src\idxgen.c
+	<string.h>
+	"idxgen.h"
+
+1352601774 c:\users\admin\prj\libntru\src\idxgen.h
+	"idxgen.h"
+	"encparams.h"
+	"bitstring.h"
+
+1423569920 source:c:\users\admin\prj\libntru\src\key.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"ntru.h"
+
+1352601774 c:\users\admin\prj\libntru\src\ntru.h
+	"poly.h"
+	"encparams.h"
+
+1352601774 c:\users\admin\prj\libntru\src\poly.h
+
+1423569935 source:c:\users\admin\prj\libntru\src\mgf.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"encparams.h"
+	"poly.h"
+
+1352601774 source:c:\users\admin\prj\libntru\src\ntru.c
+	<stdlib.h>
+	<string.h>
+	"ntru.h"
+	"poly.h"
+	"idxgen.h"
+	"mgf.h"
+	"err.h"
+
+1352601774 c:\users\admin\prj\libntru\src\mgf.h
+
+1352601774 c:\users\admin\prj\libntru\src\err.h
+
+1352601774 source:c:\users\admin\prj\libntru\src\poly.c
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<Windows.h>
+	<Wincrypt.h>
+	"poly.h"
+	"err.h"
+
+1352601774 source:c:\users\admin\prj\libntru\src\sha2.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1352601774 c:\users\admin\prj\libntru\src\md_helper.h
+
+1352601774 source:c:\users\admin\prj\libntru\src\sha2big.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1332265818 source:c:\users\admin\prj\sqlite\sqlite3.c
+	"config.h"
+	<stdint.h>
+	<inttypes.h>
+	<tcl.h>
+	<stdarg.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stddef.h>
+	<windows.h>
+	<os2safe.h>
+	<os2.h>
+	<uconv.h>
+	<ctype.h>
+	<time.h>
+	<sys/sysctl.h>
+	<malloc/malloc.h>
+	<libkern/OSAtomic.h>
+	<malloc.h>
+	<pthread.h>
+	<math.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<unistd.h>
+	<sys/time.h>
+	<errno.h>
+	<sys/mman.h>
+	<sys/ioctl.h>
+	<semaphore.h>
+	<limits.h>
+	<sys/file.h>
+	<sys/param.h>
+	<sys/mount.h>
+	<utime.h>
+	<dlfcn.h>
+	<sys/cygwin.h>
+	"sqlite3rtree.h"
+	<unicode/utypes.h>
+	<unicode/uregex.h>
+	<unicode/ustring.h>
+	<unicode/ucol.h>
+	<unicode/ubrk.h>
+	<unicode/utf16.h>
+
+1480948096 source:c:\users\admin\prj\testmonet\clt.c
+	"../libmonetr/monetR.h"
+	"../libmonetr/monet_pkt.h"
+
+1438229172 source:c:\users\admin\prj\testmonet\main.c
+	"main.h"
+
+1444226316 c:\users\admin\prj\testmonet\main.h
+
+1478520794 source:c:\users\admin\prj\testmonet\svr.c
+	"main.h"
+
+1479735943 source:c:\users\admin\local\prj\infolink\ilink_crypt.c
+
+1432120670 source:c:\users\admin\local\prj\infolink\ilink_hs.c
+
+1479812360 source:c:\users\admin\local\prj\infolink\ilink_io.c
+
+1479735775 source:c:\users\admin\local\prj\infolink\ilink_pkt.c
+
+1474963439 source:c:\users\admin\local\prj\infolink\ilink_poll.c
+	"ilink_poll_select.c"
+	"ilink_poll_poll.c"
+	"ilink_poll_epoll.c"
+
+1475136283 c:\users\admin\local\prj\infolink\ilink_poll_select.c
+	"include/ilink_intern.h"
+
+1475138864 c:\users\admin\local\prj\infolink\include\ilink_intern.h
+	"../../lib13/include/lib13.h"
+	"infolink.h"
+
+1419229319 c:\users\admin\local\prj\lib13\include\lib13.h
+	"acc13.h"
+	"arg13.h"
+	"bit13.h"
+	"const13.h"
+	"crypt13.h"
+	"day13.h"
+	"debug13.h"
+	"end13.h"
+	"error13.h"
+	"hash13.h"
+	"io13.h"
+	"lock13.h"
+	"mem13.h"
+	"pack13.h"
+	"path13.h"
+	"rr13.h"
+	"str13.h"
+	"thread13.h"
+	"type13.h"
+	"db13.h"
+
+1477828686 c:\users\admin\local\prj\lib13\include\acc13.h
+	"type13.h"
+	"hash13.h"
+
+1419512164 c:\users\admin\local\prj\lib13\include\type13.h
+	<sys/types.h>
+	<stdlib.h>
+	<stdint.h>
+	<stddef.h>
+
+1380019590 c:\users\admin\local\prj\lib13\include\hash13.h
+	"error13.h"
+	"sha256.h"
+
+1435578264 c:\users\admin\local\prj\lib13\include\error13.h
+	<sys/types.h>
+	"bit13.h"
+	"type13.h"
+	"const13.h"
+
+1377162192 c:\users\admin\local\prj\lib13\include\bit13.h
+	"type13.h"
+
+1419505431 c:\users\admin\local\prj\lib13\include\const13.h
+	"type13.h"
+
+1359978946 c:\users\admin\local\prj\lib13\include\sha256.h
+	"type13.h"
+
+1360740920 c:\users\admin\local\prj\lib13\include\arg13.h
+	"type13.h"
+	"error13.h"
+
+1432637363 c:\users\admin\local\prj\lib13\include\crypt13.h
+	"type13.h"
+	"error13.h"
+
+1475735101 c:\users\admin\local\prj\lib13\include\day13.h
+	<sys/types.h>
+	<sys/time.h>
+	<time.h>
+	"error13.h"
+
+1437015668 c:\users\admin\local\prj\lib13\include\debug13.h
+	<stdio.h>
+	"const13.h"
+
+1359189830 c:\users\admin\local\prj\lib13\include\end13.h
+	<sys/param.h>
+	<endian.h>
+
+1438084945 c:\users\admin\local\prj\lib13\include\io13.h
+	"type13.h"
+	"error13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<io.h>
+	<stdlib.h>
+	<stdio.h>
+
+1475138111 c:\users\admin\local\prj\lib13\include\lock13.h
+	"type13.h"
+	"thread13.h"
+	"obj13.h"
+
+1435206663 c:\users\admin\local\prj\lib13\include\thread13.h
+	"const13.h"
+	<semaphore.h>
+	<pthread.h>
+
+1462429529 c:\users\admin\local\prj\lib13\include\obj13.h
+	<assert.h>
+	"error13.h"
+	"type13.h"
+	"const13.h"
+	"thread13.h"
+
+1475138128 c:\users\admin\local\prj\lib13\include\mem13.h
+	<string.h>
+	"type13.h"
+	"error13.h"
+	"const13.h"
+	"lock13.h"
+
+1477816609 c:\users\admin\local\prj\lib13\include\pack13.h
+	<sys/types.h>
+	"base64.h"
+
+1405752086 c:\users\admin\local\prj\lib13\include\base64.h
+
+1478510248 c:\users\admin\local\prj\lib13\include\path13.h
+	<dirent.h>
+	<sys/stat.h>
+
+1475138176 c:\users\admin\local\prj\lib13\include\rr13.h
+	"type13.h"
+	"error13.h"
+	"thread13.h"
+	"mem13.h"
+	"obj13.h"
+
+1422862828 c:\users\admin\local\prj\lib13\include\str13.h
+	<string.h>
+	<stdio.h>
+	<wchar.h>
+	"error13.h"
+	"mem13.h"
+
+1462968225 c:\users\admin\local\prj\lib13\include\db13.h
+	"../../sqlite/sqlite3.h"
+	"type13.h"
+	"const13.h"
+	"error13.h"
+	"obj13.h"
+
+1420983082 c:\users\admin\local\prj\sqlite\sqlite3.h
+	<stdarg.h>
+
+1478505594 c:\users\admin\local\prj\infolink\include\infolink.h
+	"ilink_types.h"
+	"ilink_conf.h"
+
+1432380916 c:\users\admin\local\prj\infolink\include\ilink_types.h
+	"../../lib13/include/lib13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<string.h>
+	<wchar.h>
+	<stdio.h>
+	<stdlib.h>
+	<signal.h>
+	<errno.h>
+	<error.h>
+	<sys/wait.h>
+	<ctype.h>
+	<string.h>
+	<stdint.h>
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<errno.h>
+	<string.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<netdb.h>
+	<arpa/inet.h>
+	<sys/wait.h>
+	<signal.h>
+	<w32api.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<ws2spi.h>
+
+1434199625 c:\users\admin\local\prj\infolink\include\ilink_conf.h
+	"ilink_intern.h"
+
+1475562073 source:c:\users\admin\local\prj\infolink\ilink_sock.c
+
+1479796119 source:c:\users\admin\local\prj\infolink\infolink.c
+
+1478688109 source:c:\users\admin\local\prj\lib13\acc13.c
+
+1360160010 source:c:\users\admin\local\prj\lib13\aes.c
+	"include/aes.h"
+	<string.h>
+	<stdio.h>
+
+1359978940 c:\users\admin\local\prj\lib13\include\aes.h
+	"type13.h"
+
+1377279608 source:c:\users\admin\local\prj\lib13\arg13.c
+	"include/str13.h"
+	"include/mem13.h"
+	<string.h>
+	<assert.h>
+
+1418300948 source:c:\users\admin\local\prj\lib13\base64.c
+	"stdlib.h"
+	"include/base64.h"
+
+1360160000 source:c:\users\admin\local\prj\lib13\const13.c
+
+1479799243 source:c:\users\admin\local\prj\lib13\crypt13.c
+	"include/mem13.h"
+	"include/debug13.h"
+	"include/sha256.h"
+
+1420986685 source:c:\users\admin\local\prj\lib13\day13.c
+	"include/str13.h"
+	<stdio.h>
+	<stdlib.h>
+
+1478518752 source:c:\users\admin\local\prj\lib13\db13.c
+	<string.h>
+	"include/db13i.h"
+	"include/msg13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/bit13.h"
+	"include/day13.h"
+	"include/debug13.h"
+
+1420287320 c:\users\admin\local\prj\lib13\include\db13i.h
+	"db13.h"
+	"error13.h"
+
+1418220592 c:\users\admin\local\prj\lib13\include\msg13.h
+
+1360160274 source:c:\users\admin\local\prj\lib13\des.c
+	"include/des.h"
+	<string.h>
+	<stdio.h>
+
+1359978930 c:\users\admin\local\prj\lib13\include\des.h
+	"type13.h"
+
+1480600880 source:c:\users\admin\local\prj\lib13\error13.c
+	<error.h>
+	<errno.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	"include/error13.h"
+	"include/str13.h"
+	"include/mem13.h"
+	"include/debug13.h"
+
+1393569072 source:c:\users\admin\local\prj\lib13\hash13.c
+	"include/hash13i.h"
+	"include/end13.h"
+
+1358863864 c:\users\admin\local\prj\lib13\include\hash13i.h
+	"hash13.h"
+
+1360003550 source:c:\users\admin\local\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1438084975 source:c:\users\admin\local\prj\lib13\io13.c
+	<unistd.h>
+	<errno.h>
+	<sys/types.h>
+	<stdio.h>
+	<string.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<sys/time.h>
+	<io.h>
+	<fcntl.h>
+	"include/io13i.h"
+	"include/path13.h"
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/pack13.h"
+
+1360217502 c:\users\admin\local\prj\lib13\include\io13i.h
+	"io13.h"
+
+1422872510 source:c:\users\admin\local\prj\lib13\io13i.c
+
+1418300922 source:c:\users\admin\local\prj\lib13\lib13.c
+
+1475137780 source:c:\users\admin\local\prj\lib13\lock13.c
+	"include/const13.h"
+	"include/mem13.h"
+
+1480600328 source:c:\users\admin\local\prj\lib13\mem13.c
+	<stddef.h>
+	<string.h>
+	<stdarg.h>
+	<stdlib.h>
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/error13.h"
+	"include/bit13.h"
+
+1420983092 source:c:\users\admin\local\prj\lib13\num2text.c
+	"include/str13.h"
+	<stdio.h>
+	<string.h>
+	<assert.h>
+
+1444225611 source:c:\users\admin\local\prj\lib13\obj13.c
+	"include/mem13.h"
+	<assert.h>
+	<stdlib.h>
+
+1479798926 source:c:\users\admin\local\prj\lib13\pack13.c
+	<string.h>
+	<ctype.h>
+	"include/pack13.h"
+	"include/error13.h"
+	"include/debug13.h"
+	"include/pack13i.c"
+
+1360003550 c:\users\admin\local\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1478510360 source:c:\users\admin\local\prj\lib13\path13.c
+	<sys/types.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stdio.h>
+	<unistd.h>
+	"include/path13.h"
+	"include/debug13.h"
+
+1360659378 source:c:\users\admin\local\prj\lib13\rand13.c
+
+1360160028 source:c:\users\admin\local\prj\lib13\rc4.c
+	<string.h>
+	"include/rc4.h"
+
+1359978952 c:\users\admin\local\prj\lib13\include\rc4.h
+	"type13.h"
+
+1475138262 source:c:\users\admin\local\prj\lib13\rr13.c
+	"include/rr13.h"
+
+1360160018 source:c:\users\admin\local\prj\lib13\sha256.c
+	<string.h>
+	"include/sha256.h"
+	<stdlib.h>
+	<stdio.h>
+
+1477816561 source:c:\users\admin\local\prj\lib13\str13.c
+	<stdlib.h>
+	<assert.h>
+	"include/str13.h"
+	"include/debug13.h"
+
+1401967952 source:c:\users\admin\local\prj\lib13\xtea.c
+	"include/xtea.h"
+
+1401968549 c:\users\admin\local\prj\lib13\include\xtea.h
+	"type13.h"
+	"pack13i.c"
+
+1479801169 source:c:\users\admin\local\prj\libmonetr\monet.c
+	<unistd.h>
+
+1478507135 source:c:\users\admin\local\prj\libmonetr\monet_ctl.c
+
+1478507993 source:c:\users\admin\local\prj\libmonetr\monet_mod.c
+	"monet_internal.h"
+	<dlfcn.h>
+	<windows.h>
+
+1475139090 c:\users\admin\local\prj\libmonetr\monet_internal.h
+	"monet_fifo.h"
+	"monet_mod.h"
+	"monet_pkt.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+	"monet_perm.h"
+	"monetR.h"
+	"../lib13/include/debug13.h"
+
+1437040179 c:\users\admin\local\prj\libmonetr\monet_fifo.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1478507944 c:\users\admin\local\prj\libmonetr\monet_mod.h
+	"../lib13/include/lib13.h"
+	<windows.h>
+
+1478506644 c:\users\admin\local\prj\libmonetr\monet_pkt.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_sess.h"
+	"../infolink/include/ilink_intern.h"
+
+1477830096 c:\users\admin\local\prj\libmonetr\monet_user.h
+	"../lib13/include/lib13.h"
+
+1477317839 c:\users\admin\local\prj\libmonetr\monet_sess.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_mod.h"
+	"monet_fifo.h"
+	"monet_cont.h"
+
+1480596488 c:\users\admin\local\prj\libmonetr\monet_cont.h
+	<c:/users/admin/Local/prj/lib13/include/db13.h>
+
+1437039250 c:\users\admin\local\prj\libmonetr\monet_poll.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1474867511 c:\users\admin\local\prj\libmonetr\monet_perm.h
+	"../lib13/include/error13.h"
+	"../infolink/include/ilink_types.h"
+
+1475566754 c:\users\admin\local\prj\libmonetr\monetr.h
+	"../infolink/include/infolink.h"
+	"monet_fifo.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+
+1479822458 source:c:\users\admin\local\prj\libmonetr\monet_poll.c
+
+1477318329 source:c:\users\admin\local\prj\libmonetr\monet_sess.c
+	"monet_internal.h"
+	"../lib13/include/lib13.h"
+
+1352601774 source:c:\users\admin\local\prj\libntru\src\bitstring.c
+	<string.h>
+	"bitstring.h"
+
+1352601774 c:\users\admin\local\prj\libntru\src\bitstring.h
+	"encparams.h"
+
+1352601774 c:\users\admin\local\prj\libntru\src\encparams.h
+	"hash.h"
+
+1352601774 c:\users\admin\local\prj\libntru\src\hash.h
+
+1352601774 source:c:\users\admin\local\prj\libntru\src\encparams.c
+	"encparams.h"
+
+1352601774 source:c:\users\admin\local\prj\libntru\src\hash.c
+	"sph_sha2.h"
+	"hash.h"
+
+1352601774 c:\users\admin\local\prj\libntru\src\sph_sha2.h
+	<stddef.h>
+	"sph_types.h"
+
+1352601774 c:\users\admin\local\prj\libntru\src\sph_types.h
+	<limits.h>
+	<stdint.h>
+
+1352601774 source:c:\users\admin\local\prj\libntru\src\idxgen.c
+	<string.h>
+	"idxgen.h"
+
+1352601774 c:\users\admin\local\prj\libntru\src\idxgen.h
+	"idxgen.h"
+	"encparams.h"
+	"bitstring.h"
+
+1423569920 source:c:\users\admin\local\prj\libntru\src\key.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"ntru.h"
+
+1352601774 c:\users\admin\local\prj\libntru\src\ntru.h
+	"poly.h"
+	"encparams.h"
+
+1352601774 c:\users\admin\local\prj\libntru\src\poly.h
+
+1423569935 source:c:\users\admin\local\prj\libntru\src\mgf.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"encparams.h"
+	"poly.h"
+
+1352601774 source:c:\users\admin\local\prj\libntru\src\ntru.c
+	<stdlib.h>
+	<string.h>
+	"ntru.h"
+	"poly.h"
+	"idxgen.h"
+	"mgf.h"
+	"err.h"
+
+1352601774 c:\users\admin\local\prj\libntru\src\mgf.h
+
+1352601774 c:\users\admin\local\prj\libntru\src\err.h
+
+1352601774 source:c:\users\admin\local\prj\libntru\src\poly.c
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<Windows.h>
+	<Wincrypt.h>
+	"poly.h"
+	"err.h"
+
+1352601774 source:c:\users\admin\local\prj\libntru\src\sha2.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1352601774 c:\users\admin\local\prj\libntru\src\md_helper.h
+
+1352601774 source:c:\users\admin\local\prj\libntru\src\sha2big.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1332265818 source:c:\users\admin\local\prj\sqlite\sqlite3.c
+	"config.h"
+	<stdint.h>
+	<inttypes.h>
+	<tcl.h>
+	<stdarg.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stddef.h>
+	<windows.h>
+	<os2safe.h>
+	<os2.h>
+	<uconv.h>
+	<ctype.h>
+	<time.h>
+	<sys/sysctl.h>
+	<malloc/malloc.h>
+	<libkern/OSAtomic.h>
+	<malloc.h>
+	<pthread.h>
+	<math.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<unistd.h>
+	<sys/time.h>
+	<errno.h>
+	<sys/mman.h>
+	<sys/ioctl.h>
+	<semaphore.h>
+	<limits.h>
+	<sys/file.h>
+	<sys/param.h>
+	<sys/mount.h>
+	<utime.h>
+	<dlfcn.h>
+	<sys/cygwin.h>
+	"sqlite3rtree.h"
+	<unicode/utypes.h>
+	<unicode/uregex.h>
+	<unicode/ustring.h>
+	<unicode/ucol.h>
+	<unicode/ubrk.h>
+	<unicode/utf16.h>
+
+1479794213 source:c:\users\admin\local\prj\testmonet\clt.c
+	"../libmonetr/monetR.h"
+	"../libmonetr/monet_pkt.h"
+
+1438229172 source:c:\users\admin\local\prj\testmonet\main.c
+	"main.h"
+
+1444226316 c:\users\admin\local\prj\testmonet\main.h
+
+1478520794 source:c:\users\admin\local\prj\testmonet\svr.c
+	"main.h"
+
+1481006282 source:c:\users\admin\temp\prj\infolink\ilink_crypt.c
+
+1432120670 source:c:\users\admin\temp\prj\infolink\ilink_hs.c
+
+1481006173 source:c:\users\admin\temp\prj\infolink\ilink_io.c
+
+1481006236 source:c:\users\admin\temp\prj\infolink\ilink_pkt.c
+
+1481018755 source:c:\users\admin\temp\prj\infolink\ilink_poll.c
+	"ilink_poll_select.c"
+	"ilink_poll_poll.c"
+	"ilink_poll_epoll.c"
+
+1481110326 c:\users\admin\temp\prj\infolink\ilink_poll_select.c
+	"include/ilink_intern.h"
+
+1475138864 c:\users\admin\temp\prj\infolink\include\ilink_intern.h
+	"../../lib13/include/lib13.h"
+	"infolink.h"
+
+1419229319 c:\users\admin\temp\prj\lib13\include\lib13.h
+	"acc13.h"
+	"arg13.h"
+	"bit13.h"
+	"const13.h"
+	"crypt13.h"
+	"day13.h"
+	"debug13.h"
+	"end13.h"
+	"error13.h"
+	"hash13.h"
+	"io13.h"
+	"lock13.h"
+	"mem13.h"
+	"pack13.h"
+	"path13.h"
+	"rr13.h"
+	"str13.h"
+	"thread13.h"
+	"type13.h"
+	"db13.h"
+
+1477828686 c:\users\admin\temp\prj\lib13\include\acc13.h
+	"type13.h"
+	"hash13.h"
+
+1419512164 c:\users\admin\temp\prj\lib13\include\type13.h
+	<sys/types.h>
+	<stdlib.h>
+	<stdint.h>
+	<stddef.h>
+
+1380019590 c:\users\admin\temp\prj\lib13\include\hash13.h
+	"error13.h"
+	"sha256.h"
+
+1435578264 c:\users\admin\temp\prj\lib13\include\error13.h
+	<sys/types.h>
+	"bit13.h"
+	"type13.h"
+	"const13.h"
+
+1377162192 c:\users\admin\temp\prj\lib13\include\bit13.h
+	"type13.h"
+
+1419505431 c:\users\admin\temp\prj\lib13\include\const13.h
+	"type13.h"
+
+1359978946 c:\users\admin\temp\prj\lib13\include\sha256.h
+	"type13.h"
+
+1360740920 c:\users\admin\temp\prj\lib13\include\arg13.h
+	"type13.h"
+	"error13.h"
+
+1432637363 c:\users\admin\temp\prj\lib13\include\crypt13.h
+	"type13.h"
+	"error13.h"
+
+1475735101 c:\users\admin\temp\prj\lib13\include\day13.h
+	<sys/types.h>
+	<sys/time.h>
+	<time.h>
+	"error13.h"
+
+1437015668 c:\users\admin\temp\prj\lib13\include\debug13.h
+	<stdio.h>
+	"const13.h"
+
+1359189830 c:\users\admin\temp\prj\lib13\include\end13.h
+	<sys/param.h>
+	<endian.h>
+
+1438084945 c:\users\admin\temp\prj\lib13\include\io13.h
+	"type13.h"
+	"error13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<io.h>
+	<stdlib.h>
+	<stdio.h>
+
+1475138111 c:\users\admin\temp\prj\lib13\include\lock13.h
+	"type13.h"
+	"thread13.h"
+	"obj13.h"
+
+1435206663 c:\users\admin\temp\prj\lib13\include\thread13.h
+	"const13.h"
+	<semaphore.h>
+	<pthread.h>
+
+1462429529 c:\users\admin\temp\prj\lib13\include\obj13.h
+	<assert.h>
+	"error13.h"
+	"type13.h"
+	"const13.h"
+	"thread13.h"
+
+1475138128 c:\users\admin\temp\prj\lib13\include\mem13.h
+	<string.h>
+	"type13.h"
+	"error13.h"
+	"const13.h"
+	"lock13.h"
+
+1477816609 c:\users\admin\temp\prj\lib13\include\pack13.h
+	<sys/types.h>
+	"base64.h"
+
+1405752086 c:\users\admin\temp\prj\lib13\include\base64.h
+
+1478510248 c:\users\admin\temp\prj\lib13\include\path13.h
+	<dirent.h>
+	<sys/stat.h>
+
+1475138176 c:\users\admin\temp\prj\lib13\include\rr13.h
+	"type13.h"
+	"error13.h"
+	"thread13.h"
+	"mem13.h"
+	"obj13.h"
+
+1422862828 c:\users\admin\temp\prj\lib13\include\str13.h
+	<string.h>
+	<stdio.h>
+	<wchar.h>
+	"error13.h"
+	"mem13.h"
+
+1462968225 c:\users\admin\temp\prj\lib13\include\db13.h
+	"../../sqlite/sqlite3.h"
+	"type13.h"
+	"const13.h"
+	"error13.h"
+	"obj13.h"
+
+1420983082 c:\users\admin\temp\prj\sqlite\sqlite3.h
+	<stdarg.h>
+
+1478505594 c:\users\admin\temp\prj\infolink\include\infolink.h
+	"ilink_types.h"
+	"ilink_conf.h"
+
+1432380916 c:\users\admin\temp\prj\infolink\include\ilink_types.h
+	"../../lib13/include/lib13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<string.h>
+	<wchar.h>
+	<stdio.h>
+	<stdlib.h>
+	<signal.h>
+	<errno.h>
+	<error.h>
+	<sys/wait.h>
+	<ctype.h>
+	<string.h>
+	<stdint.h>
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<errno.h>
+	<string.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<netdb.h>
+	<arpa/inet.h>
+	<sys/wait.h>
+	<signal.h>
+	<w32api.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<ws2spi.h>
+
+1434199625 c:\users\admin\temp\prj\infolink\include\ilink_conf.h
+	"ilink_intern.h"
+
+1481010906 source:c:\users\admin\temp\prj\infolink\ilink_sock.c
+
+1481006266 source:c:\users\admin\temp\prj\infolink\infolink.c
+
+1478688109 source:c:\users\admin\temp\prj\lib13\acc13.c
+
+1360160010 source:c:\users\admin\temp\prj\lib13\aes.c
+	"include/aes.h"
+	<string.h>
+	<stdio.h>
+
+1359978940 c:\users\admin\temp\prj\lib13\include\aes.h
+	"type13.h"
+
+1377279608 source:c:\users\admin\temp\prj\lib13\arg13.c
+	"include/str13.h"
+	"include/mem13.h"
+	<string.h>
+	<assert.h>
+
+1418300948 source:c:\users\admin\temp\prj\lib13\base64.c
+	"stdlib.h"
+	"include/base64.h"
+
+1360160000 source:c:\users\admin\temp\prj\lib13\const13.c
+
+1479799243 source:c:\users\admin\temp\prj\lib13\crypt13.c
+	"include/mem13.h"
+	"include/debug13.h"
+	"include/sha256.h"
+
+1420986685 source:c:\users\admin\temp\prj\lib13\day13.c
+	"include/str13.h"
+	<stdio.h>
+	<stdlib.h>
+
+1478518752 source:c:\users\admin\temp\prj\lib13\db13.c
+	<string.h>
+	"include/db13i.h"
+	"include/msg13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/bit13.h"
+	"include/day13.h"
+	"include/debug13.h"
+
+1420287320 c:\users\admin\temp\prj\lib13\include\db13i.h
+	"db13.h"
+	"error13.h"
+
+1418220592 c:\users\admin\temp\prj\lib13\include\msg13.h
+
+1360160274 source:c:\users\admin\temp\prj\lib13\des.c
+	"include/des.h"
+	<string.h>
+	<stdio.h>
+
+1359978930 c:\users\admin\temp\prj\lib13\include\des.h
+	"type13.h"
+
+1481006331 source:c:\users\admin\temp\prj\lib13\error13.c
+	<error.h>
+	<errno.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	"include/error13.h"
+	"include/str13.h"
+	"include/mem13.h"
+	"include/debug13.h"
+
+1393569072 source:c:\users\admin\temp\prj\lib13\hash13.c
+	"include/hash13i.h"
+	"include/end13.h"
+
+1358863864 c:\users\admin\temp\prj\lib13\include\hash13i.h
+	"hash13.h"
+
+1360003550 source:c:\users\admin\temp\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1481111578 source:c:\users\admin\temp\prj\lib13\io13.c
+	<unistd.h>
+	<errno.h>
+	<sys/types.h>
+	<stdio.h>
+	<string.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<sys/time.h>
+	<io.h>
+	<fcntl.h>
+	"include/io13i.h"
+	"include/path13.h"
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/pack13.h"
+
+1360217502 c:\users\admin\temp\prj\lib13\include\io13i.h
+	"io13.h"
+
+1422872510 source:c:\users\admin\temp\prj\lib13\io13i.c
+
+1418300922 source:c:\users\admin\temp\prj\lib13\lib13.c
+
+1475137780 source:c:\users\admin\temp\prj\lib13\lock13.c
+	"include/const13.h"
+	"include/mem13.h"
+
+1480600328 source:c:\users\admin\temp\prj\lib13\mem13.c
+	<stddef.h>
+	<string.h>
+	<stdarg.h>
+	<stdlib.h>
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/error13.h"
+	"include/bit13.h"
+
+1420983092 source:c:\users\admin\temp\prj\lib13\num2text.c
+	"include/str13.h"
+	<stdio.h>
+	<string.h>
+	<assert.h>
+
+1444225611 source:c:\users\admin\temp\prj\lib13\obj13.c
+	"include/mem13.h"
+	<assert.h>
+	<stdlib.h>
+
+1481006218 source:c:\users\admin\temp\prj\lib13\pack13.c
+	<string.h>
+	<ctype.h>
+	"include/pack13.h"
+	"include/error13.h"
+	"include/debug13.h"
+	"include/pack13i.c"
+
+1360003550 c:\users\admin\temp\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1481012519 source:c:\users\admin\temp\prj\lib13\path13.c
+	<sys/types.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stdio.h>
+	<unistd.h>
+	"include/path13.h"
+	"include/debug13.h"
+
+1360659378 source:c:\users\admin\temp\prj\lib13\rand13.c
+
+1360160028 source:c:\users\admin\temp\prj\lib13\rc4.c
+	<string.h>
+	"include/rc4.h"
+
+1359978952 c:\users\admin\temp\prj\lib13\include\rc4.h
+	"type13.h"
+
+1475138262 source:c:\users\admin\temp\prj\lib13\rr13.c
+	"include/rr13.h"
+
+1360160018 source:c:\users\admin\temp\prj\lib13\sha256.c
+	<string.h>
+	"include/sha256.h"
+	<stdlib.h>
+	<stdio.h>
+
+1477816561 source:c:\users\admin\temp\prj\lib13\str13.c
+	<stdlib.h>
+	<assert.h>
+	"include/str13.h"
+	"include/debug13.h"
+
+1401967952 source:c:\users\admin\temp\prj\lib13\xtea.c
+	"include/xtea.h"
+
+1401968549 c:\users\admin\temp\prj\lib13\include\xtea.h
+	"type13.h"
+	"pack13i.c"
+
+1481111021 source:c:\users\admin\temp\prj\libmonetr\monet.c
+	<unistd.h>
+
+1478507135 source:c:\users\admin\temp\prj\libmonetr\monet_ctl.c
+
+1481112540 source:c:\users\admin\temp\prj\libmonetr\monet_mod.c
+	"monet_internal.h"
+	<dlfcn.h>
+	<windows.h>
+
+1475139090 c:\users\admin\temp\prj\libmonetr\monet_internal.h
+	"monet_fifo.h"
+	"monet_mod.h"
+	"monet_pkt.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+	"monet_perm.h"
+	"monetR.h"
+	"../lib13/include/debug13.h"
+
+1437040179 c:\users\admin\temp\prj\libmonetr\monet_fifo.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1481112627 c:\users\admin\temp\prj\libmonetr\monet_mod.h
+	"../lib13/include/lib13.h"
+	<windows.h>
+
+1478506644 c:\users\admin\temp\prj\libmonetr\monet_pkt.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_sess.h"
+	"../infolink/include/ilink_intern.h"
+
+1477830096 c:\users\admin\temp\prj\libmonetr\monet_user.h
+	"../lib13/include/lib13.h"
+
+1477317839 c:\users\admin\temp\prj\libmonetr\monet_sess.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_mod.h"
+	"monet_fifo.h"
+	"monet_cont.h"
+
+1481006317 c:\users\admin\temp\prj\libmonetr\monet_cont.h
+	<c:/users/admin/Temp/prj/lib13/include/db13.h>
+
+1437039250 c:\users\admin\temp\prj\libmonetr\monet_poll.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1474867511 c:\users\admin\temp\prj\libmonetr\monet_perm.h
+	"../lib13/include/error13.h"
+	"../infolink/include/ilink_types.h"
+
+1475566754 c:\users\admin\temp\prj\libmonetr\monetr.h
+	"../infolink/include/infolink.h"
+	"monet_fifo.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+
+1481109231 source:c:\users\admin\temp\prj\libmonetr\monet_poll.c
+
+1477318329 source:c:\users\admin\temp\prj\libmonetr\monet_sess.c
+	"monet_internal.h"
+	"../lib13/include/lib13.h"
+
+1352601774 source:c:\users\admin\temp\prj\libntru\src\bitstring.c
+	<string.h>
+	"bitstring.h"
+
+1352601774 c:\users\admin\temp\prj\libntru\src\bitstring.h
+	"encparams.h"
+
+1352601774 c:\users\admin\temp\prj\libntru\src\encparams.h
+	"hash.h"
+
+1352601774 c:\users\admin\temp\prj\libntru\src\hash.h
+
+1352601774 source:c:\users\admin\temp\prj\libntru\src\encparams.c
+	"encparams.h"
+
+1352601774 source:c:\users\admin\temp\prj\libntru\src\hash.c
+	"sph_sha2.h"
+	"hash.h"
+
+1352601774 c:\users\admin\temp\prj\libntru\src\sph_sha2.h
+	<stddef.h>
+	"sph_types.h"
+
+1352601774 c:\users\admin\temp\prj\libntru\src\sph_types.h
+	<limits.h>
+	<stdint.h>
+
+1352601774 source:c:\users\admin\temp\prj\libntru\src\idxgen.c
+	<string.h>
+	"idxgen.h"
+
+1352601774 c:\users\admin\temp\prj\libntru\src\idxgen.h
+	"idxgen.h"
+	"encparams.h"
+	"bitstring.h"
+
+1423569920 source:c:\users\admin\temp\prj\libntru\src\key.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"ntru.h"
+
+1352601774 c:\users\admin\temp\prj\libntru\src\ntru.h
+	"poly.h"
+	"encparams.h"
+
+1352601774 c:\users\admin\temp\prj\libntru\src\poly.h
+
+1423569935 source:c:\users\admin\temp\prj\libntru\src\mgf.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"encparams.h"
+	"poly.h"
+
+1352601774 source:c:\users\admin\temp\prj\libntru\src\ntru.c
+	<stdlib.h>
+	<string.h>
+	"ntru.h"
+	"poly.h"
+	"idxgen.h"
+	"mgf.h"
+	"err.h"
+
+1352601774 c:\users\admin\temp\prj\libntru\src\mgf.h
+
+1352601774 c:\users\admin\temp\prj\libntru\src\err.h
+
+1481110628 source:c:\users\admin\temp\prj\libntru\src\poly.c
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<Windows.h>
+	<Wincrypt.h>
+	"poly.h"
+	"err.h"
+
+1352601774 source:c:\users\admin\temp\prj\libntru\src\sha2.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1352601774 c:\users\admin\temp\prj\libntru\src\md_helper.h
+
+1352601774 source:c:\users\admin\temp\prj\libntru\src\sha2big.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1332265818 source:c:\users\admin\temp\prj\sqlite\sqlite3.c
+	"config.h"
+	<stdint.h>
+	<inttypes.h>
+	<tcl.h>
+	<stdarg.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stddef.h>
+	<windows.h>
+	<os2safe.h>
+	<os2.h>
+	<uconv.h>
+	<ctype.h>
+	<time.h>
+	<sys/sysctl.h>
+	<malloc/malloc.h>
+	<libkern/OSAtomic.h>
+	<malloc.h>
+	<pthread.h>
+	<math.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<unistd.h>
+	<sys/time.h>
+	<errno.h>
+	<sys/mman.h>
+	<sys/ioctl.h>
+	<semaphore.h>
+	<limits.h>
+	<sys/file.h>
+	<sys/param.h>
+	<sys/mount.h>
+	<utime.h>
+	<dlfcn.h>
+	<sys/cygwin.h>
+	"sqlite3rtree.h"
+	<unicode/utypes.h>
+	<unicode/uregex.h>
+	<unicode/ustring.h>
+	<unicode/ucol.h>
+	<unicode/ubrk.h>
+	<unicode/utf16.h>
+
+1480948096 source:c:\users\admin\temp\prj\testmonet\clt.c
+	"../libmonetr/monetR.h"
+	"../libmonetr/monet_pkt.h"
+
+1438229172 source:c:\users\admin\temp\prj\testmonet\main.c
+	"main.h"
+
+1444226316 c:\users\admin\temp\prj\testmonet\main.h
+
+1478520794 source:c:\users\admin\temp\prj\testmonet\svr.c
+	"main.h"
+
+1481009882 source:c:\intel\sid\prj\infolink\ilink_crypt.c
+
+1432124270 source:c:\intel\sid\prj\infolink\ilink_hs.c
+
+1496137251 source:c:\intel\sid\prj\infolink\ilink_io.c
+
+1496137259 source:c:\intel\sid\prj\infolink\ilink_pkt.c
+
+1481022355 source:c:\intel\sid\prj\infolink\ilink_poll.c
+	"ilink_poll_select.c"
+	"ilink_poll_poll.c"
+	"ilink_poll_epoll.c"
+
+1496144092 c:\intel\sid\prj\infolink\ilink_poll_select.c
+	"include/ilink_intern.h"
+
+1496132026 c:\intel\sid\prj\infolink\include\ilink_intern.h
+	"../../lib13/include/lib13.h"
+	"infolink.h"
+
+1419232919 c:\intel\sid\prj\lib13\include\lib13.h
+	"acc13.h"
+	"arg13.h"
+	"bit13.h"
+	"const13.h"
+	"crypt13.h"
+	"day13.h"
+	"debug13.h"
+	"end13.h"
+	"error13.h"
+	"hash13.h"
+	"io13.h"
+	"lock13.h"
+	"mem13.h"
+	"pack13.h"
+	"path13.h"
+	"rr13.h"
+	"str13.h"
+	"thread13.h"
+	"type13.h"
+	"db13.h"
+
+1477832286 c:\intel\sid\prj\lib13\include\acc13.h
+	"type13.h"
+	"hash13.h"
+
+1419515764 c:\intel\sid\prj\lib13\include\type13.h
+	<sys/types.h>
+	<stdlib.h>
+	<stdint.h>
+	<stddef.h>
+
+1380023190 c:\intel\sid\prj\lib13\include\hash13.h
+	"error13.h"
+	"sha256.h"
+
+1435581864 c:\intel\sid\prj\lib13\include\error13.h
+	<sys/types.h>
+	"bit13.h"
+	"type13.h"
+	"const13.h"
+
+1377165792 c:\intel\sid\prj\lib13\include\bit13.h
+	"type13.h"
+
+1481612513 c:\intel\sid\prj\lib13\include\const13.h
+	"type13.h"
+
+1359982546 c:\intel\sid\prj\lib13\include\sha256.h
+	"type13.h"
+
+1360744520 c:\intel\sid\prj\lib13\include\arg13.h
+	"type13.h"
+	"error13.h"
+
+1432640963 c:\intel\sid\prj\lib13\include\crypt13.h
+	"type13.h"
+	"error13.h"
+
+1481630189 c:\intel\sid\prj\lib13\include\day13.h
+	<sys/types.h>
+	<sys/time.h>
+	<time.h>
+	"error13.h"
+
+1437019268 c:\intel\sid\prj\lib13\include\debug13.h
+	<stdio.h>
+	"const13.h"
+
+1359193430 c:\intel\sid\prj\lib13\include\end13.h
+	<sys/param.h>
+	<endian.h>
+
+1438088545 c:\intel\sid\prj\lib13\include\io13.h
+	"type13.h"
+	"error13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<io.h>
+	<stdlib.h>
+	<stdio.h>
+
+1475141711 c:\intel\sid\prj\lib13\include\lock13.h
+	"type13.h"
+	"thread13.h"
+	"obj13.h"
+
+1495599803 c:\intel\sid\prj\lib13\include\thread13.h
+	"const13.h"
+	<semaphore.h>
+	<pthread.h>
+
+1462433129 c:\intel\sid\prj\lib13\include\obj13.h
+	<assert.h>
+	"error13.h"
+	"type13.h"
+	"const13.h"
+	"thread13.h"
+
+1475141728 c:\intel\sid\prj\lib13\include\mem13.h
+	<string.h>
+	"type13.h"
+	"error13.h"
+	"const13.h"
+	"lock13.h"
+
+1477820209 c:\intel\sid\prj\lib13\include\pack13.h
+	<sys/types.h>
+	"base64.h"
+
+1405755686 c:\intel\sid\prj\lib13\include\base64.h
+
+1478513848 c:\intel\sid\prj\lib13\include\path13.h
+	<dirent.h>
+	<sys/stat.h>
+
+1475141776 c:\intel\sid\prj\lib13\include\rr13.h
+	"type13.h"
+	"error13.h"
+	"thread13.h"
+	"mem13.h"
+	"obj13.h"
+
+1422866428 c:\intel\sid\prj\lib13\include\str13.h
+	<string.h>
+	<stdio.h>
+	<wchar.h>
+	"error13.h"
+	"mem13.h"
+
+1462971825 c:\intel\sid\prj\lib13\include\db13.h
+	"../../sqlite/sqlite3.h"
+	"type13.h"
+	"const13.h"
+	"error13.h"
+	"obj13.h"
+
+1420986682 c:\intel\sid\prj\sqlite\sqlite3.h
+	<stdarg.h>
+
+1495109828 c:\intel\sid\prj\infolink\include\infolink.h
+	"ilink_types.h"
+	"ilink_conf.h"
+
+1496132083 c:\intel\sid\prj\infolink\include\ilink_types.h
+	"../../lib13/include/lib13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<string.h>
+	<wchar.h>
+	<stdio.h>
+	<stdlib.h>
+	<signal.h>
+	<errno.h>
+	<error.h>
+	<sys/wait.h>
+	<ctype.h>
+	<string.h>
+	<stdint.h>
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<errno.h>
+	<string.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<netdb.h>
+	<arpa/inet.h>
+	<sys/wait.h>
+	<signal.h>
+	<w32api.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<ws2spi.h>
+
+1434203225 c:\intel\sid\prj\infolink\include\ilink_conf.h
+	"ilink_intern.h"
+
+1495109815 source:c:\intel\sid\prj\infolink\ilink_sock.c
+
+1494851597 source:c:\intel\sid\prj\infolink\infolink.c
+
+1481703451 source:c:\intel\sid\prj\lib13\acc13.c
+
+1360163610 source:c:\intel\sid\prj\lib13\aes.c
+	"include/aes.h"
+	<string.h>
+	<stdio.h>
+
+1359982540 c:\intel\sid\prj\lib13\include\aes.h
+	"type13.h"
+
+1377283208 source:c:\intel\sid\prj\lib13\arg13.c
+	"include/str13.h"
+	"include/mem13.h"
+	<string.h>
+	<assert.h>
+
+1418304548 source:c:\intel\sid\prj\lib13\base64.c
+	"stdlib.h"
+	"include/base64.h"
+
+1360163600 source:c:\intel\sid\prj\lib13\const13.c
+
+1479802843 source:c:\intel\sid\prj\lib13\crypt13.c
+	"include/mem13.h"
+	"include/debug13.h"
+	"include/sha256.h"
+
+1481630241 source:c:\intel\sid\prj\lib13\day13.c
+	"include/str13.h"
+	<stdio.h>
+	<stdlib.h>
+
+1478522352 source:c:\intel\sid\prj\lib13\db13.c
+	<string.h>
+	"include/db13i.h"
+	"include/msg13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/bit13.h"
+	"include/day13.h"
+	"include/debug13.h"
+
+1420290920 c:\intel\sid\prj\lib13\include\db13i.h
+	"db13.h"
+	"error13.h"
+
+1418224192 c:\intel\sid\prj\lib13\include\msg13.h
+
+1360163874 source:c:\intel\sid\prj\lib13\des.c
+	"include/des.h"
+	<string.h>
+	<stdio.h>
+
+1359982530 c:\intel\sid\prj\lib13\include\des.h
+	"type13.h"
+
+1494765351 source:c:\intel\sid\prj\lib13\error13.c
+	<error.h>
+	<errno.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	"include/error13.h"
+	"include/str13.h"
+	"include/mem13.h"
+	"include/debug13.h"
+
+1393572672 source:c:\intel\sid\prj\lib13\hash13.c
+	"include/hash13i.h"
+	"include/end13.h"
+
+1358867464 c:\intel\sid\prj\lib13\include\hash13i.h
+	"hash13.h"
+
+1360007150 source:c:\intel\sid\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1481115178 source:c:\intel\sid\prj\lib13\io13.c
+	<unistd.h>
+	<errno.h>
+	<sys/types.h>
+	<stdio.h>
+	<string.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<sys/time.h>
+	<io.h>
+	<fcntl.h>
+	"include/io13i.h"
+	"include/path13.h"
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/pack13.h"
+
+1360221102 c:\intel\sid\prj\lib13\include\io13i.h
+	"io13.h"
+
+1422876110 source:c:\intel\sid\prj\lib13\io13i.c
+
+1418304522 source:c:\intel\sid\prj\lib13\lib13.c
+
+1475141380 source:c:\intel\sid\prj\lib13\lock13.c
+	"include/const13.h"
+	"include/mem13.h"
+
+1480603928 source:c:\intel\sid\prj\lib13\mem13.c
+	<stddef.h>
+	<string.h>
+	<stdarg.h>
+	<stdlib.h>
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/error13.h"
+	"include/bit13.h"
+
+1420986692 source:c:\intel\sid\prj\lib13\num2text.c
+	"include/str13.h"
+	<stdio.h>
+	<string.h>
+	<assert.h>
+
+1444229211 source:c:\intel\sid\prj\lib13\obj13.c
+	"include/mem13.h"
+	<assert.h>
+	<stdlib.h>
+
+1481009818 source:c:\intel\sid\prj\lib13\pack13.c
+	<string.h>
+	<ctype.h>
+	"include/pack13.h"
+	"include/error13.h"
+	"include/debug13.h"
+	"include/pack13i.c"
+
+1360007150 c:\intel\sid\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1481016119 source:c:\intel\sid\prj\lib13\path13.c
+	<sys/types.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stdio.h>
+	<unistd.h>
+	"include/path13.h"
+	"include/debug13.h"
+
+1360662978 source:c:\intel\sid\prj\lib13\rand13.c
+
+1360163628 source:c:\intel\sid\prj\lib13\rc4.c
+	<string.h>
+	"include/rc4.h"
+
+1359982552 c:\intel\sid\prj\lib13\include\rc4.h
+	"type13.h"
+
+1475141862 source:c:\intel\sid\prj\lib13\rr13.c
+	"include/rr13.h"
+
+1360163618 source:c:\intel\sid\prj\lib13\sha256.c
+	<string.h>
+	"include/sha256.h"
+	<stdlib.h>
+	<stdio.h>
+
+1477820161 source:c:\intel\sid\prj\lib13\str13.c
+	<stdlib.h>
+	<assert.h>
+	"include/str13.h"
+	"include/debug13.h"
+
+1401971552 source:c:\intel\sid\prj\lib13\xtea.c
+	"include/xtea.h"
+
+1401972149 c:\intel\sid\prj\lib13\include\xtea.h
+	"type13.h"
+	"pack13i.c"
+
+1478510735 source:c:\intel\sid\prj\libmonetr\monet_ctl.c
+
+1481116140 source:c:\intel\sid\prj\libmonetr\monet_mod.c
+	"monet_internal.h"
+	<dlfcn.h>
+	<windows.h>
+
+1481614241 c:\intel\sid\prj\libmonetr\monet_internal.h
+	"monet_fifo.h"
+	"monet_mod.h"
+	"monet_pkt.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+	"monet_perm.h"
+	"monetR.h"
+	"../lib13/include/debug13.h"
+
+1437043779 c:\intel\sid\prj\libmonetr\monet_fifo.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1481116227 c:\intel\sid\prj\libmonetr\monet_mod.h
+	"../lib13/include/lib13.h"
+	<windows.h>
+
+1478510244 c:\intel\sid\prj\libmonetr\monet_pkt.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_sess.h"
+	"../infolink/include/ilink_intern.h"
+
+1477833696 c:\intel\sid\prj\libmonetr\monet_user.h
+	"../lib13/include/lib13.h"
+
+1477321439 c:\intel\sid\prj\libmonetr\monet_sess.h
+	"../lib13/include/lib13.h"
+	"monet_user.h"
+	"monet_mod.h"
+	"monet_fifo.h"
+	"monet_cont.h"
+
+1481203449 c:\intel\sid\prj\libmonetr\monet_cont.h
+	<c:/intel/sid/prj/lib13/include/db13.h>
+
+1437042850 c:\intel\sid\prj\libmonetr\monet_poll.h
+	"../lib13/include/lib13.h"
+	"../infolink/include/infolink.h"
+
+1474871111 c:\intel\sid\prj\libmonetr\monet_perm.h
+	"../lib13/include/error13.h"
+	"../infolink/include/ilink_types.h"
+
+1495368552 c:\intel\sid\prj\libmonetr\monetr.h
+	"../infolink/include/infolink.h"
+	"monet_fifo.h"
+	"monet_poll.h"
+	"monet_sess.h"
+	"monet_user.h"
+
+1496137242 source:c:\intel\sid\prj\libmonetr\monet_poll.c
+
+1477321929 source:c:\intel\sid\prj\libmonetr\monet_sess.c
+	"monet_internal.h"
+	"../lib13/include/lib13.h"
+
+1352605374 source:c:\intel\sid\prj\libntru\src\bitstring.c
+	<string.h>
+	"bitstring.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\bitstring.h
+	"encparams.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\encparams.h
+	"hash.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\hash.h
+
+1352605374 source:c:\intel\sid\prj\libntru\src\encparams.c
+	"encparams.h"
+
+1352605374 source:c:\intel\sid\prj\libntru\src\hash.c
+	"sph_sha2.h"
+	"hash.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\sph_sha2.h
+	<stddef.h>
+	"sph_types.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\sph_types.h
+	<limits.h>
+	<stdint.h>
+
+1352605374 source:c:\intel\sid\prj\libntru\src\idxgen.c
+	<string.h>
+	"idxgen.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\idxgen.h
+	"idxgen.h"
+	"encparams.h"
+	"bitstring.h"
+
+1423573520 source:c:\intel\sid\prj\libntru\src\key.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"ntru.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\ntru.h
+	"poly.h"
+	"encparams.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\poly.h
+
+1423573535 source:c:\intel\sid\prj\libntru\src\mgf.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"encparams.h"
+	"poly.h"
+
+1352605374 source:c:\intel\sid\prj\libntru\src\ntru.c
+	<stdlib.h>
+	<string.h>
+	"ntru.h"
+	"poly.h"
+	"idxgen.h"
+	"mgf.h"
+	"err.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\mgf.h
+
+1352605374 c:\intel\sid\prj\libntru\src\err.h
+
+1481114228 source:c:\intel\sid\prj\libntru\src\poly.c
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<Windows.h>
+	<Wincrypt.h>
+	"poly.h"
+	"err.h"
+
+1352605374 source:c:\intel\sid\prj\libntru\src\sha2.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\md_helper.h
+
+1352605374 source:c:\intel\sid\prj\libntru\src\sha2big.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1332269418 source:c:\intel\sid\prj\sqlite\sqlite3.c
+	"config.h"
+	<stdint.h>
+	<inttypes.h>
+	<tcl.h>
+	<stdarg.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stddef.h>
+	<windows.h>
+	<os2safe.h>
+	<os2.h>
+	<uconv.h>
+	<ctype.h>
+	<time.h>
+	<sys/sysctl.h>
+	<malloc/malloc.h>
+	<libkern/OSAtomic.h>
+	<malloc.h>
+	<pthread.h>
+	<math.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<unistd.h>
+	<sys/time.h>
+	<errno.h>
+	<sys/mman.h>
+	<sys/ioctl.h>
+	<semaphore.h>
+	<limits.h>
+	<sys/file.h>
+	<sys/param.h>
+	<sys/mount.h>
+	<utime.h>
+	<dlfcn.h>
+	<sys/cygwin.h>
+	"sqlite3rtree.h"
+	<unicode/utypes.h>
+	<unicode/uregex.h>
+	<unicode/ustring.h>
+	<unicode/ucol.h>
+	<unicode/ubrk.h>
+	<unicode/utf16.h>
+
+1494767746 source:c:\intel\sid\prj\testmonet\clt.c
+	"../libmonetr/monetR.h"
+	"../libmonetr/monet_pkt.h"
+
+1438232772 source:c:\intel\sid\prj\testmonet\main.c
+	"main.h"
+
+1444229916 c:\intel\sid\prj\testmonet\main.h
+
+1495598681 source:c:\intel\sid\prj\testmonet\svr.c
+	"main.h"
+
+1495600112 source:c:\intel\sid\prj\libmonetr\monet.c
+	<unistd.h>
+
+1481707917 source:c:\intel\sid\prj\libmonetr\monet_con.c
+	"monetR.h"
+

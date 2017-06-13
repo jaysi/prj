@@ -1,0 +1,373 @@
+#include "jdb.h"
+#include "debug.h"
+
+void _jdb_free_data_ptr_list(struct jdb_handle* h, struct jdb_table *table)
+{
+	_jdb_free_blk_list(h, &table->data_ptr_list);
+}
+
+int _jdb_create_data_ptr(struct jdb_handle *h, struct jdb_table* table)
+{
+	struct jdb_cell_data_ptr_blk *data_ptr;
+	int ret;
+
+	data_ptr = (struct jdb_cell_data_ptr_blk *)malloc(
+			sizeof(struct jdb_cell_data_ptr_blk));
+	if (!data_ptr) {
+		return -JE_MALOC;
+	}
+	
+	_jdb_create_blk_parented(	h, table, data_ptr, JDB_BTYPE_DATA_PTR,
+					sizeof(struct jdb_data_ptr_blk_hdr),
+					sizeof(struct jdb_data_ptr_blk_entry),
+					h->hdr.data_ptr_bent,
+					&table->data_ptr_list,
+					&ret);
+	if(ret < 0) free(data_ptr);
+	
+	return ret;
+}
+
+/*
+int _jdb_write_data_ptr(struct jdb_handle *h, struct jdb_table* table)
+{
+	int ret = 0, fret;
+	struct jdb_cell_data_ptr_blk *data_ptr;
+	for (data_ptr = table->data_ptr_list.first; data_ptr;
+		data_ptr = data_ptr->next) {
+		
+		if (data_ptr->write) {
+			fret = _jdb_write_data_ptr_blk(h, data_ptr);
+			if (fret < 0) {
+				ret = fret;
+			} else {
+				data_ptr->write = 0;
+			}
+		}
+	}
+
+	return ret;
+}
+*/
+
+int _jdb_load_data_ptr(struct jdb_handle *h, struct jdb_table *table)
+{
+	jdb_bid_t *bid;
+	jdb_bid_t i, n;
+	jdb_bent_t k;
+	int ret;
+	struct jdb_cell_data_ptr_blk *blk;
+
+	ret =
+	    _jdb_list_map_match(h, JDB_BTYPE_CELL_DATA_PTR, 0,
+	    			table->main.hdr.tid, 0,
+				JDB_MAP_CMP_BTYPE | JDB_MAP_CMP_TID, &bid, &n);
+	if (ret < 0) {
+		if (n)
+			free(bid);
+		return ret;
+	}
+
+	for (i = 0; i < n; i++) {
+
+		blk = (struct jdb_cell_data_ptr_blk*)malloc(
+			sizeof(struct jdb_cell_data_ptr_blk));
+
+		if (!blk) {
+			free(bid);
+			return -JE_MALOC;
+		}
+
+		blk->blockbuf = _jdb_get_blockbuf(h, JDB_BTYPE_DATA_PTR, 0,
+					JDB_CHANGE_BMAP_SIZE(h->hdr.dptr_bent));
+		if(!blk->blockbuf){
+			free(blk);
+			return -JE_MALOC;
+		}
+		
+		_jdb_assign_blk_element_offset(blk,
+				sizeof(struct jdb_cell_data_ptr_blk_hdr),
+				sizeof(struct jdb_cell_data_ptr_blk_entry),
+				h->hdr.dptr_bent);
+	
+		blk->bid = bid[i];
+
+		blk->write = 0;
+		
+		_wdeb_load(L"Loading block #%u", blk->bid);
+
+		ret = _jdb_read_data_ptr_blk(h, blk);
+
+		if (ret < 0) {
+			free(bid);
+			_jdb_release_blockbuf(h, blk->blockbuf);
+			free(blk);
+			return ret;
+		}
+		
+		memset(	blk->change_bmap, 0x00,
+			JDB_CHANGE_BMAP_SIZE(h->hdr.dptr_bent));
+
+		for(k = 0; k < h->hdr.dptr_bent; k++){
+			blk->entry[k].parent = blk;
+		}
+
+		blk->next = NULL;
+
+		if (!table->data_ptr_list.first) {
+			table->data_ptr_list.first = blk;
+			table->data_ptr_list.last = blk;
+			table->data_ptr_list.cnt = 1UL;
+		} else {
+			table->data_ptr_list.last->next = blk;
+			table->data_ptr_list.last =
+				table->data_ptr_list.last->next;
+			table->data_ptr_list.cnt++;
+		}
+	}
+	return 0;
+}
+
+int _jdb_create_dptr_chain(struct jdb_handle* h, struct jdb_table* table,
+				struct jdb_cell_data_ptr_blk_entry** list,
+				jdb_bid_t needed,
+				jdb_bid_t* first_bid, jdb_bent_t* first_bent){
+
+	struct jdb_cell_data_ptr_blk* blk;
+	struct jdb_cell_data_ptr_blk_entry* last = NULL, *entry;
+
+	jdb_bid_t n = needed;
+	jdb_bent_t bent, added_in_this_blk;
+	int ret;
+	*list = NULL;
+
+again:
+
+	for(blk = table->data_ptr_list.first; blk; blk = blk->next){
+		_wdeb_find(L"blk->nent = %u, h->hdr.dptr_bent = %u",
+			blk->nent, h->hdr.dptr_bent);
+		if(blk->nent < h->hdr.dptr_bent){
+			added_in_this_blk = 0;
+			for(bent = 0; bent < h->hdr.dptr_bent; bent++){
+				if(blk->entry[bent].bid == JDB_ID_INVAL){
+					if(!(*list)){
+						*list = &blk->entry[bent];
+						last = *list;
+						*first_bid = blk->bid;
+						*first_bent = bent;											
+					} else {
+						assert(last);
+						last->next = &blk->entry[bent];
+						last->nextdptrbid = blk->bid;
+						last->nextdptrbent = bent;
+						last = last->next;
+					}
+					
+					_jdb_track_change(
+							blk->change_bmap, bent);
+					
+					blk->nent++;// OnUse
+					added_in_this_blk++;
+					n--;
+					
+					if(!n){
+						_wdeb_find(L"added in this block = %u",
+							added_in_this_blk);
+						_jdb_inc_map_nful_by_bid(h,
+							blk->bid,
+							added_in_this_blk);//OnUse
+						if(!last) return -JE_UNK;
+						last->next = NULL;
+						last->nextdptrbid = JDB_ID_INVAL;
+						
+						#ifndef NDEBUG
+						wprintf(L"DPTR_CHAIN(first:%u[%u]):",
+							*first_bid,*first_bent);
+							
+						for(entry = *list; entry;
+							entry = entry->next){
+							
+							wprintf(L"DATA:%u[%u]*%u, NEXT:%u[%u]",
+							entry->bid, entry->bent,
+							entry->nent,
+							entry->nextdptrbid,
+							entry->nextdptrbent);
+						}
+						wprintf(L"\n");
+						#endif											
+						
+						return 0;
+						
+					}				
+				}
+			}
+			_wdeb_find(L"added in this block = %u", added_in_this_blk);
+			_jdb_inc_map_nful_by_bid(h, blk->bid, added_in_this_blk);// OnUse
+		}
+	}
+	
+	/*
+	if(!n){//technically never code reaches here!
+		if(!last) return -JE_UNK;
+		last->next = NULL;
+		last->nextdptrbid = JDB_ID_INVAL;
+
+		#ifndef NDEBUG
+		wprintf(L"DPTR_CHAIN:");
+		for(entry = *list; entry; entry = entry->next){
+			wprintf(L"DATA:%u[%u]*%u, NEXT:%u[%u]",
+			entry->bid, entry->bent, entry->nent,
+			entry->nextdptrbid, entry->nextdptrbent);
+		}
+		wprintf(L"\n");
+		#endif
+
+		return 0;
+	*/
+	
+	if(n) {//if reached here, all empty slots are filled and new blocks are needed
+		
+		ret = _jdb_create_data_ptr(h, table);
+		if(ret < 0){//kinda undo code
+			if(*list){
+				_jdb_dec_map_nful_by_bid(h, *first_bid, 1);
+				for(blk = table->data_ptr_list.first; blk;
+					blk = blk->next){
+					
+					if(blk->bid == *first_bid){
+						blk->nent--;
+						break;
+					}
+				}
+			}
+
+			while((*list)->nextdptrbid != JDB_ID_INVAL){
+				_jdb_dec_map_nful_by_bid(h,(*list)->nextdptrbid,
+					1);
+				for(blk = table->data_ptr_list.first; blk;
+					blk = blk->next){
+					if(blk->bid == (*list)->nextdptrbid){
+						blk->nent--;
+						break;
+					}
+				}
+				*list = (*list)->next;
+			}
+			
+			return ret;
+		}
+		
+		goto again;
+	}
+	
+	return -JE_UNK;
+}				
+
+
+int _jdb_load_dptr_chain(	struct jdb_handle* h, struct jdb_table* table,
+				struct jdb_cell* cell,
+				struct jdb_cell_data_ptr_blk_entry** list){
+				
+	struct jdb_cell_data_ptr_blk_entry* entry, *last, *first;
+	struct jdb_cell_data_ptr_blk* blk;
+	
+	_wdeb_load(	L"called, starting with bid:%u, bent:%u",
+			cell->celldef->bid_entry, cell->celldef->bent);
+	
+	if(cell->celldef->bid_entry == JDB_ID_INVAL || cell->celldef->bent ==
+		JDB_BENT_INVAL){
+		
+		return -JE_INV;
+	}
+	
+	*list = NULL;
+	
+	//resolve first
+	
+	_wdeb_load(L"first dptr bid = %u, first dptr bent = %u",
+		cell->celldef->bid_entry, cell->celldef->bent);
+	
+	first = NULL;
+	
+	for(blk = table->data_ptr_list.first; blk; blk = blk->next){
+		if(blk->bid == cell->celldef->bid_entry){
+			first = &blk->entry[cell->celldef->bent];
+			_wdeb_load(L"first data block bid = %u, first data block ent = %u; first->nextdptrbid = %u, first->nextdptrbent = %u",
+				first->bid, first->bent, first->nextdptrbid,
+				first->nextdptrbent);
+			first->next = NULL;
+			break;
+		}
+	}
+	
+	if(!first) return -JE_UNK;
+	
+	last = first;
+	while(last->nextdptrbid != JDB_ID_INVAL){
+		for(blk = table->data_ptr_list.first; blk; blk = blk->next){
+			if(last->nextdptrbid == blk->bid){
+
+				entry = &blk->entry[last->nextdptrbent];
+
+				entry->next = NULL;
+
+				last->next = entry;
+				last = last->next;
+
+				_wdeb_load(L"last->nextdptrbid=%u, last->nextdptrbent=%u",
+					last->nextdptrbid, last->nextdptrbent);
+			}
+		}
+	}
+
+	*list = first;
+
+	return 0;
+	
+}
+
+int _jdb_rm_dataptr_block(	struct jdb_handle* h, struct jdb_table *table,
+							jdb_bid_t bid){
+	_jdb_rm_blk(h, &table->data_ptr_list, bid);
+}
+
+int _jdb_rm_dptr_chain(		struct jdb_handle* h, struct jdb_table* table,
+				struct jdb_cell* cell,
+				jdb_bid_t bid, jdb_bent_t bent){
+
+	struct jdb_cell_data_ptr_blk_entry first, *last;
+	struct jdb_cell_data_ptr_blk* blk;
+
+	first.next = NULL;
+	first.nextdptrbid = bid;
+	first.nextdptrbent = bent;
+	last = &first;
+	while(last->nextdptrbid != JDB_ID_INVAL){
+		for(blk = table->data_ptr_list.first; blk; blk = blk->next){
+			//in the old times while was if!
+			while(last->nextdptrbid == blk->bid){
+				last = &blk->entry[last->nextdptrbent];
+				blk->entry[last->nextdptrbent].bid =
+					JDB_ID_INVAL;
+				blk->nent--;
+				
+				_jdb_track_change(blk->change_bmap,
+						last->nextdptrbent);
+							
+				//last = &blk->entry[last->nextdptrbent];
+				
+				if(!blk->nent){
+					_jdb_rm_map_bid_entry(h, blk->bid);
+					_jdb_rm_dataptr_block(h, table,
+								blk->bid);
+				} else {
+					_JDB_SET_WR(h, blk, blk->bid, table, 1);
+					_jdb_dec_map_nful_by_bid(h, blk->bid,1);
+				}
+			}
+		}
+	}
+	//?what was that? *list = first.next;
+	return 0;
+}			
+

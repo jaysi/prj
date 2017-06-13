@@ -1,0 +1,45 @@
+				[ MAINFEST]
+
+--] Locking
+
+ Two major types of locking has been defined, handle-list locks and table locks,
+ each able to lock the targeted resource against writing or reading, implemented
+ as multiple readers, single writer philosophy, i.e. when the write lock is set,
+ everyone has to wait for the operation to finish before reading/writing, and
+ if the read lock has been set, all read calls can be done but write requests
+ have to wait...
+ 
+ Table locks are keeping table refrence count (readers and writers apart) and
+ are triggered at the interface-call level.
+ 
+ Handle-list locks are locking certain resources on handle, including
+ header (except run-time constant values, which are marked in the jdb.h) and
+ some lists, these locks are triggered when there is a global change to the
+ database, like changing in maps.
+ 
+ Another type of locks are seemingly necessary, block-id locks may be needed
+ specially in map-related calls, I'm not sure about this one, I think this will
+ be clear by looking at the map code.
+
+--] Memmory management
+ 
+ The memmory management unit currently only manages allocated memmory for use in
+ blocks (called BlockBuf), it also does not keep amount of memmory in use, for
+ now.
+
+--] Writing to the disk
+
+ This is done through the DiffLists, which is created for each block,
+ to minimize the write overhead the blocks are divided to smaller units called
+ crypt blocks, the size of crypt blocks are depended to the encryption algorithm
+ selected.
+ 
+ The DiffList algorithm is working by marking the changed entries, packing all
+ of them in a block, detecting and encrypting of affected crypt blocks,
+ and writing them; the header is always affected by any change on the block, as
+ far as headers usually keep crc of the entire block.
+ 
+ The data blocks are quite different as long as they carry an on-disk bitmap,
+ the process is same but the code may vary in some parts.
+ 
+ 

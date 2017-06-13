@@ -1,0 +1,31 @@
+DEBUGFLAGS13 = -g
+#DEBUGFLAGS13 = -O2 -DNDEBUG
+INCLUDE13 = ../lib13/include
+CFLAGS = -Winline -Wall -I$(INCLUDE13)
+OBJ = args.o backup.o commit.o compare.o db.o init.o list.o modif.o\
+	 step13.o ui.o update.o
+SRC = *.c
+BIN = step13
+
+CFLAGS += $(DEBUGFLAGS)
+LIB = lib13.so
+
+all: step13
+
+$(BIN): $(OBJ)
+	$(CC) $(CFLAGS) -o step13 $(OBJ) -L. $(LIB) -Wl,-rpath,./ -ldl -lpthread -lsqlite3
+
+cleanall: clean cleanbak
+	@rm -f $(LIB) 
+
+clean:
+	@rm -f $(OBJ)	
+
+cleanbak:
+	@rm -f *.c~
+	@rm -f Makefile~ makefile~
+
+backup:
+	@tar -cf step13.tar *.c *.h makefile
+	@bzip2 step13.tar
+	

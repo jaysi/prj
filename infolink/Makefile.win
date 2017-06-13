@@ -1,0 +1,50 @@
+# Project: infolink
+# Makefile created by Dev-C++ 5.7.1
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = ilink_crypt.o ilink_hs.o ilink_io.o ilink_pkt.o ilink_poll.o ilink_poll_select.o ilink_sock.o infolink.o
+LINKOBJ  = ilink_crypt.o ilink_hs.o ilink_io.o ilink_pkt.o ilink_poll.o ilink_poll_select.o ilink_sock.o infolink.o
+LIBS     = -L"C:/Intel/bak/Dev-Cpp/MinGW32/lib" -L"C:/Intel/bak/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc
+INCS     = -I"C:/Intel/bak/Dev-Cpp/MinGW32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/mingw32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include"
+CXXINCS  = -I"C:/Intel/bak/Dev-Cpp/MinGW32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/mingw32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include/c++"
+BIN      = infolink.a
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(LINKOBJ)
+	ar r $(BIN) $(LINKOBJ)
+	ranlib $(BIN)
+
+ilink_crypt.o: ilink_crypt.c
+	$(CC) -c ilink_crypt.c -o ilink_crypt.o $(CFLAGS)
+
+ilink_hs.o: ilink_hs.c
+	$(CC) -c ilink_hs.c -o ilink_hs.o $(CFLAGS)
+
+ilink_io.o: ilink_io.c
+	$(CC) -c ilink_io.c -o ilink_io.o $(CFLAGS)
+
+ilink_pkt.o: ilink_pkt.c
+	$(CC) -c ilink_pkt.c -o ilink_pkt.o $(CFLAGS)
+
+ilink_poll.o: ilink_poll.c
+	$(CC) -c ilink_poll.c -o ilink_poll.o $(CFLAGS)
+
+ilink_poll_select.o: ilink_poll_select.c
+	$(CC) -c ilink_poll_select.c -o ilink_poll_select.o $(CFLAGS)
+
+ilink_sock.o: ilink_sock.c
+	$(CC) -c ilink_sock.c -o ilink_sock.o $(CFLAGS)
+
+infolink.o: infolink.c
+	$(CC) -c infolink.c -o infolink.o $(CFLAGS)

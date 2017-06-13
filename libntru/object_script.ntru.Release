@@ -1,0 +1,12 @@
+INPUT(
+./release/sha2big.o
+./release/sha2.o
+./release/poly.o
+./release/ntru.o
+./release/mgf.o
+./release/key.o
+./release/idxgen.o
+./release/hash.o
+./release/encparams.o
+./release/bitstring.o
+);

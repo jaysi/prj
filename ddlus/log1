@@ -1,0 +1,913 @@
+﻿Another instance is running, Continue?y
+$var.c@var_ptr()#127> var_ptr ans.
+$var.c@create_var()#249> name: ans, infixrest:
+$var.c@_create_var()#216> var ans created.
+$var.c@var_ptr()#127> var_ptr pi.
+$var.c@create_var()#249> name: pi, infixrest:
+$var.c@_create_var()#216> var pi created.
+$var.c@var_ptr()#127> var_ptr e.
+$var.c@create_var()#249> name: e, infixrest:
+$var.c@_create_var()#216> var e created.
+$var.c@create_var()#249> name: clip, infixrest:
+$var.c@_create_var()#216> var clip created.
+$double.c@init_session()#567> set root to:
+- [ [ double, the calculator; SSE2 enabled;  try 'help'. ]
+@root: loading "autoload"...
+@root: Could not open file [autoload].
+ > a[2][2]=(1,2,3,4)
+$double.c@run_exp()#767> prepare_exp()
+$double.c@prepare_exp()#91> next "a[2][2]=(1,2,3,4);"
+$stack.c@alloc_global_toks()#14> tokpoolsize: 23, gsbufsize: 45
+$double.c@prepare_exp()#95> next "a[2][2]=(1,2,3,4);"
+$double.c@run_exp()#771> prepare_exp: true$history.c@save_history()#79> saving at 1
+$history.c@save_history()#94> copying a[2][2]=(1,2,3,4);
+$double.c@run()#294> run(): exp: a[2][2]=(1,2,3,4);, next: a[2][2]=(1,2,3,4);
+$double.c@prefix_exp()#213> running a[2][2]=(1,2,3,4);
+$double.c@prefix_exp()#214> expbuf a[2][2]=(1,2,3,4);
+$double.c@init_exp()#103> running "a[2][2]=(1,2,3,4);"
+$double.c@prefix_exp()#248> L1: delim: ;, infix: a[2][2]=(1,2,3,4), next: , bufs
+ize: 17
+$double.c@prefix_exp()#265> delim: ;, infix: a[2][2]=(1,2,3,4), next: ; pos = 0
+$stack.c@init_stack()#95> counting tokens of "a[2][2]=(1,2,3,4)" to 20
+$stack.c@alloc_stack_toks()#75> nstacktok: 22, tokpooli: 22, stacktokstrbufsize:
+ 43, gsbufi: 43
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, 2][2]=(1,2,3,4)
+$parse.c@tokenize()#361> got token 'a', delim '['
+$var.c@var_ptr()#127> var_ptr a.
+$stack.c@make_stacktok()#178> using stack slot 0 for token a, nstacktoks = 22, s
+trsize: 2, bufi: 0
+$parse.c@proc_tok()#305> got curtok, a, 19, next: .
+$parse.c@proc_tok()#312> set infix first to a
+$stack.c@make_stacktok()#178> using stack slot 1 for token [, nstacktoks = 22, s
+trsize: 2, bufi: 2
+$parse.c@proc_tok()#305> got curtok, [, 11, next: .
+$parse.c@proc_tok()#318> set infix last to [
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, [2]=(1,2,3,4)
+$parse.c@tokenize()#361> got token '2', delim ']'
+$stack.c@make_stacktok()#178> using stack slot 2 for token 2, nstacktoks = 22, s
+trsize: 2, bufi: 4
+$parse.c@proc_tok()#305> got curtok, 2, 13, next: .
+$parse.c@proc_tok()#318> set infix last to 2
+$stack.c@make_stacktok()#178> using stack slot 3 for token ], nstacktoks = 22, s
+trsize: 2, bufi: 6
+$parse.c@proc_tok()#305> got curtok, ], 12, next: .
+$parse.c@proc_tok()#318> set infix last to ]
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, 2]=(1,2,3,4)
+$parse.c@tokenize()#361> got token '', delim '['
+$stack.c@make_stacktok()#178> using stack slot 4 for token [, nstacktoks = 22, s
+trsize: 2, bufi: 8
+$parse.c@proc_tok()#305> got curtok, [, 11, next: .
+$parse.c@proc_tok()#318> set infix last to [
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, =(1,2,3,4)
+$parse.c@tokenize()#361> got token '2', delim ']'
+$stack.c@make_stacktok()#178> using stack slot 5 for token 2, nstacktoks = 22, s
+trsize: 2, bufi: 10
+$parse.c@proc_tok()#305> got curtok, 2, 13, next: .
+$parse.c@proc_tok()#318> set infix last to 2
+$stack.c@make_stacktok()#178> using stack slot 6 for token ], nstacktoks = 22, s
+trsize: 2, bufi: 12
+$parse.c@proc_tok()#305> got curtok, ], 12, next: .
+$parse.c@proc_tok()#318> set infix last to ]
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, (1,2,3,4)
+$parse.c@tokenize()#361> got token '', delim '='
+$stack.c@make_stacktok()#178> using stack slot 7 for token =, nstacktoks = 22, s
+trsize: 2, bufi: 14
+$parse.c@proc_tok()#305> got curtok, =, 26, next: .
+$parse.c@proc_tok()#318> set infix last to =
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, 1,2,3,4)
+$parse.c@tokenize()#361> got token '', delim '('
+$stack.c@make_stacktok()#178> using stack slot 8 for token (, nstacktoks = 22, s
+trsize: 2, bufi: 16
+$parse.c@proc_tok()#305> got curtok, (, 6, next: .
+$parse.c@proc_tok()#318> set infix last to (
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, 2,3,4)
+$parse.c@tokenize()#361> got token '1', delim ','
+$stack.c@make_stacktok()#178> using stack slot 9 for token 1, nstacktoks = 22, s
+trsize: 2, bufi: 18
+$parse.c@proc_tok()#305> got curtok, 1, 13, next: .
+$parse.c@proc_tok()#318> set infix last to 1
+$stack.c@make_stacktok()#178> using stack slot 10 for token ,, nstacktoks = 22,
+strsize: 2, bufi: 20
+$parse.c@proc_tok()#305> got curtok, ,, 2, next: .
+$parse.c@proc_tok()#318> set infix last to ,
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, 3,4)
+$parse.c@tokenize()#361> got token '2', delim ','
+$stack.c@make_stacktok()#178> using stack slot 11 for token 2, nstacktoks = 22,
+strsize: 2, bufi: 22
+$parse.c@proc_tok()#305> got curtok, 2, 13, next: .
+$parse.c@proc_tok()#318> set infix last to 2
+$stack.c@make_stacktok()#178> using stack slot 12 for token ,, nstacktoks = 22,
+strsize: 2, bufi: 24
+$parse.c@proc_tok()#305> got curtok, ,, 2, next: .
+$parse.c@proc_tok()#318> set infix last to ,
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, 4)
+$parse.c@tokenize()#361> got token '3', delim ','
+$stack.c@make_stacktok()#178> using stack slot 13 for token 3, nstacktoks = 22,
+strsize: 2, bufi: 26
+$parse.c@proc_tok()#305> got curtok, 3, 13, next: .
+$parse.c@proc_tok()#318> set infix last to 3
+$stack.c@make_stacktok()#178> using stack slot 14 for token ,, nstacktoks = 22,
+strsize: 2, bufi: 28
+$parse.c@proc_tok()#305> got curtok, ,, 2, next: .
+$parse.c@proc_tok()#318> set infix last to ,
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is,
+$parse.c@tokenize()#361> got token '4', delim ')'
+$stack.c@make_stacktok()#178> using stack slot 15 for token 4, nstacktoks = 22,
+strsize: 2, bufi: 30
+$parse.c@proc_tok()#305> got curtok, 4, 13, next: .
+$parse.c@proc_tok()#318> set infix last to 4
+$stack.c@make_stacktok()#178> using stack slot 16 for token ), nstacktoks = 22,
+strsize: 2, bufi: 32
+$parse.c@proc_tok()#305> got curtok, ), 7, next: .
+$parse.c@proc_tok()#318> set infix last to )
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@prefix()#425> expression ends, returning.
+$combine.c@combine()#73> current tok: a
+$combine.c@combine()#74> prev tok: NULL
+$combine.c@find_iicombi()#51> prev: 0, curr: 19, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 19, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 19, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 0, curr: 19, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 0, curr: 19, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 19, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 19, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 19, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 19, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 0, curr: 19, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: [
+$combine.c@combine()#74> prev tok: a
+$combine.c@find_iicombi()#51> prev: 19, curr: 11, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 19, curr: 11, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 19, curr: 11, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 19, curr: 11, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 19, curr: 11, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 19, curr: 11, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 19, curr: 11, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 19, curr: 11, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 19, curr: 11, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 19, curr: 11, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: 2
+$combine.c@combine()#74> prev tok: [
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: ]
+$combine.c@combine()#74> prev tok: 2
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: [
+$combine.c@combine()#74> prev tok: ]
+$combine.c@find_iicombi()#51> prev: 12, curr: 11, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 11, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 11, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 12, curr: 11, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 12, curr: 11, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 11, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 11, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 11, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 11, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 12, curr: 11, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: 2
+$combine.c@combine()#74> prev tok: [
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 11, curr: 13, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: ]
+$combine.c@combine()#74> prev tok: 2
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 13, curr: 12, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: =
+$combine.c@combine()#74> prev tok: ]
+$combine.c@find_iicombi()#51> prev: 12, curr: 26, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 26, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 26, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 12, curr: 26, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 12, curr: 26, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 26, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 26, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 26, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 12, curr: 26, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 12, curr: 26, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: (
+$combine.c@combine()#74> prev tok: =
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: 1
+$combine.c@combine()#74> prev tok: (
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: ,
+$combine.c@combine()#74> prev tok: 1
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: 2
+$combine.c@combine()#74> prev tok: ,
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: ,
+$combine.c@combine()#74> prev tok: 2
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: 3
+$combine.c@combine()#74> prev tok: ,
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: ,
+$combine.c@combine()#74> prev tok: 3
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: 4
+$combine.c@combine()#74> prev tok: ,
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: )
+$combine.c@combine()#74> prev tok: 4
+$stack.c@insert_pre()#271> inserting a to prefix
+$stack.c@insert_pre()#276> as first
+$stack.c@push()#480> pushing [...
+$stack.c@push()#501> stacktop is now [
+$stack.c@insert_pre()#271> inserting 2 to prefix
+$stack.c@pop_to_abr()#394> this was called, popping till ABR_OPEN
+$stack.c@pop_to_abr()#411> stacktop is now [
+$stack.c@pop_to_pre()#457> stacktop = [
+$stack.c@pop_to_pre()#459> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@insert_pre()#271> inserting [ to prefix
+$stack.c@pop_to_pre()#473> stacktop is now NULL
+$stack.c@pop_to_abr()#419> and then, stacktop is now NULL
+$stack.c@push()#480> pushing [...
+$stack.c@push()#501> stacktop is now [
+$stack.c@insert_pre()#271> inserting 2 to prefix
+$stack.c@pop_to_abr()#394> this was called, popping till ABR_OPEN
+$stack.c@pop_to_abr()#411> stacktop is now [
+$stack.c@pop_to_pre()#457> stacktop = [
+$stack.c@pop_to_pre()#459> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@insert_pre()#271> inserting [ to prefix
+$stack.c@pop_to_pre()#473> stacktop is now NULL
+$stack.c@pop_to_abr()#419> and then, stacktop is now NULL
+$stack.c@push()#480> pushing =...
+$stack.c@push()#485> is not BR_OPEN "=" pred = 201, poping "(null)" pred = -1...
+
+$stack.c@push()#501> stacktop is now =
+$stack.c@push()#480> pushing (...
+$stack.c@push()#501> stacktop is now (
+$stack.c@insert_pre()#271> inserting 1 to prefix
+$stack.c@pop_to_br_for_col()#360> this was called, popping till BR_OPEN, ABR_OPE
+N or COL
+$stack.c@pop_to_br_for_col()#377> stacktop is now (
+$stack.c@pop_to_br_for_col()#384> and then, stacktop is now (
+$stack.c@push()#480> pushing ,...
+$stack.c@push()#485> is not BR_OPEN "," pred = 198, poping "(" pred = 200...
+$stack.c@push()#501> stacktop is now ,
+$stack.c@insert_pre()#271> inserting 2 to prefix
+$stack.c@pop_to_br_for_col()#360> this was called, popping till BR_OPEN, ABR_OPE
+N or COL
+$stack.c@pop_to_br_for_col()#377> stacktop is now ,
+$stack.c@pop_to_br_for_col()#384> and then, stacktop is now (
+$stack.c@push()#480> pushing ,...
+$stack.c@push()#485> is not BR_OPEN "," pred = 198, poping "(" pred = 200...
+$stack.c@push()#501> stacktop is now ,
+$stack.c@insert_pre()#271> inserting 3 to prefix
+$stack.c@pop_to_br_for_col()#360> this was called, popping till BR_OPEN, ABR_OPE
+N or COL
+$stack.c@pop_to_br_for_col()#377> stacktop is now ,
+$stack.c@pop_to_br_for_col()#384> and then, stacktop is now (
+$stack.c@push()#480> pushing ,...
+$stack.c@push()#485> is not BR_OPEN "," pred = 198, poping "(" pred = 200...
+$stack.c@push()#501> stacktop is now ,
+$stack.c@insert_pre()#271> inserting 4 to prefix
+$stack.c@pop_to_br()#326> this was called, popping till BR_OPEN
+$stack.c@pop_to_pre()#457> stacktop = ,
+$stack.c@pop_to_pre()#459> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@insert_pre()#271> inserting , to prefix
+$stack.c@pop_to_pre()#473> stacktop is now (
+$stack.c@pop_to_br()#343> stacktop is now (
+$stack.c@pop_to_br()#350> and then, stacktop is now =
+$stack.c@poptok()#306> stacktop = =
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now NULL
+$stack.c@insert_pre()#271> inserting = to prefix
+$double.c@run_ci()#348> exp: a[2][2]=(1,2,3,4)
+prefix [first -> last]: $analyze.c@tokval()#646> token not resolved.
+(19+)a(0.000000) $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#651> tok int, real, science: 2, val:
+$analyze.c@tokval()#657>
+(13+)2(2.000000) $analyze.c@tokval()#646> token not resolved.
+(11+)[(0.000000) $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#651> tok int, real, science: 2, val:
+$analyze.c@tokval()#657>
+(13+)2(2.000000) $analyze.c@tokval()#646> token not resolved.
+(11+)[(0.000000) $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#651> tok int, real, science: 1, val:
+$analyze.c@tokval()#657>
+(13+)1(1.000000) $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#651> tok int, real, science: 2, val:
+$analyze.c@tokval()#657>
+(13+)2(2.000000) $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#651> tok int, real, science: 3, val:
+$analyze.c@tokval()#657>
+(13+)3(3.000000) $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#651> tok int, real, science: 4, val:
+$analyze.c@tokval()#657>
+(13+)4(4.000000) $analyze.c@tokval()#646> token not resolved.
+(2+),(0.000000) $analyze.c@tokval()#646> token not resolved.
+(26+)=(0.000000) #
+stack [top -> down]:  #
+prefix [first -> last]: (19+)a(0.000000) (13+)2(2.000000) (11+)[(0.000000) (13+)
+2(2.000000) (11+)[(0.000000) (13+)1(1.000000) (13+)2(2.000000) (13+)3(3.000000)
+(13+)4(4.000000) (2+),(0.000000) (26+)=(0.000000) #
+stack [top -> down]:  #
+$calc.c@runprefix()#667> save prefix first: a
+$calc.c@runprefix()#679> ent = a, next = 2
+$stack.c@push_calc()#435> pushing 'a'...
+$calc.c@runprefix()#679> ent = 2, next = [
+$stack.c@push_calc()#435> pushing '2'...
+$calc.c@runprefix()#679> ent = [, next = 2
+$calc.c@runprefix()#683> got math basic [
+$calc.c@calc_basic()#180> extracting tok1
+$stack.c@poptok()#306> stacktop = 2
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now a
+$calc.c@calc_basic()#186> tk1:: str: 2, val: 2.000000, flags = 2
+$calc.c@calc_basic()#188> extracting tok2
+$stack.c@poptok()#306> stacktop = a
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now NULL
+$calc.c@calc_basic()#200> (11)[$calc.c@calc_basic()#202>
+$calc.c@calc_basic()#416> set array i to 2
+$stack.c@push_calc()#435> pushing 'a'...
+$calc.c@runprefix()#679> ent = 2, next = [
+$stack.c@push_calc()#435> pushing '2'...
+$calc.c@runprefix()#679> ent = [, next = 1
+$calc.c@runprefix()#683> got math basic [
+$calc.c@calc_basic()#180> extracting tok1
+$stack.c@poptok()#306> stacktop = 2
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now a
+$calc.c@calc_basic()#186> tk1:: str: 2, val: 2.000000, flags = 2
+$calc.c@calc_basic()#188> extracting tok2
+$stack.c@poptok()#306> stacktop = a
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now NULL
+$calc.c@calc_basic()#200> (11)[$calc.c@calc_basic()#202>
+$calc.c@calc_basic()#419> set array j to 2
+$stack.c@push_calc()#435> pushing 'a'...
+$calc.c@runprefix()#679> ent = 1, next = 2
+$stack.c@push_calc()#435> pushing '1'...
+$calc.c@runprefix()#679> ent = 2, next = 3
+$stack.c@push_calc()#435> pushing '2'...
+$calc.c@runprefix()#679> ent = 3, next = 4
+$stack.c@push_calc()#435> pushing '3'...
+$calc.c@runprefix()#679> ent = 4, next = ,
+$stack.c@push_calc()#435> pushing '4'...
+$calc.c@runprefix()#679> ent = ,, next = =
+$calc.c@runprefix()#679> ent = =, next = NULL
+$calc.c@runprefix()#683> got math basic =
+$calc.c@calc_basic()#180> extracting tok1
+$stack.c@poptok()#306> stacktop = 4
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now 3
+$calc.c@calc_basic()#186> tk1:: str: 4, val: 4.000000, flags = 2
+$calc.c@calc_basic()#188> extracting tok2
+$stack.c@poptok()#306> stacktop = 3
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now 2
+$calc.c@calc_basic()#200> (26)=$calc.c@calc_basic()#202>
+$calc.c@calc_basic()#258> assignment got!
+prefix [first -> last]:  #
+stack [top -> down]: (13+)2(2.000000) (13+)1(1.000000) (18+)a(-0.000000) #
+$var.c@var_ptr()#127> var_ptr ans.
+$calc.c@calc_basic()#268> requesting variable: 3
+$var.c@var_ptr()#127> var_ptr 3.
+$array.c@array_ptr()#447> getting array ptr of 3[0][0]
+$calc.c@calc_basic()#276> tk1(ans): 4 $id: 13, tk2(var): 3[-1][-1]
+$calc.c@calc_basic()#281> no vars defined!
+$stack.c@push_calc()#435> pushing '3'...
+$stack.c@push_calc()#435> pushing '4'...
+$stack.c@poptok()#306> stacktop = 4
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now 3
+$calc.c@calc_basic()#310> tkz: 4
+$calc.c@calc_basic()#314> last: 4
+$calc.c@calc_basic()#321> first: 4
+$stack.c@poptok()#306> stacktop = 3
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now 2
+$calc.c@calc_basic()#310> tkz: 3
+$calc.c@calc_basic()#317> tkz->next: 4
+$calc.c@calc_basic()#321> first: 3
+$stack.c@poptok()#306> stacktop = 2
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now 1
+$calc.c@calc_basic()#310> tkz: 2
+$calc.c@calc_basic()#317> tkz->next: 3
+$calc.c@calc_basic()#321> first: 2
+$stack.c@poptok()#306> stacktop = 1
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now a
+$calc.c@calc_basic()#310> tkz: 1
+$calc.c@calc_basic()#317> tkz->next: 2
+$calc.c@calc_basic()#321> first: 1
+$stack.c@poptok()#306> stacktop = a
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now NULL
+$calc.c@calc_basic()#310> tkz: a
+$calc.c@calc_basic()#317> tkz->next: 1
+$calc.c@calc_basic()#321> first: a
+$array.c@create_array_direct()#166> creating array a[2][2]
+$var.c@var_ptr()#127> var_ptr a.
+$array.c@create_array_direct()#185> creating array a[2][2]
+$array.c@_create_array2()#58> create array 2
+$array.c@array_ptr()#447> getting array ptr of a[0][0]
+$var.c@create_var()#249> name: a, infixrest:
+$var.c@_create_var()#216> var a created.
+$array.c@array_ptr()#447> getting array ptr of a[0][0]
+$array.c@array_ptr()#447> getting array ptr of a[0][1]
+$var.c@create_var()#249> name: a, infixrest:
+$var.c@_create_var()#216> var a created.
+$array.c@array_ptr()#447> getting array ptr of a[0][1]
+$array.c@_create_array2()#58> create array 2
+$array.c@array_ptr()#447> getting array ptr of a[1][0]
+$var.c@create_var()#249> name: a, infixrest:
+$var.c@_create_var()#216> var a created.
+$array.c@array_ptr()#447> getting array ptr of a[1][0]
+$array.c@array_ptr()#447> getting array ptr of a[1][1]
+$var.c@create_var()#249> name: a, infixrest:
+$var.c@_create_var()#216> var a created.
+$array.c@array_ptr()#447> getting array ptr of a[1][1]
+$var.c@var_ptr()#127> var_ptr ans.
+$stack.c@push_calc()#435> pushing '3'...
+$stack.c@poptok()#306> stacktop = 3
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now NULL
+$calc.c@runprefix()#761> ent->str [setting ans] = 3
+$var.c@var_ptr()#127> var_ptr ans.
+$file.c@record()#270> recording "a[2][2]=(1,2,3,4)"
+$format.c@show_ans_nr()#213> TODO: this buffer is temporary
+$var.c@var_ptr()#127> var_ptr ans.
+@root: 0        [ a[2][2]=(1,2,3,4); ]
+ > a=(5,6,7,8)
+$double.c@run_exp()#767> prepare_exp()$double.c@prepare_exp()#91> next "a=(5,6,7
+,8);"
+$stack.c@alloc_global_toks()#14> tokpoolsize: 15, gsbufsize: 31
+$double.c@prepare_exp()#95> next "a=(5,6,7,8);"
+$double.c@run_exp()#771> prepare_exp: true$history.c@save_history()#79> saving a
+t 2
+$history.c@save_history()#94> copying a=(5,6,7,8);
+$double.c@run()#294> run(): exp: a=(5,6,7,8);, next: a=(5,6,7,8);$double.c@prefi
+x_exp()#213> running a=(5,6,7,8);
+$double.c@prefix_exp()#214> expbuf a=(5,6,7,8);
+$double.c@init_exp()#103> running "a=(5,6,7,8);"
+$double.c@prefix_exp()#248> L1: delim: ;, infix: a=(5,6,7,8), next: , bufsize: 1
+1
+$double.c@prefix_exp()#265> delim: ;, infix: a=(5,6,7,8), next: ; pos = 0
+$stack.c@init_stack()#95> counting tokens of "a=(5,6,7,8)" to 12
+$stack.c@alloc_stack_toks()#75> nstacktok: 14, tokpooli: 14, stacktokstrbufsize:
+ 29, gsbufi: 29
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, (5,6,7,8)
+$parse.c@tokenize()#361> got token 'a', delim '='
+$var.c@var_ptr()#127> var_ptr a.
+$stack.c@make_stacktok()#178> using stack slot 0 for token a, nstacktoks = 14, s
+trsize: 2, bufi: 0
+$parse.c@proc_tok()#292> set infix rest to: (5,6,7,8)
+$parse.c@proc_tok()#305> got curtok, a, 18, next: .
+$parse.c@proc_tok()#312> set infix first to a
+$stack.c@make_stacktok()#178> using stack slot 1 for token =, nstacktoks = 14, s
+trsize: 2, bufi: 2
+$parse.c@proc_tok()#305> got curtok, =, 26, next: .
+$parse.c@proc_tok()#318> set infix last to =
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, 5,6,7,8)
+$parse.c@tokenize()#361> got token '', delim '('
+$stack.c@make_stacktok()#178> using stack slot 2 for token (, nstacktoks = 14, s
+trsize: 2, bufi: 4
+$parse.c@proc_tok()#305> got curtok, (, 6, next: .
+$parse.c@proc_tok()#318> set infix last to (
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, 6,7,8)
+$parse.c@tokenize()#361> got token '5', delim ','
+$stack.c@make_stacktok()#178> using stack slot 3 for token 5, nstacktoks = 14, s
+trsize: 2, bufi: 6
+$parse.c@proc_tok()#305> got curtok, 5, 13, next: .
+$parse.c@proc_tok()#318> set infix last to 5
+$stack.c@make_stacktok()#178> using stack slot 4 for token ,, nstacktoks = 14, s
+trsize: 2, bufi: 8
+$parse.c@proc_tok()#305> got curtok, ,, 2, next: .
+$parse.c@proc_tok()#318> set infix last to ,
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, 7,8)
+$parse.c@tokenize()#361> got token '6', delim ','
+$stack.c@make_stacktok()#178> using stack slot 5 for token 6, nstacktoks = 14, s
+trsize: 2, bufi: 10
+$parse.c@proc_tok()#305> got curtok, 6, 13, next: .
+$parse.c@proc_tok()#318> set infix last to 6
+$stack.c@make_stacktok()#178> using stack slot 6 for token ,, nstacktoks = 14, s
+trsize: 2, bufi: 12
+$parse.c@proc_tok()#305> got curtok, ,, 2, next: .
+$parse.c@proc_tok()#318> set infix last to ,
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is, 8)
+$parse.c@tokenize()#361> got token '7', delim ','
+$stack.c@make_stacktok()#178> using stack slot 7 for token 7, nstacktoks = 14, s
+trsize: 2, bufi: 14
+$parse.c@proc_tok()#305> got curtok, 7, 13, next: .
+$parse.c@proc_tok()#318> set infix last to 7
+$stack.c@make_stacktok()#178> using stack slot 8 for token ,, nstacktoks = 14, s
+trsize: 2, bufi: 16
+$parse.c@proc_tok()#305> got curtok, ,, 2, next: .
+$parse.c@proc_tok()#318> set infix last to ,
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@tokenize()#359> the infix rest is,
+$parse.c@tokenize()#361> got token '8', delim ')'
+$stack.c@make_stacktok()#178> using stack slot 9 for token 8, nstacktoks = 14, s
+trsize: 2, bufi: 18
+$parse.c@proc_tok()#305> got curtok, 8, 13, next: .
+$parse.c@proc_tok()#318> set infix last to 8
+$stack.c@make_stacktok()#178> using stack slot 10 for token ), nstacktoks = 14,
+strsize: 2, bufi: 20
+$parse.c@proc_tok()#305> got curtok, ), 7, next: .
+$parse.c@proc_tok()#318> set infix last to )
+stack [top -> down]:  #
+prefix [first -> last]:  #
+$parse.c@prefix()#425> expression ends, returning.
+$combine.c@combine()#73> current tok: a
+$combine.c@combine()#74> prev tok: NULL
+$combine.c@find_iicombi()#51> prev: 0, curr: 18, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 18, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 18, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 0, curr: 18, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 0, curr: 18, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 18, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 18, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 18, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 0, curr: 18, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 0, curr: 18, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: =
+$combine.c@combine()#74> prev tok: a
+$combine.c@find_iicombi()#51> prev: 18, curr: 26, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 18, curr: 26, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 18, curr: 26, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 18, curr: 26, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 18, curr: 26, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 18, curr: 26, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 18, curr: 26, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 18, curr: 26, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 18, curr: 26, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 18, curr: 26, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: (
+$combine.c@combine()#74> prev tok: =
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 26, curr: 6, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: 5
+$combine.c@combine()#74> prev tok: (
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 6, curr: 13, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: ,
+$combine.c@combine()#74> prev tok: 5
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: 6
+$combine.c@combine()#74> prev tok: ,
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: ,
+$combine.c@combine()#74> prev tok: 6
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: 7
+$combine.c@combine()#74> prev tok: ,
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: ,
+$combine.c@combine()#74> prev tok: 7
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 13, curr: 2, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: 8
+$combine.c@combine()#74> prev tok: ,
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 27, ccurr: 27
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 28, ccurr: 28
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 26, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 52, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 53, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 60, ccurr: 26
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 21, ccurr: 21
+$combine.c@find_iicombi()#51> prev: 2, curr: 13, cprev: 20, ccurr: 20
+$combine.c@combine()#73> current tok: )
+$combine.c@combine()#74> prev tok: 8
+$stack.c@insert_pre()#271> inserting a to prefix
+$stack.c@insert_pre()#276> as first
+$stack.c@push()#480> pushing =...
+$stack.c@push()#485> is not BR_OPEN "=" pred = 201, poping "(null)" pred = -1...
+
+$stack.c@push()#501> stacktop is now =
+$stack.c@push()#480> pushing (...
+$stack.c@push()#501> stacktop is now (
+$stack.c@insert_pre()#271> inserting 5 to prefix
+$stack.c@pop_to_br_for_col()#360> this was called, popping till BR_OPEN, ABR_OPE
+N or COL
+$stack.c@pop_to_br_for_col()#377> stacktop is now (
+$stack.c@pop_to_br_for_col()#384> and then, stacktop is now (
+$stack.c@push()#480> pushing ,...
+$stack.c@push()#485> is not BR_OPEN "," pred = 198, poping "(" pred = 200...
+$stack.c@push()#501> stacktop is now ,
+$stack.c@insert_pre()#271> inserting 6 to prefix
+$stack.c@pop_to_br_for_col()#360> this was called, popping till BR_OPEN, ABR_OPE
+N or COL
+$stack.c@pop_to_br_for_col()#377> stacktop is now ,
+$stack.c@pop_to_br_for_col()#384> and then, stacktop is now (
+$stack.c@push()#480> pushing ,...
+$stack.c@push()#485> is not BR_OPEN "," pred = 198, poping "(" pred = 200...
+$stack.c@push()#501> stacktop is now ,
+$stack.c@insert_pre()#271> inserting 7 to prefix
+$stack.c@pop_to_br_for_col()#360> this was called, popping till BR_OPEN, ABR_OPE
+N or COL
+$stack.c@pop_to_br_for_col()#377> stacktop is now ,
+$stack.c@pop_to_br_for_col()#384> and then, stacktop is now (
+$stack.c@push()#480> pushing ,...
+$stack.c@push()#485> is not BR_OPEN "," pred = 198, poping "(" pred = 200...
+$stack.c@push()#501> stacktop is now ,
+$stack.c@insert_pre()#271> inserting 8 to prefix
+$stack.c@pop_to_br()#326> this was called, popping till BR_OPEN
+$stack.c@pop_to_pre()#457> stacktop = ,
+$stack.c@pop_to_pre()#459> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@insert_pre()#271> inserting , to prefix
+$stack.c@pop_to_pre()#473> stacktop is now (
+$stack.c@pop_to_br()#343> stacktop is now (
+$stack.c@pop_to_br()#350> and then, stacktop is now =
+$stack.c@poptok()#306> stacktop = =
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now NULL
+$stack.c@insert_pre()#271> inserting = to prefix
+$double.c@run_ci()#348> exp: a=(5,6,7,8)
+prefix [first -> last]: $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#666> getting value of array: 'a[-1][-1]'
+(18+)a(0.000000) $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#651> tok int, real, science: 5, val:
+$analyze.c@tokval()#657>
+(13+)5(5.000000) $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#651> tok int, real, science: 6, val:
+$analyze.c@tokval()#657>
+(13+)6(6.000000) $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#651> tok int, real, science: 7, val:
+$analyze.c@tokval()#657>
+(13+)7(7.000000) $analyze.c@tokval()#646> token not resolved.
+$analyze.c@tokval()#651> tok int, real, science: 8, val:
+$analyze.c@tokval()#657>
+(13+)8(8.000000) $analyze.c@tokval()#646> token not resolved.
+(2+),(0.000000) $analyze.c@tokval()#646> token not resolved.
+(26+)=(0.000000) #
+stack [top -> down]:  #
+prefix [first -> last]: (18+)a(0.000000) (13+)5(5.000000) (13+)6(6.000000) (13+)
+7(7.000000) (13+)8(8.000000) (2+),(0.000000) (26+)=(0.000000) #
+stack [top -> down]:  #
+$calc.c@runprefix()#667> save prefix first: a
+$calc.c@runprefix()#679> ent = a, next = 5
+$stack.c@push_calc()#435> pushing 'a'...
+$calc.c@runprefix()#679> ent = 5, next = 6
+$stack.c@push_calc()#435> pushing '5'...
+$calc.c@runprefix()#679> ent = 6, next = 7
+$stack.c@push_calc()#435> pushing '6'...
+$calc.c@runprefix()#679> ent = 7, next = 8
+$stack.c@push_calc()#435> pushing '7'...
+$calc.c@runprefix()#679> ent = 8, next = ,
+$stack.c@push_calc()#435> pushing '8'...
+$calc.c@runprefix()#679> ent = ,, next = =
+$calc.c@runprefix()#679> ent = =, next = NULL
+$calc.c@runprefix()#683> got math basic =
+$calc.c@calc_basic()#180> extracting tok1
+$stack.c@poptok()#306> stacktop = 8
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now 7
+$calc.c@calc_basic()#186> tk1:: str: 8, val: 8.000000, flags = 2
+$calc.c@calc_basic()#188> extracting tok2
+$stack.c@poptok()#306> stacktop = 7
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now 6
+$calc.c@calc_basic()#200> (26)=$calc.c@calc_basic()#202>
+$calc.c@calc_basic()#258> assignment got!
+prefix [first -> last]:  #
+stack [top -> down]: (13+)6(6.000000) (13+)5(5.000000) (18+)a(0.000000) #
+$var.c@var_ptr()#127> var_ptr ans.
+$calc.c@calc_basic()#268> requesting variable: 7
+$var.c@var_ptr()#127> var_ptr 7.
+$array.c@array_ptr()#447> getting array ptr of 7[0][0]
+$calc.c@calc_basic()#276> tk1(ans): 8 $id: 13, tk2(var): 7[-1][-1]
+$calc.c@calc_basic()#281> no vars defined!
+$stack.c@push_calc()#435> pushing '7'...
+$stack.c@push_calc()#435> pushing '8'...
+$stack.c@poptok()#306> stacktop = 8
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now 7
+$calc.c@calc_basic()#310> tkz: 8
+$calc.c@calc_basic()#314> last: 8
+$calc.c@calc_basic()#321> first: 8
+$stack.c@poptok()#306> stacktop = 7
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now 6
+$calc.c@calc_basic()#310> tkz: 7
+$calc.c@calc_basic()#317> tkz->next: 8
+$calc.c@calc_basic()#321> first: 7
+$stack.c@poptok()#306> stacktop = 6
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now 5
+$calc.c@calc_basic()#310> tkz: 6
+$calc.c@calc_basic()#317> tkz->next: 7
+$calc.c@calc_basic()#321> first: 6
+$stack.c@poptok()#306> stacktop = 5
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now a
+$calc.c@calc_basic()#310> tkz: 5
+$calc.c@calc_basic()#317> tkz->next: 6
+$calc.c@calc_basic()#321> first: 5
+$stack.c@poptok()#306> stacktop = a
+$stack.c@poptok()#308> sess->cursess->pre->exp->stacktop->id != BR_OPEN (
+$stack.c@poptok()#316> stacktop is now NULL
+$calc.c@calc_basic()#310> tkz: a
+$calc.c@calc_basic()#317> tkz->next: 5
+$calc.c@calc_basic()#321> first: a
+$array.c@create_array_direct()#166> creating array a[-1][-1]
+$var.c@var_ptr()#127> var_ptr a.
+$array.c@create_array_direct()#185> creating array a[-1][-1]
+@root: Bad argument type [a].
+@root: Calculation error.
+$double.c@run_ci()#351> error running prefix
+ >

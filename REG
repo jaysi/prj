@@ -1,0 +1,74 @@
+--] PROJECT PRIORITY {
+	monetr
+};
+
+--] PROJECT STAGE {
+	empty,
+	in progress,
+	partly finished, //	means it runs anyway but needs improvements and
+					 //	additional code.
+	finished,
+	unknown
+};
+
+--] PROJECT STATUS {
+	empty,
+	active,
+	inactive,
+	deprecated,
+	unknown
+};
+
+--] PROJECTS LIST (	line number, codename [name], description, stage, status,
+					TODO ) {
+
+	10 , ddlus [double], programmable calculator, partly finished, inactive, ?
+	20 , infolink [], network data transmition layer library, partly finished,
+		 inactive, ?
+-	30 , jlib [], common functions library, finished, deprecated, to be replaced
+		 by lib13
+	40 , lib13 [], new common functions library jlib replacement,
+		 partly finished, inactive, ?
+	50 , libnm [libnetmetre], a library to control netmetre protocol,
+		 in progress, inactive, ?
+	60 , monetR [modular network relay], a library to share modules over
+		 network, partly finished, inactive, ?
+	70 , nemeQ [netmetre qt ui], a client side user interface for net metre,
+		 empty, inactive, ?
+	80 , nemese [netmetre server], a server side executable for net metre,
+		 partly finished, inactive, ?
+-	90 , peek [], a program to manage syncs between bakfs model filesystems,
+		 partly finished, deprecated, to be replaced with extern freefilesync
+-	100, step13 [], same as above
+	110, WhereToGo [], a gui to the great database by $S!, partly finished,
+		 inactive, to be done...
+	120, alarm [], a simple reminder / organizer, finished, inactive, nothing
+	130, BNFin [], commision, finished, inactive, nothing
+-	140, compass [], see monetR (i think!), in progress, inactive, nothing
+-	150, db13 [], a standard interface to communicate with different rdbms,
+		 deprecated, inactive, combined with lib13
+	160, flashback [], a rdbms?, in progress, inactive, ?
+
+};//PROJECT LIST
+
+-- TODO (name, list) {
+
+-	ddlus:
+	-	fix for, if, recalc, add precomiled files.
+
+-	infolink:
+	+	accept/connect/disconnect/poll(select)/crypto
+	?	crypto tested?
+	-	handshake
+	-	fragmented data transmition protocol
+
+-	lib13:
+
+-	libnm:
+	-	table design
+
+-	monetR:
+	+	join/leave to the main stream
+	-	module subsystem
+
+};//TODO

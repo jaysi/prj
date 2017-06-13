@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="lib13" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="default">
+				<Option output="13" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+			</Target>
+		</Build>
+		<Linker>
+			<Add option="../libntru/release.dev/libntru.lib" />
+			<Add option="../sqlite/libsqlite.lib" />
+		</Linker>
+		<Unit filename="README" />
+		<Unit filename="TODO" />
+		<Unit filename="acc13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="aes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="arg13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="base64.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="const13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="crypt13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="day13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="db13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="des.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="error13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="hash13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/acc13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/aes.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/arg13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/base64.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/bit13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/const13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/crc.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/crypt13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/crypt13i.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/day13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/db13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/db13i.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/debug13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/des.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/end13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/error13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/hash13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/hash13i.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/io13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/io13i.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/lib13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/lock13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/mem13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/msg13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/obj13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/pack13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/pack13i.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/pack13i.o" />
+		<Unit filename="include/path13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/rc4.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/rr13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/sha256.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/str13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/thread13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/thread13.h.gch" />
+		<Unit filename="include/type13.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/xtea.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="io13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="io13i.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lib13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lock13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="mem13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="num2text.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="obj13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="pack13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="path13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rand13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rc4.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rr13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sha256.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="str13.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="xtea.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

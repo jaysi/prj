@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="double" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="default">
+				<Option output="double" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+			</Target>
+		</Build>
+		<Linker>
+			<Add library="../../../codeblocks/MinGW/lib/libpthread.a" />
+		</Linker>
+		<Unit filename="analyze.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="array.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="calc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="cmd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="combine.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="date.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="double.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="double.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="file.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="flow.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="format.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="func.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="history.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="if.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="num2text.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="num2text_en.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="parse.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="stack.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="str.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="var.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

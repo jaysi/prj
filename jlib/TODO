@@ -1,0 +1,17 @@
+-- add encryption to the journal [DONE, via rc4]
+-- add snapshot support
+-- write update cell code
+-- add indexing support
+-- add undo support (HINT: use snapshots)
+-- add des3 encryption support [DONE]
+-- use BlockBuf - data_ptr.c, fav.c, type.c & snap.c are not compatible yet.[DONE]
+-- use DiffList write
+-C use ChangeTracker [DONE, except in data.c]
+-- use Locking - table locking is in use for now (in interface calls);
+   remove interface-interface calls to avoid conflict between locks,
+   block locking in map-call returns seems necessary, OR use
+   in-handle-list-locking when you want to access to something outside the
+   tables (the table-locking style implementation is recomended);
+   all kind of lock entries MUST be placed in interface calls, but they can't!
+   [Table-Locking is done]
+   [handle-list locking is somewhat complicated!]

@@ -1,0 +1,77 @@
+#ifndef ARGS_H
+#define ARGS_H
+
+struct step13;
+
+enum step13_cmd_code{
+
+    STEP13_CMD_INIT=0,
+    STEP13_CMD_UPDATE,
+    STEP13_CMD_CLEAN,
+    STEP13_CMD_ADD,
+    STEP13_CMD_RM,
+    STEP13_CMD_COMPARE,
+    STEP13_CMD_LIST,
+    STEP13_CMD_STAT,
+    STEP13_CMD_COMMIT,
+    STEP13_CMD_CHECKOUT,
+    STEP13_CMD_QUERY,
+    STEP13_CMD_VERSION,
+
+    STEP13_CMD_ENDS,
+
+    STEP13_CMDARG_PATH,
+    STEP13_CMDARG_TAG,
+    STEP13_CMDARG_COMMENT,
+    STEP13_CMDARG_ALL,
+    STEP13_CMDARG_COMPARE,
+    STEP13_CMDARG_BACKUP,
+    STEP13_CMDARG_DUPLICATE,    
+    STEP13_CMDARG_NONE,
+    STEP13_CMDARG_ERROR,
+    STEP13_CMDARG_WARNING,
+    STEP13_CMDARG_INFO,
+    STEP13_CMDARG_DEBUG,
+    STEP13_CMDARG_LOW,
+    STEP13_CMDARG_MEDIUM,
+    STEP13_CMDARG_FULL,
+
+    STEP13_CMD_ERROR
+
+};
+
+enum step13_switch{
+     STEP13_SW_VERBOSE=0,
+     STEP13_SW_RECURSIVE,
+     STEP13_SW_DETAIL,
+     STEP13_SW_NOBACKUP,
+     STEP13_SW_ROOT,
+     STEP13_SW_SOURCE,
+     STEP13_SW_PATH,
+     STEP13_SW_BACKUPDIR,
+     STEP13_SW_TYPE,
+     STEP13_SW_CTIME,
+     STEP13_SW_MTIME,
+     STEP13_SW_SIZE,
+     STEP13_SW_COMMENT,
+     STEP13_SW_TAG,
+     STEP13_SW_STAT,
+     STEP13_SW_ERROR
+};
+
+#define STEP13_SW(sw_id) (0x0001<<(sw_id))
+#define STEP13_SW_NUM   STEP13_SW_ERROR//keep ERROR last always
+
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
+int parse_args(struct step13* h, int argc, char* argv[]);
+int print_help_switches(struct step13* h);
+
+#ifdef __cplusplus
+    }
+#endif
+
+
+#endif // ARGS_H

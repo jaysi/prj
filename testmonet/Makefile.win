@@ -1,0 +1,118 @@
+# Project: testmonet
+# Makefile created by Dev-C++ 5.7.1
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = clt.o main.o svr.o ../lib13/acc13.o ../lib13/aes.o ../lib13/arg13.o ../lib13/base64.o ../lib13/const13.o ../lib13/crypt13.o ../lib13/day13.o ../lib13/db13.o ../lib13/des.o ../lib13/error13.o ../lib13/hash13.o ../lib13/io13.o ../lib13/io13i.o ../lib13/lib13.o ../lib13/include/pack13i.o ../infolink/ilink_crypt.o ../infolink/ilink_hs.o ../infolink/ilink_io.o ../infolink/ilink_pkt.o ../infolink/ilink_poll.o ../infolink/ilink_poll_select.o ../infolink/ilink_sock.o ../infolink/infolink.o ../monetR/monet.o ../monetR/monet_ctl.o ../monetR/monet_mod.o ../monetR/monet_poll.o ../monetR/monet_sess.o
+LINKOBJ  = clt.o main.o svr.o ../lib13/acc13.o ../lib13/aes.o ../lib13/arg13.o ../lib13/base64.o ../lib13/const13.o ../lib13/crypt13.o ../lib13/day13.o ../lib13/db13.o ../lib13/des.o ../lib13/error13.o ../lib13/hash13.o ../lib13/io13.o ../lib13/io13i.o ../lib13/lib13.o ../lib13/include/pack13i.o ../infolink/ilink_crypt.o ../infolink/ilink_hs.o ../infolink/ilink_io.o ../infolink/ilink_pkt.o ../infolink/ilink_poll.o ../infolink/ilink_poll_select.o ../infolink/ilink_sock.o ../infolink/infolink.o ../monetR/monet.o ../monetR/monet_ctl.o ../monetR/monet_mod.o ../monetR/monet_poll.o ../monetR/monet_sess.o
+LIBS     = -L"C:/Intel/bak/Dev-Cpp/MinGW32/lib" -L"C:/Intel/bak/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc
+INCS     = -I"C:/Intel/bak/Dev-Cpp/MinGW32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/mingw32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include"
+CXXINCS  = -I"C:/Intel/bak/Dev-Cpp/MinGW32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/mingw32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include/c++"
+BIN      = testmonet.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+clt.o: clt.c
+	$(CC) -c clt.c -o clt.o $(CFLAGS)
+
+main.o: main.c
+	$(CC) -c main.c -o main.o $(CFLAGS)
+
+svr.o: svr.c
+	$(CC) -c svr.c -o svr.o $(CFLAGS)
+
+../lib13/acc13.o: ../lib13/acc13.c
+	$(CC) -c ../lib13/acc13.c -o ../lib13/acc13.o $(CFLAGS)
+
+../lib13/aes.o: ../lib13/aes.c
+	$(CC) -c ../lib13/aes.c -o ../lib13/aes.o $(CFLAGS)
+
+../lib13/arg13.o: ../lib13/arg13.c
+	$(CC) -c ../lib13/arg13.c -o ../lib13/arg13.o $(CFLAGS)
+
+../lib13/base64.o: ../lib13/base64.c
+	$(CC) -c ../lib13/base64.c -o ../lib13/base64.o $(CFLAGS)
+
+../lib13/const13.o: ../lib13/const13.c
+	$(CC) -c ../lib13/const13.c -o ../lib13/const13.o $(CFLAGS)
+
+../lib13/crypt13.o: ../lib13/crypt13.c
+	$(CC) -c ../lib13/crypt13.c -o ../lib13/crypt13.o $(CFLAGS)
+
+../lib13/day13.o: ../lib13/day13.c
+	$(CC) -c ../lib13/day13.c -o ../lib13/day13.o $(CFLAGS)
+
+../lib13/db13.o: ../lib13/db13.c
+	$(CC) -c ../lib13/db13.c -o ../lib13/db13.o $(CFLAGS)
+
+../lib13/des.o: ../lib13/des.c
+	$(CC) -c ../lib13/des.c -o ../lib13/des.o $(CFLAGS)
+
+../lib13/error13.o: ../lib13/error13.c
+	$(CC) -c ../lib13/error13.c -o ../lib13/error13.o $(CFLAGS)
+
+../lib13/hash13.o: ../lib13/hash13.c
+	$(CC) -c ../lib13/hash13.c -o ../lib13/hash13.o $(CFLAGS)
+
+../lib13/io13.o: ../lib13/io13.c
+	$(CC) -c ../lib13/io13.c -o ../lib13/io13.o $(CFLAGS)
+
+../lib13/io13i.o: ../lib13/io13i.c
+	$(CC) -c ../lib13/io13i.c -o ../lib13/io13i.o $(CFLAGS)
+
+../lib13/lib13.o: ../lib13/lib13.c
+	$(CC) -c ../lib13/lib13.c -o ../lib13/lib13.o $(CFLAGS)
+
+../lib13/include/pack13i.o: ../lib13/include/pack13i.c
+	$(CC) -c ../lib13/include/pack13i.c -o ../lib13/include/pack13i.o $(CFLAGS)
+
+../infolink/ilink_crypt.o: ../infolink/ilink_crypt.c
+	$(CC) -c ../infolink/ilink_crypt.c -o ../infolink/ilink_crypt.o $(CFLAGS)
+
+../infolink/ilink_hs.o: ../infolink/ilink_hs.c
+	$(CC) -c ../infolink/ilink_hs.c -o ../infolink/ilink_hs.o $(CFLAGS)
+
+../infolink/ilink_io.o: ../infolink/ilink_io.c
+	$(CC) -c ../infolink/ilink_io.c -o ../infolink/ilink_io.o $(CFLAGS)
+
+../infolink/ilink_pkt.o: ../infolink/ilink_pkt.c
+	$(CC) -c ../infolink/ilink_pkt.c -o ../infolink/ilink_pkt.o $(CFLAGS)
+
+../infolink/ilink_poll.o: ../infolink/ilink_poll.c
+	$(CC) -c ../infolink/ilink_poll.c -o ../infolink/ilink_poll.o $(CFLAGS)
+
+../infolink/ilink_poll_select.o: ../infolink/ilink_poll_select.c
+	$(CC) -c ../infolink/ilink_poll_select.c -o ../infolink/ilink_poll_select.o $(CFLAGS)
+
+../infolink/ilink_sock.o: ../infolink/ilink_sock.c
+	$(CC) -c ../infolink/ilink_sock.c -o ../infolink/ilink_sock.o $(CFLAGS)
+
+../infolink/infolink.o: ../infolink/infolink.c
+	$(CC) -c ../infolink/infolink.c -o ../infolink/infolink.o $(CFLAGS)
+
+../monetR/monet.o: ../monetR/monet.c
+	$(CC) -c ../monetR/monet.c -o ../monetR/monet.o $(CFLAGS)
+
+../monetR/monet_ctl.o: ../monetR/monet_ctl.c
+	$(CC) -c ../monetR/monet_ctl.c -o ../monetR/monet_ctl.o $(CFLAGS)
+
+../monetR/monet_mod.o: ../monetR/monet_mod.c
+	$(CC) -c ../monetR/monet_mod.c -o ../monetR/monet_mod.o $(CFLAGS)
+
+../monetR/monet_poll.o: ../monetR/monet_poll.c
+	$(CC) -c ../monetR/monet_poll.c -o ../monetR/monet_poll.o $(CFLAGS)
+
+../monetR/monet_sess.o: ../monetR/monet_sess.c
+	$(CC) -c ../monetR/monet_sess.c -o ../monetR/monet_sess.o $(CFLAGS)

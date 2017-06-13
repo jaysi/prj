@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="infolink" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="default">
+				<Option output="infolink" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+			</Target>
+		</Build>
+		<Unit filename="TODO" />
+		<Unit filename="ilink_crypt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ilink_hs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ilink_io.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ilink_pkt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ilink_poll.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ilink_poll_select.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ilink_sock.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/ilink_conf.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/ilink_intern.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/ilink_types.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/infolink.h">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="infolink.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

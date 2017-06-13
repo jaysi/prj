@@ -1,0 +1,30 @@
+﻿DEBUGFLAGS13 = -O -g
+#DEBUGFLAGS13 = -O2 -DNDEBUG
+INCLUDE13 = ./include
+CFLAGS = -Winline -Wall -c -fPIC -I$(INCLUDE13)
+OBJ = day13.o error13.o hash13.o io13.o mem13.o pack13.o path13.o str13.o
+SRC = *.c
+
+CFLAGS += $(DEBUGFLAGS13)
+LIB = lib13.so
+IF =
+
+all: $(LIB) $(IF)
+
+lib13.so: $(OBJ)
+	$(CC) --shared -o lib13.so $(OBJ)
+
+cleanall: clean cleanbak
+	@rm -f $(LIB)
+
+clean:
+	@rm -f $(OBJ)	
+
+cleanbak:
+	@rm -f *.c~
+	@rm -f Makefile~ makefile~
+
+backup:
+	@tar -cf lib13.tar *.c makefile include/
+	@bzip2 lib13.tar
+

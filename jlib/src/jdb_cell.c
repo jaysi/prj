@@ -1,0 +1,883 @@
+#include "jdb.h"
+
+static inline int _jdb_check_datalen(uchar dtype, uint32_t datalen)
+{
+	switch (dtype) {
+		case JDB_TYPE_EMPTY:
+			if(datalen != 0) return -JE_SIZE;
+			return 0;
+		case JDB_TYPE_BYTE:
+			if (datalen != 1)
+				return -JE_SIZE;
+			return 0;
+		case JDB_TYPE_SHORT:
+			if (datalen != 2)
+				return -JE_SIZE;
+			return 0;
+		case JDB_TYPE_LONG:
+			if (datalen != 4)
+				return -JE_SIZE;
+			return 0;
+		case JDB_TYPE_LONG_LONG:
+			if (datalen != 8)
+				return -JE_SIZE;
+			return 0;
+		case JDB_TYPE_DOUBLE:	//refer to jpack.c
+			if (datalen < 8)
+				return -JE_SIZE;
+			return 0;
+		default:
+			return 0;	
+	}
+	return -JE_UNK;
+}
+
+
+int _jdb_create_celldef(struct jdb_handle *h, struct jdb_table *table)
+{
+	struct jdb_celldef_blk *blk;
+	int ret;
+
+	blk = (struct jdb_celldef_blk*)malloc(sizeof(struct jdb_celldef_blk));
+	if (!blk)
+		return -JE_MALOC;	
+
+	_jdb_create_blk_parented(	h, table, blk, 
+					JDB_BTYPE_CELLDEF,
+					sizeof(struct jdb_celldef_blk_hdr),
+					sizeof(struct jdb_celldef_blk_entry),
+					h->hdr.celldef_bent,
+					&table->celldef_list,
+					&ret);
+	
+	if(ret < 0) free(blk);
+	
+	return ret;
+
+}
+
+static inline struct jdb_cell* _jdb_find_cell_by_pos(	struct jdb_handle *h,
+					struct jdb_table *table, uint32_t row,
+					uint32_t col){
+	struct jdb_cell *cell;
+
+	for (cell = table->cell_list.first; cell; cell = cell->next) {		
+		_wdeb_find(L"%u:%u", cell->celldef->row, cell->celldef->col);
+		if (cell->celldef->row == row && cell->celldef->col == col){
+			_wdeb_find(L"found cell");
+			return cell;
+		}
+	}
+	return NULL;
+}
+
+int _jdb_load_celldef(struct jdb_handle *h, struct jdb_table *table)
+{
+
+	jdb_bid_t *bid;
+	jdb_bid_t i, j, n;
+	int ret;
+	struct jdb_celldef_blk *blk;
+	
+	ret =
+	    _jdb_list_map_match(h, JDB_BTYPE_CELLDEF, 0,
+				  table->main.hdr.tid,
+				  0, JDB_MAP_CMP_BTYPE | JDB_MAP_CMP_TID,
+				  &bid, &n);
+
+	if (ret < 0) {
+		if (n)
+			free(bid);
+		return ret;
+	}	
+
+	for (i = 0; i < n; i++) {
+		blk = (struct jdb_celldef_blk *)
+		    malloc(sizeof(struct jdb_celldef_blk));
+
+		if (!blk) {
+			free(bid);
+			return -JE_MALOC;
+		}
+
+		blk->blockbuf = _jdb_get_blockbuf(h, JDB_BTYPE_CELLDEF, 0,
+				JDB_CHANGE_BMAP_SIZE(h->hdr.celldef_bent));
+		
+		if (!blk->blockbuf) {
+			free(bid);
+			free(blk);
+			return -JE_MALOC;
+		}
+
+		_jdb_assign_blk_element_offset(blk,
+					sizeof(struct jdb_celldef_blk_hdr),
+					sizeof(struct jdb_celldef_blk_entry),
+					h->hdr.celldef_bent);
+
+		for (j = 0; j < h->hdr.celldef_bent; j++) {
+			blk->entry[j].parent = blk;
+		}
+
+		blk->next = NULL;
+		blk->bid = bid[i];
+		blk->write = 0;		
+
+		ret = _jdb_read_celldef_blk(h, blk);
+
+		if (ret < 0) {
+			free(bid);
+			_jdb_release_blockbuf(h, blk->blockbuf);
+			free(blk);
+
+			return ret;
+		}
+		
+		memset(	blk->change_bmap, 0x00,
+			JDB_CHANGE_BMAP_SIZE(h->hdr.celldef_bent));
+
+		if (!table->celldef_list.first) {
+			table->celldef_list.first = blk;
+			table->celldef_list.last = blk;
+			table->celldef_list.cnt = 1UL;
+		} else {
+			table->celldef_list.last->next = blk;
+			table->celldef_list.last =
+			    table->celldef_list.last->next;
+			table->celldef_list.cnt++;
+		}
+	}
+	return 0;
+}
+/*
+int _jdb_write_celldef(struct jdb_handle *h, struct jdb_table *table)
+{
+
+	struct jdb_celldef_blk *blk;
+	int ret, ret2 = 0;
+	
+	for (blk = table->celldef_list.first; blk; blk = blk->next) {
+		ret = _jdb_write_celldef_blk(h, blk);
+		if (!ret2 && ret < 0)
+			ret2 = ret;
+	}
+	
+	return ret2;
+}
+*/
+void _jdb_free_celldef_list(struct jdb_handle* h, struct jdb_table *table)
+{
+	_jdb_free_blk_list(h, &table->celldef_list);
+}
+
+int _jdb_load_cells(struct jdb_handle *h, struct jdb_table *table, int loaddata)
+{
+	struct jdb_celldef_blk *blk;
+	struct jdb_cell *cell;
+	int ret;
+	jdb_bent_t i;
+	
+	for (blk = table->celldef_list.first; blk; blk = blk->next) {
+
+		for (i = 0; i < h->hdr.celldef_bent; i++) {
+
+			if (blk->entry[i].row != JDB_ID_INVAL
+			    && blk->entry[i].col != JDB_ID_INVAL) {
+
+				if (_jdb_find_cell_by_pos
+				    (h, table, blk->entry[i].row,
+				     blk->entry[i].col)){
+					return -JE_CORRUPT;
+				}
+
+				cell = (struct jdb_cell *)
+				    malloc(sizeof(struct jdb_cell));
+
+				if (!cell){
+					return -JE_MALOC;
+				}
+
+				cell->next = NULL;
+				cell->celldef = &blk->entry[i];
+				if (loaddata) {
+
+					ret = _jdb_load_cell_data(h, table, cell);					
+
+					if (ret < 0) {
+						free(cell);
+						return ret;
+					}
+
+					cell->data_stat = JDB_CELL_DATA_UPTODATE;
+
+				} else {
+					cell->data_stat = JDB_CELL_DATA_NOTLOADED;
+				}								
+
+				if (!table->cell_list.first) {
+
+					table->cell_list.first = cell;
+					table->cell_list.last = cell;
+					table->cell_list.cnt = 1UL;
+
+				} else {
+
+					table->cell_list.last->next = cell;
+					table->cell_list.last = cell;
+					table->cell_list.cnt++;
+
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+static inline int
+_jdb_add_celldef(struct jdb_handle *h,
+		 struct jdb_table *table,
+		 uint32_t row,
+		 uint32_t col,
+		 uchar dtype,
+		 uint32_t datalen,
+		 jdb_bid_t data_bid_entry,
+		 jdb_bent_t data_bent, struct jdb_celldef_blk** blk,
+		 struct jdb_celldef_blk_entry **entry)
+{
+
+	jdb_bent_t bent;
+	jdb_bid_t bid;
+	int ret;
+		
+	bid = _jdb_find_first_map_match(h, JDB_BTYPE_CELLDEF, 0,
+					table->main.hdr.tid,
+					h->hdr.celldef_bent - 1,
+					JDB_MAP_CMP_BTYPE | JDB_MAP_CMP_TID |
+					JDB_MAP_CMP_NFUL);
+	if(bid == JDB_ID_INVAL) {
+		//*blk = NULL;
+		goto createnew;
+	}
+	
+	for(*blk = table->celldef_list.first; *blk; *blk = (*blk)->next){
+		if((*blk)->bid == bid) break;
+	}
+	
+after_new:	
+	
+	if(!(*blk)){
+		return -JE_CORRUPT;
+	}
+
+	for (bent = 0; bent < h->hdr.celldef_bent; bent++){
+
+		if ((*blk)->entry[bent].row == JDB_ID_INVAL ||
+		    (*blk)->entry[bent].col == JDB_ID_INVAL) {
+			_wdeb_find(	L"found empty celldef @ BID:%u:BENT:%u",
+					(*blk)->bid, bent);
+			break;
+		}
+	}
+	
+	if (!(*blk)) {
+createnew:		
+		_wdeb_find(L"creating celldef");
+		if ((ret = _jdb_create_celldef(h, table)) < 0)
+			return ret;
+		
+		*blk = table->celldef_list.last;
+		
+		_wdeb_find(L"BID: %u", (*blk)->bid);
+		
+		goto after_new;				
+	}
+
+	if ((ret = _jdb_inc_map_nful_by_bid(h, (*blk)->bid, 1)) < 0){
+		return ret;
+	}
+
+	_JDB_SET_WR(h, *blk, (*blk)->bid, table, 1);
+	
+	_wdeb_add(L"reached here, row %u, col %u, data_type 0x%02x, datalen %u, dptr_bid_entry %u, dptr_bent %u!",
+	row, col, dtype, datalen, data_bid_entry, data_bent);
+
+	(*blk)->entry[bent].row = row;
+	(*blk)->entry[bent].col = col;
+	(*blk)->entry[bent].data_type = dtype;
+	(*blk)->entry[bent].datalen = datalen;
+	(*blk)->entry[bent].bid_entry = data_bid_entry;
+	(*blk)->entry[bent].bent = data_bent;
+	*entry = &(*blk)->entry[bent];
+	
+	_jdb_track_change((*blk)->change_bmap, bent);
+
+	return 0;
+}
+
+static inline void _jdb_rm_celldef_block(struct jdb_handle* h, struct jdb_table *table, jdb_bid_t bid){
+	_jdb_rm_blk(h, &table->celldef_list, bid);	
+}
+
+
+int
+_jdb_rm_celldef(struct jdb_handle *h, struct jdb_table *table,
+		uint32_t row, uint32_t col)
+{
+
+	struct jdb_celldef_blk *blk;
+	jdb_bent_t bent, nful;
+	int ret;
+
+	for (blk = table->celldef_list.first; blk; blk = blk->next) {
+
+		for (bent = 0; bent < h->hdr.celldef_bent; bent++) {
+
+			if (blk->entry[bent].row == row
+			    && blk->entry[bent].col == col) {
+
+				_jdb_dec_map_nful_by_bid(h, blk->bid, 1);
+
+				blk->entry[bent].row = JDB_ID_INVAL;
+				
+				ret = _jdb_get_map_nful_by_bid(h, blk->bid, &nful);
+				if(ret < 0) return ret;
+				
+				if(!nful){
+					_jdb_rm_map_bid_entry(h, blk->bid);
+					_jdb_rm_celldef_block(	h, table,
+								blk->bid);					
+				} else {				
+					_JDB_SET_WR(h, blk, blk->bid, table, 1);
+				}
+
+				_jdb_track_change(blk->change_bmap, bent);
+
+				return 0;
+			}
+		}
+	}
+
+	return -JE_NOTFOUND;
+
+}
+
+static inline void _jdb_free_cell(struct jdb_cell* cell){
+	_wdeb_free(L"freeing cell %u:%u, datalen: %u, datastat = %i, data is %s",
+			cell->celldef->col, cell->celldef->row,
+			cell->celldef->datalen, cell->data_stat, cell->data);
+	if(cell->celldef->datalen && cell->data_stat != JDB_CELL_DATA_NOTLOADED && cell->data){		
+		free(cell->data);
+	}
+	_wdeb_free(L"done freeing");
+}
+
+void _jdb_free_cell_list(struct jdb_handle* h, struct jdb_table *table)
+{
+
+	struct jdb_cell* del;
+#ifndef NDEBUG
+	uint32_t n = table->cell_list.cnt;
+#endif	
+
+	//_jdb_enter_lock(table, //JDB_LK_CELL_RD | //JDB_LK_CELL_WR);
+
+	_wdeb_free(L"freeing cell list cnt = %u", table->cell_list.cnt);	
+	
+	while (table->cell_list.first) {
+		_wdeb_free(L"freeing");
+		del = table->cell_list.first;
+		table->cell_list.first = table->cell_list.first->next;
+		_jdb_free_cell(del);
+		free(del);
+		
+#ifndef NDEBUG
+		n--;
+		if(!n){
+			_wdeb_free(L"must exit");
+		}
+#endif		
+
+	}
+	
+	//_jdb_exit_lock(table, //JDB_LK_CELL_RD | //JDB_LK_CELL_WR);
+
+}
+
+int jdb_create_cell(struct jdb_handle *h,
+	     wchar_t* table_name,
+	     uint32_t col, uint32_t row,
+	     uchar * data, uint32_t datalen,
+	     jdb_data_t dtype)
+{
+
+	int ret;
+	struct jdb_cell *cell;	
+	struct jdb_celldef_blk*	celldef_blk;
+	struct jdb_celldef_blk_entry *celldef_entry;
+	struct jdb_typedef_blk*	typedef_blk;
+	struct jdb_typedef_blk_entry* typedef_entry;
+	struct jdb_table *table;
+	
+	//journalling
+	uint64_t chid;
+	size_t argsize[6];
+	struct jdb_changelog_rec* rec;	
+
+	if(dtype == JDB_TYPE_NULL) return -JE_TYPE;
+	
+	rec = (struct jdb_changelog_rec*)malloc(sizeof(struct jdb_changelog_rec));
+	if(!rec) return -JE_MALOC;
+	chid = _jdb_get_chid(h, 1);
+	argsize[0] = WBYTES(table_name);
+	argsize[1] = sizeof(uint32_t);
+	argsize[2] = sizeof(uint32_t);
+	argsize[3] = datalen;
+	argsize[4] = sizeof(uint32_t);
+	argsize[5] = sizeof(jdb_data_t);
+	_jdb_changelog_assm_rec(rec, chid, JDB_CMD_CREATE_CELL, 0, 6, argsize,
+			table_name, col, row, data, datalen, dtype);
+	_jdb_changelog_reg(h, rec);
+	
+	if((ret = _jdb_lock_table(h, table_name, JDB_LK_WR, &table))<0){
+		_jdb_changelog_reg_end(h, rec, ret);
+		return ret;	
+	}
+
+	if (row > table->main.hdr.nrows) {
+
+		if (table->main.hdr.flags & JDB_TABLE_BIND_ROWS){
+			_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+			_jdb_changelog_reg_end(h, rec, -JE_LIMIT);
+			return -JE_LIMIT;
+		}
+
+	}
+
+	if (col > table->main.hdr.ncols) {
+
+		if (table->main.hdr.flags & JDB_TABLE_BIND_COLS){
+			_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+			_jdb_changelog_reg_end(h, rec, -JE_LIMIT);
+			return -JE_LIMIT;
+		}
+
+	}
+	
+	if (_jdb_find_cell_by_pos(h, table, row, col)){
+		_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+		_jdb_changelog_reg_end(h, rec, -JE_EXISTS);
+		return -JE_EXISTS;
+	}
+
+	if (dtype > JDB_TYPE_NULL) {
+
+		if ((ret = _jdb_find_typedef(	h, table, dtype, &typedef_blk,
+						&typedef_entry)) < 0){
+			_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+			_jdb_changelog_reg_end(h, rec, ret);
+			return ret;
+		}
+			
+		if(!(typedef_entry->flags & JDB_TYPE_VAR)){ //fixed
+			if(datalen > typedef_entry->len ||
+			   datalen%typedef_entry->len){
+				_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+				_jdb_changelog_reg_end(h, rec, -JE_SIZE);
+				return -JE_SIZE;
+			}
+		}
+
+	} else {//base types, you forgot
+
+		if ((ret = _jdb_check_datalen(dtype, datalen)) < 0){
+			_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+			_jdb_changelog_reg_end(h, rec, ret);
+			return ret;
+		}
+
+	}
+
+	if (table->main.hdr.flags & JDB_TABLE_ENFORCE_COL_TYPE) {
+
+		if (dtype != jdb_find_col_type(h, table_name, col)){
+			_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+			_jdb_changelog_reg_end(h, rec, ret);
+			return -JE_TYPE;
+		}
+
+	}
+
+	//add definition, leave data entry pointers invalid
+
+	if ((ret =
+	     _jdb_add_celldef(h, table, row, col, dtype, datalen,
+			      JDB_ID_INVAL, JDB_BENT_INVAL, &celldef_blk,
+			      &celldef_entry))<0){
+		_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+		_jdb_changelog_reg_end(h, rec, ret);
+		return ret;
+
+	}
+
+	//allocate memmory
+
+	cell = (struct jdb_cell *)malloc(sizeof(struct jdb_cell));
+
+	if (!cell) {
+
+		_jdb_rm_celldef(h, table, row, col);
+		_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+		_jdb_changelog_reg_end(h, rec, -JE_MALOC);
+		return -JE_MALOC;
+
+	}
+
+	cell->next = NULL;
+	cell->celldef = celldef_entry;
+
+	if (datalen) {
+		cell->data = (uchar *) malloc(datalen);
+		if (!cell->data) {
+			_jdb_rm_celldef(h, table, row, col);
+			free(cell);
+			_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+			_jdb_changelog_reg_end(h, rec, -JE_MALOC);
+			return -JE_MALOC;
+		}
+
+		memcpy(cell->data, data, datalen);
+		
+		cell->celldef->data_crc32 = _jdb_crc32(cell->data, cell->celldef->datalen);
+		_wdeb_crc(L"celldata crc = 0x%08x", cell->celldef->data_crc32);
+				
+		ret = 0;
+		
+		if(dtype < JDB_TYPE_NULL){
+			if(dtype <= JDB_TYPE_FIXED_BASE_END){
+				ret = 0;				
+			} else {
+				ret = 1;
+			}
+		} else {
+			if(typedef_entry->flags & JDB_TYPE_VAR) ret = 2;
+		}
+				
+		if(ret){
+			ret = _jdb_alloc_cell_data(	h, table, cell,
+							dtype,
+							data,
+							datalen, 1);		
+			if(ret < 0){
+				free(cell->data);				
+				free(cell);
+				_wdeb_add(L"removing celldef");
+				_jdb_rm_celldef(h, table, row, col);
+				_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+				_jdb_changelog_reg_end(h, rec, ret);
+				return ret;
+			}			
+		} else {
+			ret = _jdb_add_fdata(h, table, dtype, data,
+				&cell->celldef->bid_entry, &cell->celldef->bent);
+
+			if(ret < 0){
+				free(cell->data);
+				free(cell);
+				_wdeb_add(L"removing celldef");
+				_jdb_rm_celldef(h, table, row, col);
+				_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+				_jdb_changelog_reg_end(h, rec, ret);
+				return ret;
+			}			
+			cell->dptr = NULL;				
+		}
+	} else {
+		cell->data = NULL;
+		cell->dptr = NULL;		
+		ret = 0;
+	}
+
+	cell->data_stat = JDB_CELL_DATA_UPTODATE;	
+	
+	if(!table->cell_list.first){
+		table->cell_list.first = cell;
+		table->cell_list.last = cell;
+		table->cell_list.cnt = 1UL;
+	} else {
+		table->cell_list.last->next = cell;
+		table->cell_list.last = cell;
+		table->cell_list.cnt++;
+	}
+
+	table->main.hdr.ncells++;
+	
+	_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+	
+	_jdb_changelog_reg_end(h, rec, ret);
+	
+	return ret;
+
+}
+
+int jdb_load_cell(struct jdb_handle *h, wchar_t* table_name,
+		uint32_t col, uint32_t row, uchar** data,
+		uint32_t* datalen, uchar* data_type){
+
+	struct jdb_cell* cell;
+	struct jdb_table* table;
+	int ret;
+	
+	_wdeb_load(L"called");
+	
+	if((ret = _jdb_lock_table(h, table_name, JDB_LK_RD, &table)) < 0){
+		return ret;	
+	}
+
+	if (!(cell = _jdb_find_cell_by_pos(h, table, row, col))){
+		_wdeb_load(L"not found");
+		_jdb_unlock_table(h, table_name, JDB_LK_RD, &table);
+		return -JE_NOTFOUND;
+	}
+
+
+	if(cell->data_stat != JDB_CELL_DATA_NOTLOADED){
+		_wdeb_load(L"data altrady in memmory, stat = %i", cell->data_stat);
+		*data = cell->data;
+		*datalen = cell->celldef->datalen;
+		*data_type = cell->celldef->data_type;
+		
+		_jdb_unlock_table(h, table_name, JDB_LK_RD, &table);	
+		
+		return -JE_EXISTS;
+	}
+
+	_wdeb_load(L"loading cell data");
+	
+	ret = _jdb_load_cell_data(h, table, cell);
+
+	if (ret < 0) {
+		_jdb_unlock_table(h, table_name, JDB_LK_RD, &table);
+		return ret;
+	}
+
+	cell->data_stat = JDB_CELL_DATA_UPTODATE;
+
+	*data = cell->data;
+	*datalen = cell->celldef->datalen;
+	*data_type = cell->celldef->data_type;
+	
+	_jdb_unlock_table(h, table_name, JDB_LK_RD, &table);
+
+	return 0;
+		
+}
+
+int jdb_rm_cell(struct jdb_handle* h, wchar_t * table_name,
+		uint32_t col, uint32_t row){
+
+	struct jdb_cell *cell, *prev;
+	struct jdb_table* table;
+	int ret;
+	jdb_bid_t next_dptr_bid;
+	jdb_bent_t next_dptr_bent;
+	struct jdb_cell_data_ptr_blk_entry* dptr;
+	
+	//journalling
+	uint64_t chid;
+	size_t argsize[3];
+	struct jdb_changelog_rec* rec;
+	
+	rec = (struct jdb_changelog_rec*)malloc(sizeof(struct jdb_changelog_rec));
+	if(!rec) return -JE_MALOC;
+	chid = _jdb_get_chid(h, 1);
+	argsize[0] = WBYTES(table_name);
+	argsize[1] = sizeof(uint32_t);
+	argsize[2] = sizeof(uint32_t);
+	_jdb_changelog_assm_rec(rec, chid, JDB_CMD_RM_CELL, 0, 3, argsize,
+			table_name, col, row);
+	_jdb_changelog_reg(h, rec);
+	
+	if((ret = _jdb_lock_table(h, table_name, JDB_LK_WR, &table)) < 0){
+		_jdb_changelog_reg_end(h, rec, ret);
+		return ret;
+	}
+
+	prev = table->cell_list.first;
+	for (cell = table->cell_list.first; cell; cell = cell->next) {		
+			
+		if (cell->celldef->row == row && cell->celldef->col == col){
+			if(cell == table->cell_list.first){
+				table->cell_list.first = table->cell_list.first->next;
+			} else if(cell == table->cell_list.last){
+				prev->next = NULL;
+				table->cell_list.last = prev;
+			} else {
+				prev->next = cell->next;
+			}
+		}
+	
+		prev = cell;			
+
+	}
+
+	if(cell){
+
+		//remove celldef
+		next_dptr_bid = cell->celldef->bid_entry;
+		next_dptr_bent = cell->celldef->bent;
+		_jdb_rm_celldef(h, table, cell->celldef->row, cell->celldef->col);
+		//free data
+		_jdb_free_cell(cell);
+		//remove data segments
+		_jdb_rm_data_seg(h, table, cell->celldef->bid_entry, cell->celldef->bent, 1);
+		for(dptr = cell->dptr; dptr; dptr = dptr->next){
+			_jdb_rm_data_seg(h, table, dptr->bid, dptr->bent, dptr->nent);
+		}
+		//remove dptrs
+		_jdb_rm_dptr_chain(h, table, cell, next_dptr_bid, next_dptr_bent);
+		
+		table->main.hdr.ncells--;
+		_jdb_changelog_reg_end(h, rec, 0);
+		
+		_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+		
+		return 0;
+	}
+	
+	_jdb_unlock_table(h, table_name, JDB_LK_WR, &table);
+	
+	_jdb_changelog_reg_end(h, rec, -JE_NOTFOUND);
+	return -JE_NOTFOUND;
+	
+	
+}		
+		
+
+int jdb_update_cell(struct jdb_handle *h, wchar_t * table_name,
+		    uint32_t col, uint32_t row,
+		    uchar * data, uint32_t datalen){
+		    
+	//you cannot change data_type by this call!
+	int ret;
+	struct jdb_table* table;
+	
+	//if((ret = _jdb_table_handle(h, table_name, &table)) < 0) return ret;
+
+	return -JE_IMPLEMENT;
+}		    					
+
+
+//set row or col to JDB_ID_INVAL for all matches
+int jdb_list_cells(	struct jdb_handle* h, wchar_t* table_name, uint32_t col,
+			uint32_t row, uint32_t** li_col, uint32_t** li_row,
+			uint32_t* n){
+	struct jdb_table* table;
+	struct jdb_cell* cell;
+	int ret;
+	
+	if((ret = _jdb_lock_table(h, table_name, JDB_LK_RD, &table)) < 0){
+		return ret;
+	}
+
+	//use list_buck
+
+	*li_col = NULL;
+	*li_row = NULL;
+	*n = 0UL;
+	
+	_jdb_unlock_table(h, table_name, JDB_LK_RD, &table);
+	
+	for(cell = table->cell_list.first; cell; cell = cell->next){
+		if(row == JDB_ID_INVAL && col == JDB_ID_INVAL){			
+		} else if(row == JDB_ID_INVAL && col != JDB_ID_INVAL){
+			if(col != cell->celldef->col) continue;
+		} else if(row != JDB_ID_INVAL && col == JDB_ID_INVAL){
+			if(row != cell->celldef->row) continue;
+		} else {
+			if(	row != cell->celldef->row &&
+				col != cell->celldef->col) continue;
+		}
+
+		if(!((*n)%h->hdr.list_buck)){
+			*li_col = (uint32_t*)realloc(*li_col, h->hdr.list_buck*sizeof(uint32_t));
+			if(!(*li_col)){
+				//free the allocated
+				
+				if(*li_row) free(*li_row);
+				
+				_jdb_unlock_table(h, table_name, JDB_LK_RD, &table);
+				
+				return -JE_MALOC;
+			}
+			*li_row = (uint32_t*)realloc(*li_row,
+					h->hdr.list_buck*sizeof(uint32_t));
+			if(!(*li_row)){
+				//free the allocated
+				
+				if(*li_col) free(*li_col);
+				
+				_jdb_unlock_table(h, table_name, JDB_LK_RD, &table);			
+
+				return -JE_MALOC;
+			}			
+		}
+
+		(*li_col)[*n] = cell->celldef->col;
+		(*li_row)[*n] = cell->celldef->row;
+		(*n)++;
+		
+	}
+	
+	_jdb_unlock_table(h, table_name, JDB_LK_RD, &table);			
+
+	return 0;	
+}
+
+/*
+	get_cell(), put_cell() and reup_cell() are functions to directly
+	accessing the cell without opening the table, reducing overhead...
+
+int jdb_get_cell(struct jdb_handle *h, wchar_t* table_name,
+		uint32_t col, uint32_t row, uchar** data,
+		uint32_t* datalen, uchar* data_type){
+
+	struct jdb_cell* cell;
+	struct jdb_table* table;
+	int ret;
+	
+	_wdeb_load(L"called");
+	
+	if((ret = _jdb_table_handle(h, table_name, &table)) < 0) return ret;	
+
+	if (!(cell = _jdb_find_cell_by_pos(h, table, row, col))){
+		_wdeb_load(L"not found");
+		return -JE_NOTFOUND;
+	}
+
+
+	if(cell->data_stat != JDB_CELL_DATA_NOTLOADED){
+		_wdeb_load(L"data altrady in memmory, stat = %i", cell->data_stat);
+		*data = cell->data;
+		*datalen = cell->celldef->datalen;
+		*data_type = cell->celldef->data_type;
+		return -JE_EXISTS;
+	}
+
+	_wdeb_load(L"loading cell data");
+	
+	ret = _jdb_load_cell_data(h, table, cell);
+
+	if (ret < 0) {
+		return ret;
+	}
+
+	cell->data_stat = JDB_CELL_DATA_UPTODATE;
+
+	*data = cell->data;
+	*datalen = cell->celldef->datalen;
+	*data_type = cell->celldef->data_type;
+
+	return 0;
+		
+}
+*/
+

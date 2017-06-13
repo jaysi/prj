@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ConfigDialog</class>
+ <widget class="QDialog" name="ConfigDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>335</width>
+    <height>239</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Settings...</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="qnmui.qrc">
+    <normaloff>:/res/settings2-26.png</normaloff>:/res/settings2-26.png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="6" column="0">
+    <widget class="QCheckBox" name="checkNoSep">
+     <property name="text">
+      <string>No thousands separator</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="whatsThis">
+      <string>You may set locales here, this affects guide and number to text conversion language.</string>
+     </property>
+     <property name="title">
+      <string>Locale</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QRadioButton" name="radioLocaleFarsi">
+        <property name="text">
+         <string>Farsi</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioLocaleEnglish">
+        <property name="text">
+         <string>English</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QCheckBox" name="checkAns">
+     <property name="whatsThis">
+      <string>Show answer at the end of calculation.</string>
+     </property>
+     <property name="text">
+      <string>Show answer</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="checkDetails">
+     <property name="whatsThis">
+      <string>Show more details.</string>
+     </property>
+     <property name="text">
+      <string>Details</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QCheckBox" name="checkDecimFix">
+     <property name="text">
+      <string>Fixed decimal point</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QCheckBox" name="checkLoud">
+     <property name="whatsThis">
+      <string>Be verbose!</string>
+     </property>
+     <property name="text">
+      <string>Verbose</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="checkHilight">
+     <property name="whatsThis">
+      <string>Controls odd/even hilighting to make reading the output easier.</string>
+     </property>
+     <property name="text">
+      <string>HiLight</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" rowspan="7">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" rowspan="5">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Theme</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Background:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="comboBackgroundColor"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Font:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="comboFontColor"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Style:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="comboStyle"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="qnmui.qrc"/>
+ </resources>
+ <connections/>
+</ui>

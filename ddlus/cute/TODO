@@ -1,0 +1,60 @@
+﻿+ fork(hell, "+1"); switch(hell); kill(hell); -> CRASH!
++ a=a+1; re a; -> a = 0???
+//+ Fix ((339.7/201.7)-1)
+//+ save state won't save vars?!?!
+//+ Fix T(99) BUG
+
++ Arrays are not working as expected!
+
+//+ FOR ALL EXPRESSIONS {tokenize -> combine -> syntax -> prefix} - NOW - tokenize + combine + syntax -> prefix!
+//  THERE is a final big change in code, tokenize post processing... see project daedalus.
+
++ Process On Type, tokenize when typing.
+
+//+ an a[i]=(1,2,4,5,...) would be nice!
+//+ try array(a[2][2]); set a[0][0] to a[0][1]; then a[1][1]: sum of all others...
++ add stack-image file support, i.e. take an image of calc-stack, inject it on load {
+
+    normal:
+    1. parse
+    2. prefix
+    3. run prefix
+
+    stack-image:
+    1. inject prefix stack-image.
+    2. run prefix
+
+}
+
++ finish xrecalc()
+
++ every TOK_BR_OPEN needs a TOK_ABR_OPEN beside?
++ array merge needed
+//+ performance penalty in afill and recalc while working with a full 2d array
++ hist can't be zero sized!
++ the IF subsystem needs extensive checks ( say 0;label a;+1;if(ans==100000){return;} else {goto a;}; )
++ fork(a,"a:1;_ fails
+// fork(a,"...");...; CRASH [long exp] //donno... conditional in Q
+// label a;+1;if(ans==10){return;};goto a; //run twice
++ ever need a continue?
+//+ in Q & sometimes in C: mode fin;1;2;3;mode prog or nr; => CRASH :(
++ every op on sess has to be in cursess, fix it in Q;
+//+ in C: run where autoload does not exists, mode fin; 1; 2; => CRASH :D
+* label a;+1;if(ans<10000){goto a;} => CRASH in M$Win :(( try efence or valgrind (5178&5179)
++ wanna connect different double procs?
++ for is incomplete! [CANCELED FOR NOW]
++ need db (tables); network; view (db, /*text -> done*/)
+
+//+ print all array members if i < 0 or j < 0, see show_results
+//+ 0;label a;+1;if(ans==2500000){jump;};goto a; // forking fails!
+//+ set decim to 0 and type 100!!!
+//+ type some, switch from mode nodet to mode det to CRASH!
++ try forking, switching to that process, and exit!
++ burst interactive array input: a[] -> 1[ENTER] 2+3[ENTER] 0[ENTER] [ENTER] burst?
+  or array walk?? interactive array control mode -> UP, DOWN, LEFT, RIGHT, SET, VIEW, LIST, STORE
+  plus a grid view in gui [DONE]
++ lightweight definitions: -> name, value
++ array functions like average, count [DONE], ...
+//+ need today() and dayno2date()
++ a tray icon + system wide hotkey could be cool!
++ a timer function?

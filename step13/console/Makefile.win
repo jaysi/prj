@@ -1,0 +1,136 @@
+# Project: step13
+# Makefile created by Dev-C++ 5.7.1
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = args.o backup.o commit.o compare.o db.o init.o list.o modif.o step13.o ui.o update.o ../../lib13/acc13.o ../../lib13/aes.o ../../lib13/arg13.o ../../lib13/base64.o ../../lib13/const13.o ../../lib13/crypt13.o ../../lib13/day13.o ../../lib13/db13.o ../../lib13/des.o ../../lib13/error13.o ../../lib13/hash13.o ../../lib13/io13.o ../../lib13/io13i.o ../../lib13/lib13.o ../../lib13/lock13.o ../../lib13/mem13.o ../../lib13/num2text.o ../../lib13/obj13.o ../../lib13/pack13.o ../../lib13/path13.o ../../lib13/rand13.o ../../lib13/rc4.o ../../lib13/rr13.o ../../lib13/sha256.o ../../lib13/str13.o ../../lib13/xtea.o
+LINKOBJ  = args.o backup.o commit.o compare.o db.o init.o list.o modif.o step13.o ui.o update.o ../../lib13/acc13.o ../../lib13/aes.o ../../lib13/arg13.o ../../lib13/base64.o ../../lib13/const13.o ../../lib13/crypt13.o ../../lib13/day13.o ../../lib13/db13.o ../../lib13/des.o ../../lib13/error13.o ../../lib13/hash13.o ../../lib13/io13.o ../../lib13/io13i.o ../../lib13/lib13.o ../../lib13/lock13.o ../../lib13/mem13.o ../../lib13/num2text.o ../../lib13/obj13.o ../../lib13/pack13.o ../../lib13/path13.o ../../lib13/rand13.o ../../lib13/rc4.o ../../lib13/rr13.o ../../lib13/sha256.o ../../lib13/str13.o ../../lib13/xtea.o
+LIBS     = -L"C:/Intel/bak/Dev-Cpp/MinGW32/lib" -L"C:/Intel/bak/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc
+INCS     = -I"C:/Intel/bak/Dev-Cpp/MinGW32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/mingw32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include"
+CXXINCS  = -I"C:/Intel/bak/Dev-Cpp/MinGW32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/mingw32/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include" -I"C:/Intel/bak/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include/c++"
+BIN      = step13.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+args.o: args.c
+	$(CC) -c args.c -o args.o $(CFLAGS)
+
+backup.o: backup.c
+	$(CC) -c backup.c -o backup.o $(CFLAGS)
+
+commit.o: commit.c
+	$(CC) -c commit.c -o commit.o $(CFLAGS)
+
+compare.o: compare.c
+	$(CC) -c compare.c -o compare.o $(CFLAGS)
+
+db.o: db.c
+	$(CC) -c db.c -o db.o $(CFLAGS)
+
+init.o: init.c
+	$(CC) -c init.c -o init.o $(CFLAGS)
+
+list.o: list.c
+	$(CC) -c list.c -o list.o $(CFLAGS)
+
+modif.o: modif.c
+	$(CC) -c modif.c -o modif.o $(CFLAGS)
+
+step13.o: step13.c
+	$(CC) -c step13.c -o step13.o $(CFLAGS)
+
+ui.o: ui.c
+	$(CC) -c ui.c -o ui.o $(CFLAGS)
+
+update.o: update.c
+	$(CC) -c update.c -o update.o $(CFLAGS)
+
+../../lib13/acc13.o: ../../lib13/acc13.c
+	$(CC) -c ../../lib13/acc13.c -o ../../lib13/acc13.o $(CFLAGS)
+
+../../lib13/aes.o: ../../lib13/aes.c
+	$(CC) -c ../../lib13/aes.c -o ../../lib13/aes.o $(CFLAGS)
+
+../../lib13/arg13.o: ../../lib13/arg13.c
+	$(CC) -c ../../lib13/arg13.c -o ../../lib13/arg13.o $(CFLAGS)
+
+../../lib13/base64.o: ../../lib13/base64.c
+	$(CC) -c ../../lib13/base64.c -o ../../lib13/base64.o $(CFLAGS)
+
+../../lib13/const13.o: ../../lib13/const13.c
+	$(CC) -c ../../lib13/const13.c -o ../../lib13/const13.o $(CFLAGS)
+
+../../lib13/crypt13.o: ../../lib13/crypt13.c
+	$(CC) -c ../../lib13/crypt13.c -o ../../lib13/crypt13.o $(CFLAGS)
+
+../../lib13/day13.o: ../../lib13/day13.c
+	$(CC) -c ../../lib13/day13.c -o ../../lib13/day13.o $(CFLAGS)
+
+../../lib13/db13.o: ../../lib13/db13.c
+	$(CC) -c ../../lib13/db13.c -o ../../lib13/db13.o $(CFLAGS)
+
+../../lib13/des.o: ../../lib13/des.c
+	$(CC) -c ../../lib13/des.c -o ../../lib13/des.o $(CFLAGS)
+
+../../lib13/error13.o: ../../lib13/error13.c
+	$(CC) -c ../../lib13/error13.c -o ../../lib13/error13.o $(CFLAGS)
+
+../../lib13/hash13.o: ../../lib13/hash13.c
+	$(CC) -c ../../lib13/hash13.c -o ../../lib13/hash13.o $(CFLAGS)
+
+../../lib13/io13.o: ../../lib13/io13.c
+	$(CC) -c ../../lib13/io13.c -o ../../lib13/io13.o $(CFLAGS)
+
+../../lib13/io13i.o: ../../lib13/io13i.c
+	$(CC) -c ../../lib13/io13i.c -o ../../lib13/io13i.o $(CFLAGS)
+
+../../lib13/lib13.o: ../../lib13/lib13.c
+	$(CC) -c ../../lib13/lib13.c -o ../../lib13/lib13.o $(CFLAGS)
+
+../../lib13/lock13.o: ../../lib13/lock13.c
+	$(CC) -c ../../lib13/lock13.c -o ../../lib13/lock13.o $(CFLAGS)
+
+../../lib13/mem13.o: ../../lib13/mem13.c
+	$(CC) -c ../../lib13/mem13.c -o ../../lib13/mem13.o $(CFLAGS)
+
+../../lib13/num2text.o: ../../lib13/num2text.c
+	$(CC) -c ../../lib13/num2text.c -o ../../lib13/num2text.o $(CFLAGS)
+
+../../lib13/obj13.o: ../../lib13/obj13.c
+	$(CC) -c ../../lib13/obj13.c -o ../../lib13/obj13.o $(CFLAGS)
+
+../../lib13/pack13.o: ../../lib13/pack13.c
+	$(CC) -c ../../lib13/pack13.c -o ../../lib13/pack13.o $(CFLAGS)
+
+../../lib13/path13.o: ../../lib13/path13.c
+	$(CC) -c ../../lib13/path13.c -o ../../lib13/path13.o $(CFLAGS)
+
+../../lib13/rand13.o: ../../lib13/rand13.c
+	$(CC) -c ../../lib13/rand13.c -o ../../lib13/rand13.o $(CFLAGS)
+
+../../lib13/rc4.o: ../../lib13/rc4.c
+	$(CC) -c ../../lib13/rc4.c -o ../../lib13/rc4.o $(CFLAGS)
+
+../../lib13/rr13.o: ../../lib13/rr13.c
+	$(CC) -c ../../lib13/rr13.c -o ../../lib13/rr13.o $(CFLAGS)
+
+../../lib13/sha256.o: ../../lib13/sha256.c
+	$(CC) -c ../../lib13/sha256.c -o ../../lib13/sha256.o $(CFLAGS)
+
+../../lib13/str13.o: ../../lib13/str13.c
+	$(CC) -c ../../lib13/str13.c -o ../../lib13/str13.o $(CFLAGS)
+
+../../lib13/xtea.o: ../../lib13/xtea.c
+	$(CC) -c ../../lib13/xtea.c -o ../../lib13/xtea.o $(CFLAGS)

@@ -1,0 +1,75 @@
+# depslib dependency file v1.0
+1414507028 source:c:\intel\bak\prj\ddlus\console\analyze.c
+
+1414398724 source:c:\intel\bak\prj\ddlus\console\array.c
+
+1414588318 source:c:\intel\bak\prj\ddlus\console\calc.c
+
+1414323823 source:c:\intel\bak\prj\ddlus\console\cmd.c
+	<sys/time.h>
+
+1474723564 source:c:\intel\bak\prj\ddlus\console\combine.c
+
+1409110013 source:c:\intel\bak\prj\ddlus\console\date.c
+
+1414063486 source:c:\intel\bak\prj\ddlus\console\double.c
+	<windows.h>
+
+1409020336 source:c:\intel\bak\prj\ddlus\console\file.c
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	"double.h"
+
+1477139790 c:\intel\bak\prj\ddlus\console\double.h
+	<string.h>
+	<ctype.h>
+	<math.h>
+	<stdlib.h>
+	<stdio.h>
+	<sys/types.h>
+	<sys/time.h>
+	<time.h>
+	<unistd.h>
+	<signal.h>
+	<pthread.h>
+	<Windows.h>
+	<assert.h>
+
+1412751220 source:c:\intel\bak\prj\ddlus\console\flow.c
+	<unistd.h>
+	<io.h>
+	<stdlib.h>
+	<stdio.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+
+1409109924 source:c:\intel\bak\prj\ddlus\console\format.c
+	<errno.h>
+	<sys/types.h>
+
+1409020560 source:c:\intel\bak\prj\ddlus\console\func.c
+
+1397651071 source:c:\intel\bak\prj\ddlus\console\history.c
+
+1409133998 source:c:\intel\bak\prj\ddlus\console\if.c
+
+1414326718 source:c:\intel\bak\prj\ddlus\console\num2text.c
+	<stdio.h>
+	<string.h>
+	"double.h"
+
+1414326764 source:c:\intel\bak\prj\ddlus\console\num2text_en.c
+	<stdio.h>
+	<string.h>
+	"double.h"
+
+1413348289 source:c:\intel\bak\prj\ddlus\console\parse.c
+
+1409488921 source:c:\intel\bak\prj\ddlus\console\stack.c
+
+1435833090 source:c:\intel\bak\prj\ddlus\console\str.c
+
+1412751282 source:c:\intel\bak\prj\ddlus\console\var.c
+
