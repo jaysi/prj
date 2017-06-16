@@ -5,5 +5,6 @@
 		<Project filename="../infolink/infolink.cbp" />
 		<Project filename="../libmonetr/libmonetr.cbp" />
 		<Project filename="temo.cbp" />
+		<Project filename="../sqlite/sqlite.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

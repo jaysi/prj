@@ -1,9 +1,9 @@
-﻿/*
-//WARNING: DO NOT INCLUDE THIS FILE INSIDE YOUR PROJECT
+﻿/*COMMENT OUT THE INCLUDE LINE UNLESS USING CODEBLOCKS WORKSPACE*/
+//WARNING: DO NOT INCLUDE THIS FILE INSIDE YOUR PROJECT,
 #ifndef ILINK_POLL_USE_SELECT
 #include "include/ilink_intern.h"
 #endif
-*/
+
 
 #define _deb_sel _NullMsg
 #define _deb_sel2 _DebugMsg

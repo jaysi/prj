@@ -1,0 +1,93 @@
+# depslib dependency file v1.0
+1352605374 source:c:\intel\sid\prj\libntru\src\bitstring.c
+	<string.h>
+	"bitstring.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\bitstring.h
+	"encparams.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\encparams.h
+	"hash.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\hash.h
+
+1352605374 source:c:\intel\sid\prj\libntru\src\encparams.c
+	"encparams.h"
+
+1352605374 source:c:\intel\sid\prj\libntru\src\hash.c
+	"sph_sha2.h"
+	"hash.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\sph_sha2.h
+	<stddef.h>
+	"sph_types.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\sph_types.h
+	<limits.h>
+	<stdint.h>
+
+1352605374 source:c:\intel\sid\prj\libntru\src\idxgen.c
+	<string.h>
+	"idxgen.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\idxgen.h
+	"idxgen.h"
+	"encparams.h"
+	"bitstring.h"
+
+1423573520 source:c:\intel\sid\prj\libntru\src\key.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"ntru.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\ntru.h
+	"poly.h"
+	"encparams.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\poly.h
+
+1423573535 source:c:\intel\sid\prj\libntru\src\mgf.c
+	<stdint.h>
+	<Winsock2.h>
+	<netinet/in.h>
+	"encparams.h"
+	"poly.h"
+
+1352605374 source:c:\intel\sid\prj\libntru\src\ntru.c
+	<stdlib.h>
+	<string.h>
+	"ntru.h"
+	"poly.h"
+	"idxgen.h"
+	"mgf.h"
+	"err.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\mgf.h
+
+1352605374 c:\intel\sid\prj\libntru\src\err.h
+
+1481114228 source:c:\intel\sid\prj\libntru\src\poly.c
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<Windows.h>
+	<Wincrypt.h>
+	"poly.h"
+	"err.h"
+
+1352605374 source:c:\intel\sid\prj\libntru\src\sha2.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+
+1352605374 c:\intel\sid\prj\libntru\src\md_helper.h
+
+1352605374 source:c:\intel\sid\prj\libntru\src\sha2big.c
+	<stddef.h>
+	<string.h>
+	"sph_sha2.h"
+	"md_helper.h"
+

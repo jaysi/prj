@@ -1,53 +1,23 @@
 # depslib dependency file v1.0
-1496296241 source:c:\intel\sid\prj\libmonetr\monet.c
-	<unistd.h>
+1481009882 source:c:\intel\sid\prj\infolink\ilink_crypt.c
 
-1481707917 source:c:\intel\sid\prj\libmonetr\monet_con.c
-	"monetR.h"
+1432124270 source:c:\intel\sid\prj\infolink\ilink_hs.c
 
-1497359207 c:\intel\sid\prj\libmonetr\monetr.h
-	"../infolink/include/infolink.h"
-	"monet_fifo.h"
-	"monet_poll.h"
-	"monet_sess.h"
-	"monet_user.h"
+1496321445 source:c:\intel\sid\prj\infolink\ilink_io.c
 
-1496322241 c:\intel\sid\prj\infolink\include\infolink.h
-	"ilink_types.h"
-	"ilink_conf.h"
+1496137259 source:c:\intel\sid\prj\infolink\ilink_pkt.c
 
-1496132083 c:\intel\sid\prj\infolink\include\ilink_types.h
+1481022355 source:c:\intel\sid\prj\infolink\ilink_poll.c
+	"ilink_poll_select.c"
+	"ilink_poll_poll.c"
+	"ilink_poll_epoll.c"
+
+1497590005 c:\intel\sid\prj\infolink\ilink_poll_select.c
+	"include/ilink_intern.h"
+
+1496132026 c:\intel\sid\prj\infolink\include\ilink_intern.h
 	"../../lib13/include/lib13.h"
-	<sys/types.h>
-	<sys/stat.h>
-	<string.h>
-	<wchar.h>
-	<stdio.h>
-	<stdlib.h>
-	<signal.h>
-	<errno.h>
-	<error.h>
-	<sys/wait.h>
-	<ctype.h>
-	<string.h>
-	<stdint.h>
-	<assert.h>
-	<stdio.h>
-	<stdlib.h>
-	<unistd.h>
-	<errno.h>
-	<string.h>
-	<sys/types.h>
-	<sys/socket.h>
-	<netinet/in.h>
-	<netdb.h>
-	<arpa/inet.h>
-	<sys/wait.h>
-	<signal.h>
-	<w32api.h>
-	<winsock2.h>
-	<ws2tcpip.h>
-	<ws2spi.h>
+	"infolink.h"
 
 1419232919 c:\intel\sid\prj\lib13\include\lib13.h
 	"acc13.h"
@@ -190,69 +160,50 @@
 1420986682 c:\intel\sid\prj\sqlite\sqlite3.h
 	<stdarg.h>
 
+1496322241 c:\intel\sid\prj\infolink\include\infolink.h
+	"ilink_types.h"
+	"ilink_conf.h"
+
+1496132083 c:\intel\sid\prj\infolink\include\ilink_types.h
+	"../../lib13/include/lib13.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<string.h>
+	<wchar.h>
+	<stdio.h>
+	<stdlib.h>
+	<signal.h>
+	<errno.h>
+	<error.h>
+	<sys/wait.h>
+	<ctype.h>
+	<string.h>
+	<stdint.h>
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<errno.h>
+	<string.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<netdb.h>
+	<arpa/inet.h>
+	<sys/wait.h>
+	<signal.h>
+	<w32api.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<ws2spi.h>
+
 1434203225 c:\intel\sid\prj\infolink\include\ilink_conf.h
 	"ilink_intern.h"
 
-1496132026 c:\intel\sid\prj\infolink\include\ilink_intern.h
-	"../../lib13/include/lib13.h"
-	"infolink.h"
+1495109815 source:c:\intel\sid\prj\infolink\ilink_sock.c
 
-1437043779 c:\intel\sid\prj\libmonetr\monet_fifo.h
-	"../lib13/include/lib13.h"
-	"../infolink/include/infolink.h"
+1494851597 source:c:\intel\sid\prj\infolink\infolink.c
 
-1437042850 c:\intel\sid\prj\libmonetr\monet_poll.h
-	"../lib13/include/lib13.h"
-	"../infolink/include/infolink.h"
-
-1477321439 c:\intel\sid\prj\libmonetr\monet_sess.h
-	"../lib13/include/lib13.h"
-	"monet_user.h"
-	"monet_mod.h"
-	"monet_fifo.h"
-	"monet_cont.h"
-
-1477833696 c:\intel\sid\prj\libmonetr\monet_user.h
-	"../lib13/include/lib13.h"
-
-1481116227 c:\intel\sid\prj\libmonetr\monet_mod.h
-	"../lib13/include/lib13.h"
-	<windows.h>
-
-1481203449 c:\intel\sid\prj\libmonetr\monet_cont.h
-	<c:/intel/sid/prj/lib13/include/db13.h>
-
-1478510735 source:c:\intel\sid\prj\libmonetr\monet_ctl.c
-
-1481116140 source:c:\intel\sid\prj\libmonetr\monet_mod.c
-	"monet_internal.h"
-	<dlfcn.h>
-	<windows.h>
-
-1481614241 c:\intel\sid\prj\libmonetr\monet_internal.h
-	"monet_fifo.h"
-	"monet_mod.h"
-	"monet_pkt.h"
-	"monet_poll.h"
-	"monet_sess.h"
-	"monet_user.h"
-	"monet_perm.h"
-	"monetR.h"
-	"../lib13/include/debug13.h"
-
-1478510244 c:\intel\sid\prj\libmonetr\monet_pkt.h
-	"../lib13/include/lib13.h"
-	"monet_user.h"
-	"monet_sess.h"
-	"../infolink/include/ilink_intern.h"
-
-1474871111 c:\intel\sid\prj\libmonetr\monet_perm.h
-	"../lib13/include/error13.h"
-	"../infolink/include/ilink_types.h"
-
-1496149069 source:c:\intel\sid\prj\libmonetr\monet_poll.c
-
-1477321929 source:c:\intel\sid\prj\libmonetr\monet_sess.c
-	"monet_internal.h"
-	"../lib13/include/lib13.h"
+1497590005 source:c:\intel\sid\prj\infolink\ilink_poll_select.c
+	"include/ilink_intern.h"
 
