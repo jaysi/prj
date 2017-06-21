@@ -14,6 +14,18 @@
 #define TB      (BASEB*GB)
 #define EB      (BASEB*TB)
 
+#define S13_PROGLIST_CHUNK_DEF  1024
+#define S13_PROGLIST_STRLEN_MAX 1024
+#define S13_PROGLIST_DELIM_DEF  ';'
+
+struct  s13_proglist{
+    char* buf;
+    size_t chunk;
+    size_t bufsize;
+    size_t pos;
+    char delim;
+};
+
 #ifdef __cplusplus
     extern "C" {
 #endif
@@ -45,10 +57,9 @@ char* s13_malloc_strcat(const char* src1, const char* src2, size_t size);
 
 int s13_wildcmp(const char* dst, const char* src, const char any,
                 const char one, const char escape);
-				
+
 error13_t nt_convert(long double val, char* buf, size_t bufsize);
 error13_t nt_convert_str(char* numbuf, char* buf, size_t bufsize);
-
 
 #ifdef __cplusplus
     }

@@ -15,6 +15,17 @@ enum _monet_proc_pkt_code {
     MN_PROC_PKT_NOPERM,//the user is not permitted to request this op
     MN_PROC_PKT_POLL,//add poll link
     MN_PROC_PKT_TEST,
+    MN_PROC_PKT_USER_LIST,
+    MN_PROC_PKT_USER_ADD,
+    MN_PROC_PKT_USER_RM,
+    MN_PROC_PKT_USER_BAN,
+    MN_PROC_PKT_USER_KICK,
+    MN_PROC_PKT_GROUP_LIST,
+    MN_PROC_PKT_GROUP_ADD,
+    MN_PROC_PKT_GROUP_RM,
+    MN_PROC_PKT_GROUP_JOIN,
+    MN_PROC_PKT_GROUP_LEAVE,
+    MN_PROC_PKT_MOD_LIST,
     MN_PROC_PKT_INVAL
 };
 
@@ -32,6 +43,7 @@ error13_t _monet_proc_pkt(struct monet* mn,
     ilink_pkt_type_t type;
     error13_t ret;
     //TODO: TEMPORARY, REMOVE LATER
+    //user_array is already locked??
     uid13_t uid[mn->user_array.nalloc];
     uid13_t i = 0, j;
 
@@ -52,12 +64,20 @@ error13_t _monet_proc_pkt(struct monet* mn,
         break;
 
     case MN_PKT_UNPOLL:
+
+        //allowed from pipe only
+        if(ilink->sock != mn->pipelink_recv->sock){ret = e13_error(E13_PERM); *proc_code = MN_PROC_PKT_INVAL; break;}
+
         _deb3("unpoll");
         *proc_code = MN_PROC_PKT_UNPOLL;
         ret = E13_CONTINUE;//continue processing the packet
         break;
 
     case MN_PKT_POLL:
+
+        //allowed from pipe only
+        if(ilink->sock != mn->pipelink_recv->sock){ret = e13_error(E13_PERM); *proc_code = MN_PROC_PKT_INVAL; break;}
+
         _deb3("poll");
         *proc_code = MN_PROC_PKT_POLL;
         ret = E13_CONTINUE;//add poll link
@@ -67,19 +87,31 @@ error13_t _monet_proc_pkt(struct monet* mn,
     	_deb_trace_pkt0("TEST PKT");
         *proc_code = MN_PROC_PKT_TEST;
         //TODO: TEMPORARY, REMOVE LATER
+        //already locked?
+        //th13_mutex_lock(mn->user_array.mx);
         for(j = 0; j < mn->user_array.nalloc; j++){
             if(mn->user_array.array[j].user){
                 uid[i++] = mn->user_array.array[j].user->uid;
             }
         }
-        //already locked
+        //th13_mutex_unlock(mn->user_array.mx);
         _monet_request_send(mn, i, uid, data, datalen, type, 0, 1);
         _deb_trace_pkt0("DATA: %s", data);
         _deb3("test data: %s", data);
         break;
 
+        //session packets
     case MN_PKT_SESS_START:
         if(_monet_check_perm(mn, (((struct monet_user*)ilink->ext_ctx)->uid), GID13_NONE, MN_PKT_SESS_START, data, datalen) != E13_OK){
+            //TODO: send error _monet_request_send(mn, i, (((struct monet_user*)ilink->ext_ctx)->id), NULL, 0, MN_PKT_TYPE_ERROR)
+        }
+
+        break;
+
+        //user management
+    case MN_PKT_USER_LIST:
+
+        if(_monet_check_perm(mn, (((struct monet_user*)ilink->ext_ctx)->uid), GID13_NONE, MN_PKT_USER_LIST, data, datalen) != E13_OK){
             //TODO: send error _monet_request_send(mn, i, (((struct monet_user*)ilink->ext_ctx)->id), NULL, 0, MN_PKT_TYPE_ERROR)
         }
 
@@ -195,6 +227,10 @@ void* _monet_poll_thread(void* arg){
 
                             case E13_OK:
                                 _deb_poll("process OK, rd_count = %i", list->readfds.fd_count);
+                                break;
+
+                            case e13_error(E13_PERM):
+                                _deb_poll("permission denied");
                                 break;
 
                             default:

@@ -579,6 +579,25 @@ direct_check:
     return 0;
 }
 
+error13_t s13_proglist_init(struct s13_proglist list, size_t chunk, char delim){
+    list.buf = (char*)malloc(chunk?chunk:S13_PROGLIST_CHUNK_DEF);
+    if(!list.buf) return e13_error(E13_NOMEM);
+    list.chunk = chunk;
+    list.delim = delim?delim:S13_PROGLIST_DELIM_DEF;
+    list.pos = 0UL;
+    list.bufsize = chunk;
+    return E13_OK;
+}
+
+error13_t s13_proglist_add(struct s13_proglist list, char* string, size_t len){
+    size_t slen = len?len:s13_strlen(string, S13_PROGLIST_STRLEN_MAX);
+    if(list.pos + slen + 1 > list.bufsize){
+        list.buf = realloc(list.buf, list.bufsize + list.chunk);
+        if(!list.buf) return e13_error(E13_NOMEM);
+    }
+    memcpy()
+}
+
 #ifdef TEST
 int test1_s13(){
     char str[100], delim[10], **ary, *prepared, **copy, *joined;

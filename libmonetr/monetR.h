@@ -154,7 +154,7 @@ struct monet {
 
     struct infolink acceptlink,
 					*pipelink_recv, pipelink_send,
-					*console;
+					*console_intl, console;
 					/*
 						this is an ordinary link with some special behaviour,
 						once someone connected as the console he'll get all

@@ -16,8 +16,8 @@ struct monet_conf def_conf = {
     512,//max session name length in bytes
     1024,//session thread read pipe buffer size
     "64999",//port
-    "64998",//pipe port
-    "64997",//console port
+    "64998",//internal pipe port
+    "64997",//console (external pipe) port
     "monetr",//path
     "monetr.conf",//config
     "monetr.acl",//acl
@@ -418,17 +418,17 @@ void* _mn_tmp_console(void* arg){
 
 //    th13_sem_post(args->mn->wait_sem);
 
-    if((ret = ilink_accept(args->acceptlink, &mn->console)) != E13_OK){
+    if((ret = ilink_accept(args->acceptlink, &mn->console_intl)) != E13_OK){
         goto end;
     }
 
     //TODO: authorize user
 
-    if((ret = ilink_poll_add(&mn->poll.polist, mn->console, ILINK_POLL_RD)) != E13_OK){
+    if((ret = ilink_poll_add(&mn->poll.polist, mn->console_intl, ILINK_POLL_RD)) != E13_OK){
         goto end;
     }
 
-    mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_CONSOLE_CONNECTED), mn_link_username(mn, mn->console));
+    mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_CONSOLE_CONNECTED), mn_link_username(mn, mn->console_intl));
 
 end:
     th13_exit(&ret);
@@ -479,7 +479,7 @@ end:
 
 error13_t mn_wait(struct monet *mn){
 
-    struct infolink *link, pipeaccept;
+    struct infolink *link, pipeaccept, conaccept;
     error13_t ret;
     struct ilink_conf conf;
     char *path;
@@ -570,12 +570,12 @@ error13_t mn_wait(struct monet *mn){
     _deb_wait("%s", "waiting for semaphore...");
     th13_sem_wait(mn->wait_sem);
 
-    //TODO: FIX THIS, MUST WAIT FOR THREAD to accept, done via SEMs
-    #ifdef WIN32
-    _sleep(1);
-    #else
-    sleep(1);
-    #endif // WIN32
+//    //TODO: FIX THIS, MUST WAIT FOR THREAD to accept, done via SEMs
+//    #ifdef WIN32
+//    _sleep(1);
+//    #else
+//    sleep(1);
+//    #endif // WIN32
 
     if((ret = ilink_connect(&mn->pipelink_send, &conf)) != E13_OK){
         _deb_wait("%s", e13_codemsg(ret));
@@ -587,11 +587,12 @@ error13_t mn_wait(struct monet *mn){
     //WAIT for THREAD to FINISH
     th13_join(&th, &arg.pret);
 
+    ilink_destroy(&pipeaccept);
+
     //check tmp_accept thread's return value
     if(*arg.pret != E13_OK){
         _deb_wait("fails here, %s", e13_codemsg(*arg.pret));
         db_close(&acdb);
-        ilink_destroy(&pipeaccept);
 //        mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_INIT_FAILE));
         return *arg.pret;
     }
@@ -623,6 +624,73 @@ error13_t mn_wait(struct monet *mn){
 //        ilink_destroy(&pipeaccept);
 //        return ret;
 //    }
+
+    //2. init console link
+
+    conf.type = ILINK_TYPE_SERVER;
+    conf.port = mn->conf.console_port;
+
+    if((ret = ilink_init(&conaccept, &conf)) != E13_OK){
+        _deb_wait("%s", e13_codemsg(ret));
+        db_close(&acdb);
+        return ret;
+    }
+
+//    _deb_wait2("pipeaccept->sock = %i", pipeaccept.sock);
+
+    conf.type = ILINK_TYPE_CLIENT;
+
+    if((ret = ilink_init(&mn->console, &conf)) != E13_OK){
+        _deb_wait("%s", e13_codemsg(ret));
+        db_close(&acdb);
+        ilink_destroy(&conaccept);
+        return ret;
+    }
+
+//    _deb_wait2("pipelink_send->sock = %i", mn->pipelink_send.sock);
+
+    //2a. connect pipe ends using a temp accept thread
+
+    arg.mn = mn;
+    arg.acceptlink = &conaccept;
+    arg.pret = &ret;
+
+    _deb_wait("%s", "create tmp accept");
+    mn->wait_sem = m13_malloc(sizeof(th13_sem_t));
+    th13_sem_init(mn->wait_sem, 0, 0);
+    th13_create(&th, NULL, &_mn_tmp_console, &arg);
+    _deb_wait("%s", "waiting for semaphore...");
+    th13_sem_wait(mn->wait_sem);
+
+//    //TODO: FIX THIS, MUST WAIT FOR THREAD to accept, done via SEMs
+//    #ifdef WIN32
+//    _sleep(1);
+//    #else
+//    sleep(1);
+//    #endif // WIN32
+
+    if((ret = ilink_connect(&mn->console, &conf)) != E13_OK){
+        _deb_wait("%s", e13_codemsg(ret));
+//        db_close(&acdb);
+//        ilink_destroy(&pipeaccept);
+//        return ret;
+    }
+
+    //WAIT for THREAD to FINISH
+    th13_join(&th, &arg.pret);
+
+    ilink_destroy(&conaccept);
+
+    //check tmp_accept thread's return value
+//    if(*arg.pret != E13_OK){
+//        _deb_wait("fails here, %s", e13_codemsg(*arg.pret));
+//        db_close(&acdb);
+////        mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_INIT_FAILE));
+//        return *arg.pret;
+//    }
+
+    mn->console_intl->flags |= ILINK_FLAG_PIPE;
+    mn->console.flags |= ILINK_FLAG_PIPE;
 
     //4. start poll thread
 

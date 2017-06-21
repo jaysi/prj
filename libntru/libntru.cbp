@@ -34,9 +34,48 @@
 				</Linker>
 			</Target>
 		</Build>
-		<Unit filename="main.c">
+		<Unit filename="src/bitstring.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src/bitstring.h" />
+		<Unit filename="src/encparams.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/encparams.h" />
+		<Unit filename="src/err.h" />
+		<Unit filename="src/hash.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/hash.h" />
+		<Unit filename="src/idxgen.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/idxgen.h" />
+		<Unit filename="src/key.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/key.h" />
+		<Unit filename="src/md_helper.h" />
+		<Unit filename="src/mgf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/mgf.h" />
+		<Unit filename="src/ntru.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/ntru.h" />
+		<Unit filename="src/poly.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/poly.h" />
+		<Unit filename="src/sha2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/sha2big.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/sph_sha2.h" />
+		<Unit filename="src/sph_types.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

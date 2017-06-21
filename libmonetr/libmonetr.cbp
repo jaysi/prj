@@ -20,10 +20,11 @@
 				</Compiler>
 				<Linker>
 					<Add library="user32" />
-					<Add library="../lib13/lib13.a" />
 					<Add library="../infolink/libinfolink.a" />
-					<Add library="../sqlite/libsqlite.lib" />
+					<Add library="../lib13/lib13.a" />
 					<Add library="ws2_32" />
+					<Add library="../sqlite/libsqlite.lib" />
+					<Add library="../libntru/bin/Debug/libntru.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -56,6 +57,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="monet_fifo.h" />
+		<Unit filename="monet_info.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="monet_internal.h" />
 		<Unit filename="monet_mod.c">
 			<Option compilerVar="CC" />
