@@ -46,6 +46,7 @@ error13_t _monet_proc_pkt(struct monet* mn,
     //user_array is already locked??
     uid13_t uid[mn->user_array.nalloc];
     uid13_t i = 0, j;
+    struct monet_fifo_entry* fentry;
 
     _deb3("called for sock %i.", ilink->sock);
 
@@ -101,25 +102,37 @@ error13_t _monet_proc_pkt(struct monet* mn,
         break;
 
         //session packets
-    case MN_PKT_SESS_START:
-        if(_monet_check_perm(mn, (((struct monet_user*)ilink->ext_ctx)->uid), GID13_NONE, MN_PKT_SESS_START, data, datalen) != E13_OK){
-            //TODO: send error _monet_request_send(mn, i, (((struct monet_user*)ilink->ext_ctx)->id), NULL, 0, MN_PKT_TYPE_ERROR)
-        }
-
-        break;
-
-        //user management
-    case MN_PKT_USER_LIST:
-
-        if(_monet_check_perm(mn, (((struct monet_user*)ilink->ext_ctx)->uid), GID13_NONE, MN_PKT_USER_LIST, data, datalen) != E13_OK){
-            //TODO: send error _monet_request_send(mn, i, (((struct monet_user*)ilink->ext_ctx)->id), NULL, 0, MN_PKT_TYPE_ERROR)
-        }
-
-        break;
-
     default:
         ret = e13_error(E13_IMPLEMENT);
         _deb3("not implemented type %u", type);
+
+        fentry = (struct monet_fifo_entry*)m13_malloc(sizeof(struct monet_fifo_entry));
+        if(!fentry) {ret = e13_error(E13_NOMEM); goto end;}
+        fentry->flags = MONET_FIFO_ENTRY_FLAG_INIT;
+        fentry->reqid = 0UL;//TODO: TEMPORARY?? ever need a reqid?
+        fentry->type = MN_FIFO_ENT_REQUEST_PKT;
+        fentry->owner = ((struct monet_user*)ilink->ext_ctx)->uid;
+        fentry->sess_index = 0UL;
+        fentry->pkt_type = type;
+        fentry->len = datalen;
+        fentry->ptr = data;
+        fentry->next = NULL;
+
+        th13_mutex_lock(&mn->req_fifo.mx);
+
+        if(!mn->req_fifo.n){
+            mn->req_fifo.first = fentry;
+            mn->req_fifo.last = fentry;
+            mn->req_fifo.n = 1UL;
+        } else {
+            mn->req_fifo.last->next = fentry;
+            mn->req_fifo.last = fentry;
+            mn->req_fifo.n++;
+        }
+
+        th13_sem_post(&mn->wait_sem);
+        th13_mutex_unlock(&mn->req_fifo.mx);
+
         break;
 
     }

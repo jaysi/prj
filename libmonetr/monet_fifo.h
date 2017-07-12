@@ -14,24 +14,31 @@ enum monet_fifo_entry_t {
 
 };
 
+#define MN_FIFO_ENTRY_FLAG_INIT   (0x00)
+
 struct monet_fifo_entry {
 
     uint8_t flags;
+    monet_reqid_t reqid;
     enum monet_fifo_entry_t type;
     uid13_t owner;
     uint32_t sess_index;
+    ilink_pkt_type_t pkt_type;
     ilink_datalen_t len;
     ilink_data_t* ptr;
     struct monet_fifo_entry* next;
 
 };
 
-#define MN_FIFO_FLAG_BLOCK (0x01<<0)    //don't accept any new requests
+#define MN_FIFO_FLAG_INIT   (0x00)
+#define MN_FIFO_FLAG_BLOCK  (0x01<<0)    //don't accept any new requests
 
 struct monet_fifo {
-    uint8_t flags;    
+    uint8_t flags;
     uint32_t n;
-    struct monet_fifo_entry* first, *last;
+    th13_t th;
+    th13_mutex_t mx;
+    struct monet_fifo_entry* first, *cur, *last;
 };
 
 #endif // MONET_FIFO_H

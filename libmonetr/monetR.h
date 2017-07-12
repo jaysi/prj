@@ -170,6 +170,7 @@ struct monet {
     struct monet_user_array user_array; //the BIG user array,everyone's invited!
     struct monet_session_array sess_array;
     struct monet_poll poll;
+    struct monet_fifo req_fifo;
 
 };
 

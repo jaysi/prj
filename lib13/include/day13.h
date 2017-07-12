@@ -29,6 +29,7 @@
 error13_t d13_g2j(int g_y, int g_m, int g_d, int jdate[D13_ITEMS]);
 error13_t d13_j2g(int j_y, int j_m, int j_d, int gdate[D13_ITEMS]);
 error13_t d13_today(int date[D13_ITEMS]);
+error13_t d13_clock(int* t13_time);
 error13_t d13_now(char t13[MAXTIME]);
 error13_t d13_time13(time_t* t, char t13[MAXTIME]);
 error13_t d13_resolve_date(char* date, int d[D13_ITEMS]);

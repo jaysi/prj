@@ -1,5 +1,18 @@
 #include "monet_internal.h"
 
+inline error13_t _monet_proc_entry(struct monet* mn, struct monet_fifo_entry* entry){
+
+    error13_t ret = E13_OK;
+
+    switch(entry->pkt_type){
+    default:
+        break;
+    }
+
+    return ret;
+
+}
+
 //this is heart of the monet-stacked-io
 
 void* _monet_proc_thread(void* arg){
@@ -16,6 +29,7 @@ void* _monet_proc_thread(void* arg){
         mn->req_fifo.n--;
         th13_mutex_unlock(&mn->req_fifo.mx);
         //process entry
+        _monet_proc_entry(mn, entry);
 
     }
 

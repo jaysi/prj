@@ -17,7 +17,8 @@ choice_label:
         return clt();
     } else if(!strcasecmp(choice, "server") || !strcasecmp(choice, "s")) {
         return svr();
-    } else if(!strcasecmp(choice, "exit") || !strcasecmp(choice, "x") || !strcasecmp(choice, "e")) {
+    } else if(	!strcasecmp(choice, "exit") || !strcasecmp(choice, "x") ||
+    		!strcasecmp(choice, "e")) {
         return 0;
     } else {
         printo("use one of the choices provided.\n");

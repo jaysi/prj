@@ -71,10 +71,16 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="monet_poll.h" />
+		<Unit filename="monet_proc.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="monet_sess.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="monet_sess.h" />
+		<Unit filename="monet_user.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="monet_user.h" />
 		<Extensions>
 			<code_completion />

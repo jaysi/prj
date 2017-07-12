@@ -311,6 +311,23 @@ int d13_cmp_time13(int t13_1[D13_ITEMS], int t13_2[D13_ITEMS]){
 
 }
 
+error13_t d13_clock(int* t13_time){
+
+    time_t t;
+    int it13[D13_ITEMS];
+
+    if(time(&t) == -1){
+        return e13_error(E13_SYSE);
+    }
+
+    _d13_get_proper_sys_time(&t, it13);
+
+    *t13_time = it13[3]*10000+it13[4]*100+it13[5];
+
+    return E13_OK;
+}
+
+
 error13_t d13_today(int it13[D13_ITEMS]){
 
     time_t t;
@@ -341,7 +358,6 @@ error13_t d13_todayg(int it13[D13_ITEMS]){
     return E13_OK;
 }
 
-
 error13_t d13_now(char t13[MAXTIME]){
     time_t t;
 
@@ -365,7 +381,6 @@ error13_t d13_nowg(char t13[MAXTIME]){
 
     return E13_OK;
 }
-
 
 error13_t d13_resolve_date(char* date, int d[D13_ITEMS]){
     char* start, *end;

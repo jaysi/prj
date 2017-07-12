@@ -31,6 +31,7 @@ struct monet_user_array {
     uid13_t nalloc;
     uid13_t nactive;
     uid13_t npause;
+    struct obj13* obj_root;
     struct monet_user_array_entry* array;
 };
 
@@ -40,5 +41,7 @@ struct monet_user_array {
     uid13_t n;
     struct monet_user* first, *last, *curr;
 };*/
+
+error13_t _monet_user_login(struct monet* mn, struct infolink* link, char username, char password);
 
 #endif // MONET_USER_H

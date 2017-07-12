@@ -17,10 +17,11 @@
 #define ACC_USER_PASS_HASH_ALG_DEF  h13_sha256
 #define ACC_USER_PASS_HASH_LEN_DEF  512
 
-#define ACC_USER_SYSTEM  "system"
-#define ACC_USER_MANAGER "manager"
-#define ACC_USER_DEBUG   "debug"
-#define ACC_USER_THIS    "this"
+#define ACC_USER_SYSTEM     "system"
+#define ACC_USER_MANAGER    "manager"
+#define ACC_USER_DEBUG      "debug"
+#define ACC_USER_THIS       "this"
+#define ACC_USER_GUEST      "guest"
 
 #define ACC_GRP_STT_ACTIVE  10
 #define ACC_GRP_STT_INACTIVE 20

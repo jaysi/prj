@@ -77,7 +77,7 @@ struct obj13_region {
 struct obj13_ctl {
     obj13_ctl_flag_t flags;
     th13_mutex_t mx;
-    th13_cond_t cond;    
+    th13_cond_t cond;
     obj13_regionid_t nregions;
     struct obj13_region* region_first, *region_last;
 };
@@ -88,6 +88,7 @@ struct obj13_ctl {
 #define OBJ13_FLAG_VIRTUAL  (0x0001<<3)//virtual object, like object invoice
 #define OBJ13_FLAG_RHEAD    (0x0001<<4)//object region header, e.g. users' regi
 #define OBJ13_FLAG_MTHREAD  (0x0001<<5)//on root only, multi threaded
+#define OBJ13_FLAG_DEF      (0x0000)
 
 //this header controls object!
 struct obj13 {

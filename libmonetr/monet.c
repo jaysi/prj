@@ -24,7 +24,7 @@ struct monet_conf def_conf = {
     "monetr.ctl",//control
     "root",//root user
     "root",//root password
-    "guest",//guest user
+    ACC_USER_GUEST,//guest user
     "guest",//guest password
     2,//acc_regid
     1000000,//max users
@@ -245,6 +245,7 @@ error13_t mn_init(struct monet* mn, struct monet_conf* conf){
     mn->mod_list.first = NULL;
     mn->clog_list.first = NULL;
     mn->user_array.array = NULL;
+    mn->user_array.obj_root = NULL;
     mn->sess_array.array = NULL;
     mn->poll.polist.first = NULL;
 
@@ -321,13 +322,68 @@ error13_t _mn_login_recv(struct monet *mn, struct infolink* link){
     username[MN_MAX_USERNAME-1] = '\0';
     password[MN_MAX_PASSWORD-1] = '\0';
 
-    _deb_connect("logging in %s", username);
-    if((ret = acc_user_login(&mn->ac, username, password, &uid)) != E13_OK){
-		_deb_connect("login_user failed code: %i, msg: %s", ret,
-					e13_codemsg(ret));
-		mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_LOGIN_FAILED), username, ret);
-		return ret;
-    }
+    _
+
+//    _deb_connect("logging in %s", username);
+//    if((ret = acc_user_login(&mn->ac, username, password, &uid)) != E13_OK){
+//		_deb_connect("login_user failed code: %i, msg: %s", ret,
+//					e13_codemsg(ret));
+//		mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_LOGIN_FAILED), username, ret);
+//		return ret;
+//    }
+//
+//    //alloc + init user struct
+//    mn_user = (struct monet_user*)m13_malloc(sizeof(struct monet_user));
+//
+//    mn_user->next = NULL;
+//
+//    mn_user->link = link;
+//    mn_user->name = s13_malloc_strcpy(username, MN_MAX_USERNAME);
+//    mn_user->uid = uid;
+////    mn_user->gid_array = NULL;
+////    mn_user->name = mn->conf.guest_user;//TODO: TEMP
+////    mn_user->id == ++uid;//TODO: TEMP
+//
+//
+//    th13_mutex_lock(&mn->user_array.mx);
+//
+//    if(!mn->user_array.array){
+//        mn->user_array.array = (struct monet_user_array_entry*)m13_malloc(
+//                    sizeof(struct monet_user_array_entry)*
+//                    mn->conf.user_bulk_size);
+//        mn->user_array.nalloc = mn->conf.user_bulk_size;
+//        mn->user_array.nactive = 0UL;
+//        mn->user_array.npause = 0UL;
+//        for( i = 0; i < mn->conf.user_bulk_size; i++ ) {
+//            mn->user_array.array[i].user = NULL;
+//        }
+//        i = 0;
+//    } else {
+//        if(mn->user_array.nalloc == mn->user_array.nactive + mn->user_array.npause){
+//            mn->user_array.array = (struct monet_user_array_entry*)m13_realloc(
+//                        mn->user_array.array,
+//                        sizeof(struct monet_user_array_entry)*
+//                        (mn->conf.user_bulk_size + mn->user_array.nalloc));
+//            for(i = 0; i < mn->conf.user_bulk_size; i++){
+//                mn->user_array.array[i + mn->user_array.nalloc].user = NULL;
+//            }
+//            i = mn->user_array.nalloc;
+//            mn->user_array.nalloc += mn->conf.user_bulk_size;
+//        } else {
+//            for(i = 0; i < mn->user_array.nalloc; i++){
+//                if(!mn->user_array.array[i].user) break;
+//            }
+//        }
+//    }
+//
+//    link->ext_ctx = mn_user;
+//
+//	mn_user->i = i;
+//    mn->user_array.array[i].user = mn_user;
+//    mn->user_array.nactive++;
+
+    mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_LOGIN_SUCCESS), username,
+			uid);
 
     _deb1("sym_crypt_MAGIC: %x", link->sym_crypt.magic);
 
@@ -347,59 +403,6 @@ error13_t _mn_login_recv(struct monet *mn, struct infolink* link){
 					e13_codemsg(ret));
 		return ret;
     }
-
-    //alloc + init user struct
-    mn_user = (struct monet_user*)m13_malloc(sizeof(struct monet_user));
-
-    mn_user->next = NULL;
-
-    mn_user->link = link;
-    mn_user->name = s13_malloc_strcpy(username, MN_MAX_USERNAME);
-    mn_user->uid = uid;
-//    mn_user->gid_array = NULL;
-//    mn_user->name = mn->conf.guest_user;//TODO: TEMP
-//    mn_user->id == ++uid;//TODO: TEMP
-
-
-    th13_mutex_lock(&mn->user_array.mx);
-
-    if(!mn->user_array.array){
-        mn->user_array.array = (struct monet_user_array_entry*)m13_malloc(
-                    sizeof(struct monet_user_array_entry)*
-                    mn->conf.user_bulk_size);
-        mn->user_array.nalloc = mn->conf.user_bulk_size;
-        mn->user_array.nactive = 0UL;
-        mn->user_array.npause = 0UL;
-        for( i = 0; i < mn->conf.user_bulk_size; i++ ) {
-            mn->user_array.array[i].user = NULL;
-        }
-        i = 0;
-    } else {
-        if(mn->user_array.nalloc == mn->user_array.nactive + mn->user_array.npause){
-            mn->user_array.array = (struct monet_user_array_entry*)m13_realloc(
-                        mn->user_array.array,
-                        sizeof(struct monet_user_array_entry)*
-                        (mn->conf.user_bulk_size + mn->user_array.nalloc));
-            for(i = 0; i < mn->conf.user_bulk_size; i++){
-                mn->user_array.array[i + mn->user_array.nalloc].user = NULL;
-            }
-            i = mn->user_array.nalloc;
-            mn->user_array.nalloc += mn->conf.user_bulk_size;
-        } else {
-            for(i = 0; i < mn->user_array.nalloc; i++){
-                if(!mn->user_array.array[i].user) break;
-            }
-        }
-    }
-
-    link->ext_ctx = mn_user;
-
-	mn_user->i = i;
-    mn->user_array.array[i].user = mn_user;
-    mn->user_array.nactive++;
-
-    mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_LOGIN_SUCCESS), username,
-			uid);
 
     //do not unlock
 
@@ -701,10 +704,21 @@ error13_t mn_wait(struct monet *mn){
 
     th13_create(&mn->poll.th, NULL, &_monet_poll_thread, &poll_arg);
 	th13_sem_wait(mn->wait_sem);
-    th13_sem_destroy(mn->wait_sem);
-    m13_free(mn->wait_sem);
+    //th13_sem_destroy(mn->wait_sem); gonna need it in the monet_proc thread
+    //m13_free(mn->wait_sem);
 
     mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_ACCEPTING));
+
+    poll_arg.mn = mn;
+    poll_arg.index = 0;
+
+    _deb_wait("%s", "create poll thread");
+
+    mn->req_fifo.first = NULL;
+    mn->req_fifo.n = 0UL;
+    th13_mutex_init(&mn->req_fifo.mx);
+    mn->req_fifo.flags = MN_FIFO_FLAG_INIT;
+    th13_create(&mn->req_fifo.th, NULL, &_monet_proc_thread, &poll_arg);
 
     while( 1 ) {
 

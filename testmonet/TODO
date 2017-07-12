@@ -1,7 +1,8 @@
 /***	TODO	***
 
-
-√ run server, connect 3 or more hosts, send a message to crash at client side, the explode_pkt() fails to free data pointer.
-
+//run server, connect 3 or more hosts, send a message to crash at client side, the explode_pkt() fails to free data pointer.
++ test d13_clock()
++ test updatad acc_user_login()
++ test new acc_user_logout()
 
 ***		TODO	***/

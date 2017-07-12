@@ -1242,7 +1242,6 @@ error13_t acc_user_list_free(struct user13* user){
 error13_t acc_user_login(struct access13* ac, char* username, char* password,
 						uid13_t* uid){
 
-
     struct db_stmt st;
     db_table_id tid;
     int stt;
@@ -1250,10 +1249,21 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
     struct db_logic_s logic;
     db_colid_t colid[3];
     error13_t ret;
+    struct user13 user;
+    int date_[3];
+    int time_;
+    char now[20];
+
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
     }
+
+    if((ret = acc_user_chk(ac, name, &user)) != E13_OK){
+        return ret;
+    }
+
+    if(user.stt == ACC_USR_STT_IN) return e13_error(E13_EXISTS);
 
     _deb_acc_login("login request username %s, password %s", username, password);
 
@@ -1270,6 +1280,69 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
     colid[2] = db_get_colid_byname(ac->db, tid, "lasttime");
 
     stt = ACC_USR_STT_IN;
+
+    val = m13_malloc(3*sizeof(char*));
+
+    val[0] = (char*)&stt;
+    //TODO: UPDATE LASTDATE AND LASTTIME
+    //val[1] = ;
+    //val[2] = ;
+    d13_today(date_);
+    val[1]=date_;
+    d13_clock(&time_);
+    val[2]=(char*)&time_;
+
+    ret = db_update(ac->db, tid, logic, 1, colid, val, NULL, &st);
+
+    db_finalize(&st);
+
+	m13_free(val);
+
+    return ret==E13_CONTINUE?E13_OK:ret;
+
+}
+
+error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
+
+    struct db_stmt st;
+    db_table_id tid;
+    int stt;
+    uchar** val;
+    struct db_logic_s logic;
+    db_colid_t colid[3];
+    error13_t ret;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+    if((ret = acc_user_chk(ac, name, &user)) != E13_OK){
+        return ret;
+    }
+
+    if(user.stt != ACC_USR_STT_IN) return e13_error(E13_NOTFOUND);
+
+    _deb_acc_login("logout request username %s, uid %u", username, uid);
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
+
+    if(username){
+        logic.col = db_get_colid_byname(ac->db, tid, "name");
+        logic.comb = DB_LOGICOMB_NONE;
+        logic.flags = 0;
+        logic.sval = username;
+        logic.logic = DB_LOGIC_LIKE;
+    } else {
+        logic.col = db_get_colid_byname(ac->db, tid, "id");
+        logic.comb = DB_LOGICOMB_NONE;
+        logic.flags = 0;
+        logic.ival = uid;
+        logic.logic = DB_LOGIC_LIKE;
+    }
+
+    colid[0] = db_get_colid_byname(ac->db, tid, "stat");
+
+    stt = ACC_USR_STT_OUT;
 
     val = m13_malloc(3*sizeof(char*));
 
