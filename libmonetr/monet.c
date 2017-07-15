@@ -273,10 +273,9 @@ error13_t mn_destroy(struct monet* mn){
 
 error13_t _mn_login_recv(struct monet *mn, struct infolink* link){
 
-    //TODO: TEMPORARY
+    //TODO: THIS IS A VERY BAD WRITTEN CODE! NOT FAIL SAFE BY ANY MEANS!
     static uid13_t uid = UID13_NONE;
     size_t i;
-    struct monet_user* mn_user;
     struct ilink_io ios;
     error13_t ret;
     ilink_data_t* data;
@@ -322,65 +321,10 @@ error13_t _mn_login_recv(struct monet *mn, struct infolink* link){
     username[MN_MAX_USERNAME-1] = '\0';
     password[MN_MAX_PASSWORD-1] = '\0';
 
-    _
-
-//    _deb_connect("logging in %s", username);
-//    if((ret = acc_user_login(&mn->ac, username, password, &uid)) != E13_OK){
-//		_deb_connect("login_user failed code: %i, msg: %s", ret,
-//					e13_codemsg(ret));
-//		mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_LOGIN_FAILED), username, ret);
-//		return ret;
-//    }
-//
-//    //alloc + init user struct
-//    mn_user = (struct monet_user*)m13_malloc(sizeof(struct monet_user));
-//
-//    mn_user->next = NULL;
-//
-//    mn_user->link = link;
-//    mn_user->name = s13_malloc_strcpy(username, MN_MAX_USERNAME);
-//    mn_user->uid = uid;
-////    mn_user->gid_array = NULL;
-////    mn_user->name = mn->conf.guest_user;//TODO: TEMP
-////    mn_user->id == ++uid;//TODO: TEMP
-//
-//
-//    th13_mutex_lock(&mn->user_array.mx);
-//
-//    if(!mn->user_array.array){
-//        mn->user_array.array = (struct monet_user_array_entry*)m13_malloc(
-//                    sizeof(struct monet_user_array_entry)*
-//                    mn->conf.user_bulk_size);
-//        mn->user_array.nalloc = mn->conf.user_bulk_size;
-//        mn->user_array.nactive = 0UL;
-//        mn->user_array.npause = 0UL;
-//        for( i = 0; i < mn->conf.user_bulk_size; i++ ) {
-//            mn->user_array.array[i].user = NULL;
-//        }
-//        i = 0;
-//    } else {
-//        if(mn->user_array.nalloc == mn->user_array.nactive + mn->user_array.npause){
-//            mn->user_array.array = (struct monet_user_array_entry*)m13_realloc(
-//                        mn->user_array.array,
-//                        sizeof(struct monet_user_array_entry)*
-//                        (mn->conf.user_bulk_size + mn->user_array.nalloc));
-//            for(i = 0; i < mn->conf.user_bulk_size; i++){
-//                mn->user_array.array[i + mn->user_array.nalloc].user = NULL;
-//            }
-//            i = mn->user_array.nalloc;
-//            mn->user_array.nalloc += mn->conf.user_bulk_size;
-//        } else {
-//            for(i = 0; i < mn->user_array.nalloc; i++){
-//                if(!mn->user_array.array[i].user) break;
-//            }
-//        }
-//    }
-//
-//    link->ext_ctx = mn_user;
-//
-//	mn_user->i = i;
-//    mn->user_array.array[i].user = mn_user;
-//    mn->user_array.nactive++;
+    ret = _monet_user_login(mn, link, username, password);
+    if(ret != E13_OK){
+        return ret;
+    }
 
     mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_LOGIN_SUCCESS), username,
 			uid);

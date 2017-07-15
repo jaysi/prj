@@ -59,6 +59,7 @@ error13_t _monet_user_login(struct monet* mn, struct infolink* link, char userna
         }
     }
 
+    //the link is not in the poll list, no need to lock, don't worry!
     link->ext_ctx = mn_user;
 
 	mn_user->i = i;
@@ -79,6 +80,10 @@ end:
 }
 
 error13_t _monet_user_logout(struct monet* mn, uid13_t uid){
+
+    error13_t ret;
+
+    if((ret = _monet_rm_poll_link(mn, )))
 
 }
 

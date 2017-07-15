@@ -45,6 +45,8 @@
 				</Linker>
 			</Target>
 		</Build>
+		<Unit filename="_manifest" />
+		<Unit filename="_todo" />
 		<Unit filename="monet.c">
 			<Option compilerVar="CC" />
 		</Unit>
