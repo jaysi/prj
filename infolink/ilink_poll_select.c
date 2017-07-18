@@ -276,15 +276,48 @@ addex:
 
 }
 
-error13_t ilink_poll_rm(struct ilink_poll_list* list, struct infolink* link, uint8_t dir){
+error13_t ilink_poll_rm(struct ilink_poll_list* list, ilink_sock_t sockfd, uint8_t dir){
 
-    struct infolink* prev, *entry;
-    int replace_fdmax;
+    struct infolink* prev, *link;
+    ilink_sock_t replace_fdmax;
     int dont_remove_it = 0;
 
     if(!(dir & ILINK_POLL_NOLOCK)) ilink_poll_lock(list);
 
     _assert_fdcount(list->readfds.fd_count || list->writefds.fd_count || list->exfds.fd_count);
+
+    if(sockfd == list->fdmax){
+        replace_fdmax = -1;
+        //list->fdmax = -1;
+    } else {
+        replace_fdmax = 0;
+    }
+
+    //find entry
+    for(link = list->first; link; link = link->next){
+
+        if(link->sock == sockfd){
+            if(list->first == entry){
+                if(list->last == entry){
+                    list->last = NULL;
+                }
+                list->first = list->first->next;
+            } else {
+                if(list->last == link){
+                    list->last = prev;
+                }
+                prev->next = link->next;
+            }
+
+            break;
+        } else {
+            if(replace_fdmax){
+                if(link->sock > replace_fdmax) replace_fdmax = link->sock;
+            }
+        }
+    }
+
+    if(!link) return e13_error(E13_NOTFOUND);
 
     _deb_rm("removing %i, flags = %u, dir = %u, rd_fdcount = %i", link->sock, link->pollflags, dir, list->readfds.fd_count);
 
@@ -317,36 +350,7 @@ error13_t ilink_poll_rm(struct ilink_poll_list* list, struct infolink* link, uin
     link->pollflags &= ~dir;
 
     if(!dont_remove_it){
-
-        if(link->sock == list->fdmax){
-            replace_fdmax = 1;
-            list->fdmax = -1;
-        } else {
-            replace_fdmax = 0;
-        }
-
-        prev = list->first;
-        for(entry = list->first; entry; entry = entry->next){
-
-            if(entry->sock == link->sock){
-                if(list->first == entry){
-                    if(list->last == entry){
-                        list->last = NULL;
-                    }
-                    list->first = list->first->next;
-                } else {
-                    if(list->last == entry){
-                        list->last = prev;
-                    }
-                    prev->next = entry->next;
-                }
-            } else {
-                if(replace_fdmax){
-                    if(list->fdmax < entry->sock) list->fdmax = entry->sock;
-                }
-            }
-        }
-
+        list->fdmax = replace_fdmax;
     }//!dont_remove_it
 
     _assert_fdcount(list->readfds.fd_count || list->writefds.fd_count || list->exfds.fd_count);

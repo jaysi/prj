@@ -219,6 +219,7 @@ void* _monet_poll_thread(void* arg){
 
                                     m13_free(s);
                                 }
+                                /* THERE IS NO NEED TO UNPOLL, SIMPLY CLOSE THE CONNECTION!
                                 if(proc_code == MN_PROC_PKT_UNPOLL){
                                     s = mn->pipelink_send.tmp_ctx;
                                     _deb_poll("process PKT_UNPOLL %i", s->link->sock);
@@ -235,6 +236,7 @@ void* _monet_poll_thread(void* arg){
 
                                     m13_free(s);
                                 }
+                                */
                                 _deb_poll("process CONTINUE ends, rd_count = %i", list->readfds.fd_count);
                                 break;
 
@@ -256,7 +258,7 @@ void* _monet_poll_thread(void* arg){
                         break;
                         case e13_error(E13_DC):
                             _deb_poll("recv DC, disconnected %i", entry->sock);
-                            ilink_poll_rm(list, entry, ILINK_POLL_ALL|ILINK_POLL_NOLOCK);
+                            ilink_poll_rm(list, entry->sock, ILINK_POLL_ALL|ILINK_POLL_NOLOCK);
                         break;
                         default:
                             _deb_poll("recv other case! ilink_recv = %i", ret);
@@ -291,12 +293,12 @@ void* _monet_poll_thread(void* arg){
                             _deb_poll("send OK");
                         case E13_DONE:
                             _deb_poll("send DONE, may happen after OK, removing poll request");
-                            ilink_poll_rm(list, entry, ILINK_POLL_WR|ILINK_POLL_NOLOCK);
+                            ilink_poll_rm(list, entry->sock, ILINK_POLL_WR|ILINK_POLL_NOLOCK);
                         break;
 
                         case e13_error(E13_DC):
                             _deb_poll("send DC, disconnected");
-                            ilink_poll_rm(list, entry, ILINK_POLL_ALL|ILINK_POLL_NOLOCK);
+                            ilink_poll_rm(list, entry->sock, ILINK_POLL_ALL|ILINK_POLL_NOLOCK);
                         break;
 
                         default:
@@ -329,7 +331,7 @@ void* _monet_poll_thread(void* arg){
             if(ready) m13_free(ready);
             //do not forget to release poll list lock at the end.
             _deb_poll("poll OK ends, unlocking");
-            //TODO: where did i lock it???
+            //t0d0: where did i lock it??? in the ilink_poll
             ilink_poll_unlock(list);
 
         break;//E13_OK

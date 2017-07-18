@@ -238,7 +238,7 @@ typedef uint16_t ilink_dc_t;
                              uint8_t dir);
 
     error13_t ilink_poll_rm(struct ilink_poll_list* list,
-                            struct infolink* link,
+                            ilink_sock_t sockfd,
                             uint8_t dir);
 
     //packet
