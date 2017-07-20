@@ -5,6 +5,8 @@ error13_t _monet_user_login(struct monet* mn, struct infolink* link, char userna
     error13_t ret;
     uid13_t uid;
 
+    //locking poll_list is not needed, the link is malloc'ed, not still in the list
+
     _deb_connect("logging in %s", username);
     if((ret = acc_user_login(&mn->ac, username, password, &uid)) != E13_OK){
 		_deb_connect("login_user failed code: %i, msg: %s", ret,
@@ -75,16 +77,36 @@ error13_t _monet_user_login(struct monet* mn, struct infolink* link, char userna
     else ret = obj13_bst_insert_node((mn->user_array.obj_root, node);
 
 end:
+    if(ret != E13_OK){
+        if(node) obj13_bst_free_node(node);
+    }
     th13_mutex_unlock(&mn->user_array.mx);
     return ret;
 }
 
 error13_t _monet_user_logout(struct monet* mn, uid13_t uid){
 
+    struct obj13* node;
     error13_t ret;
+    struct mn_user* user;
 
-    if((ret = _monet_rm_poll_link(mn, )))
+    //BE AGGRESSIVE! CLOSE THE CONNECTION!
+    th13_mutex_lock(&mn->user_array.mx);
 
+    if((ret = obj13_bst_find_node(mn->user_array.obj_root, uid, &node)) != E13_OK){
+        goto end;
+    }
+
+    user = mn->user_array.array[((struct mn_user*)node->objptr)->i].user;
+    mn->user_array.array[((struct mn_user*)node->objptr)->i].user = NULL;
+    mn->user_array.nactive--;
+
+    //no need to lock anything, since the link and user mutexes are the same
+
+    th13_mutex_unlock(&mn->user_array.mx);
+
+end:
+    return ret;
 }
 
 error13_t _monet_user_find(struct monet* mn, char* name, uid13_t* uid){

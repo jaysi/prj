@@ -1,3 +1,6 @@
 /*
+
 + write poll link remove
+// there is a conflict between the mutex in the user array and poll list roles => the mutex ptr is pointing to the user_array mutex, don't worry
+
 */
