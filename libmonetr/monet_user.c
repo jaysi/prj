@@ -1,6 +1,7 @@
 #include "monet_internal.h"
 
-error13_t _monet_user_login(struct monet* mn, struct infolink* link, char username, char password){
+error13_t _monet_user_login(struct monet* mn, struct infolink* link,
+							char username, char password){
     struct obj13* node;
     error13_t ret;
     uid13_t uid;
@@ -11,7 +12,8 @@ error13_t _monet_user_login(struct monet* mn, struct infolink* link, char userna
     if((ret = acc_user_login(&mn->ac, username, password, &uid)) != E13_OK){
 		_deb_connect("login_user failed code: %i, msg: %s", ret,
 					e13_codemsg(ret));
-		mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_LOGIN_FAILED), username, ret);
+		mn_clog(mn, MN_CLOGID_ALL, mn_msg(mn, MN_MSGID_LOGIN_FAILED), username,
+				ret);
 		return ret;
     }
 
@@ -44,7 +46,8 @@ error13_t _monet_user_login(struct monet* mn, struct infolink* link, char userna
 
         i = 0;
     } else {
-        if(mn->user_array.nalloc == mn->user_array.nactive + mn->user_array.npause){
+        if(mn->user_array.nalloc == mn->user_array.nactive +
+									mn->user_array.npause){
             mn->user_array.array = (struct monet_user_array_entry*)m13_realloc(
                         mn->user_array.array,
                         sizeof(struct monet_user_array_entry)*
@@ -69,7 +72,8 @@ error13_t _monet_user_login(struct monet* mn, struct infolink* link, char userna
     mn->user_array.nactive++;
 
     //the user list is locked?
-    if((ret = obj13_bst_create_node(&node, (objid13_t)uid, user, OBJ13_FLAG_DEF)) != E13_OK){
+    if((ret = obj13_bst_create_node(&node, (objid13_t)uid, user,
+									OBJ13_FLAG_DEF)) != E13_OK){
         goto end;
     }
 
@@ -93,22 +97,58 @@ error13_t _monet_user_logout(struct monet* mn, uid13_t uid){
     //BE AGGRESSIVE! CLOSE THE CONNECTION!
     th13_mutex_lock(&mn->user_array.mx);
 
-    if((ret = obj13_bst_find_node(mn->user_array.obj_root, uid, &node)) != E13_OK){
+    if((ret = obj13_bst_find_node(mn->user_array.obj_root, uid, &node)) !=
+		E13_OK){
         goto end;
     }
 
-    user = mn->user_array.array[((struct mn_user*)node->objptr)->i].user;
-    mn->user_array.array[((struct mn_user*)node->objptr)->i].user = NULL;
+    user = mn->user_array.array[((struct monet_user*)node->objptr)->i].user;
+    mn->user_array.array[((struct monet_user*)node->objptr)->i].user = NULL;
     mn->user_array.nactive--;
 
     //no need to lock anything, since the link and user mutexes are the same
 
     th13_mutex_unlock(&mn->user_array.mx);
 
+    //not in the list anymore, do what you want
+
+    obj13_bst_delete_node(mn->user_array.obj_root, uid);
+
+    acc_user_logout(mn->ac, NULL, uid);
+
+    ilink_disconnect(((struct monet_user*)node->objptr)->link, ILINK_DC_ALL);
+
 end:
     return ret;
 }
 
-error13_t _monet_user_find(struct monet* mn, char* name, uid13_t* uid){
+error13_t _monet_user_find(	struct monet* mn,char* name, uid13_t uid,
+							int unlock){
+
+	error13_t ret;
+
+	th13_mutex_lock(&mn->user_array.mx);
+
+    //TODO: MAKE USERNAME SEARCH HASH BASED
+
+    if(name){
+        //TODO
+		ret = e13_error(E13_NOTFOUND);
+		goto end;
+    }
+
+    if((ret = obj13_bst_find_node(mn->user_array.obj_root, uid, &node)) !=
+		E13_OK){
+        goto end;
+    }
+
+    return E13_OK;
+
+end:
+	if(unlock){
+		th13_mutex_unlock(&mn->user_array.mx);
+	}
+
+	return ret;
 
 }

@@ -1,6 +1,17 @@
 /*
 
-+ write poll link remove
-// there is a conflict between the mutex in the user array and poll list roles => the mutex ptr is pointing to the user_array mutex, don't worry
++ LAST: Make a RoadMap
+
+//+ write poll link remove
+//+ there is a conflict between the mutex in the user array and poll list roles
+	=> the mutex ptr is pointing to the user_array mutex, don't worry
+
+--] RoadMap:
+
+	- create test platform init functions
+	- create user access perms -> management routines
+	- create group subroutines
+    - create session subsystem
+    - create module subsystem
 
 */
