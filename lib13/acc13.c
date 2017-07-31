@@ -44,7 +44,7 @@
 
 //acl
 #define ACC_TABLE_ACL_COLS    7
-//RegID, nrow, gid, uid, objid, perm, FLAGS(FAKE)
+//RegID, nrow, gid, uid, objid, perm, FLAGS(FAKE)struct db_stmt st;
 
 //freeobj - free'ed object strs
 #define ACC_TABLE_FREEOBJ_COLS  4
@@ -585,6 +585,18 @@ error13_t acc_group_add(struct access13 *ac, char *name){
 
 }
 
+//remove all uid record
+error13_t _acc_rm_user_membership(struct access13* ac, char* name, uid13_t uid){
+	struct db_stmt st;
+	return TODO;
+}
+
+error13_t _acc_rm_group_membership(struct access13* ac, char* name, gid13_t gid){
+	struct db_stmt st;
+	return TODO;
+}
+
+//TODO: remove all user membership
 error13_t acc_group_rm(struct access13 *ac, char *name){
 
     struct db_stmt st;
@@ -609,6 +621,8 @@ error13_t acc_group_rm(struct access13 *ac, char *name){
     }
 
     if(group.stt == ACC_GRP_STT_REMOVED) return e13_error(E13_OK);
+
+    _acc_rm_user_group_membership(ac, name);
 
     stt = ACC_GRP_STT_REMOVED;
     logic.col = db_get_colid_byname(ac->db, tid, "id");
@@ -1284,9 +1298,6 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
     val = m13_malloc(3*sizeof(char*));
 
     val[0] = (char*)&stt;
-    //TODO: UPDATE LASTDATE AND LASTTIME
-    //val[1] = ;
-    //val[2] = ;
     d13_today(date_);
     val[1]=date_;
     d13_clock(&time_);
@@ -1361,5 +1372,70 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
 }
 
 error13_t acc_destroy(struct access13* ac){
+	//TODO
 	return e13_error(E13_IMPLEMENT);
 }
+
+error13_t acc_user_group_check(struct access13 *ac, char *username, char* group){
+
+    struct db_stmt st;
+    struct db_logic_s logic[2];
+    error13_t ret;
+    db_table_id tid;
+    struct user13 usr;
+    struct group13 grp;
+    size_t passlen;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+    if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
+		return ret;
+    }
+    if((ret = acc_group_chk(ac, group, &grp)) != E13_OK){
+		return ret;
+    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
+    _deb_usr_chk("got tid %u", tid);
+
+    logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
+    logic.comb = DB_LOGICOMB_AND;
+    logic.flags = 0;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = usr.uid;
+
+    logic[1].col = db_get_colid_byname(ac->db, tid, "gid");
+    logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = 0;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = grp.gid;
+
+    _deb_usr_chk("collecting...");
+    if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
+        _deb_usr_chk("fails %i", ret);
+        return ret;
+    }
+    _deb_usr_chk("collecting done");
+
+    switch((ret = db_step(&st))){
+        case E13_CONTINUE:
+        db_finalize(&st);
+        ret = E13_OK;
+        break;
+        case E13_OK:
+        _deb_usr_chk("step OK");
+        db_finalize(&st);
+        return e13_error(E13_NOTFOUND);
+        break;
+        default:
+        _deb_usr_chk("step %i", ret);
+        return ret;
+        break;
+    }
+
+    return ret;
+}
+
+
