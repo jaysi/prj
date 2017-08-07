@@ -34,6 +34,10 @@
 #define ACC_USR_STT_INACTIVE 50
 #define ACC_USR_STT_REMOVED 60
 
+#define ACC_MEMS_STT_ACTIVE		10
+#define ACC_MEMS_STT_INACTIVE	20
+
+
 struct group13{
 
     char* name;
@@ -75,6 +79,25 @@ struct access13{
 
 };
 
+    /***        ***ACL***       ***/
+
+//ac PERMISSIONS
+typedef uint8_t acc_perm_t;
+#define ACC_PERM_RD  (0x01<<0)
+#define ACC_PERM_WR  (0x01<<1)
+#define ACC_PERM_EX  (0x01<<2)
+#define ACC_PERM_REC_USER	0x01
+#define ACC_PERM_REC_GROUP	0x02
+
+typedef uint8_t acc_acl_t;
+
+struct acc_acl_entry{
+    acc_acl_t type;
+    gid13_t gid;
+    uid13_t uid;
+    struct acc_acl_entry* next;
+};
+
 #ifdef __cplusplus
     extern "C" {
 #endif
@@ -104,25 +127,21 @@ struct access13{
     error13_t acc_user_login(struct access13* ac, char* username, char* password, uid13_t* uid);
     error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid);
 
+    error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name, acc_perm_t perm);
+    error13_t acc_perm_user_add(struct access13* ac, objid13_t objid, char* name, acc_perm_t perm);
+    error13_t acc_perm_user_rm(struct access13* ac, objid13_t objid, char* name, acc_perm_t perm);
+    error13_t acc_perm_group_chk(struct access13* ac, objid13_t objid, char* name, acc_perm_t perm);
+    error13_t acc_perm_group_add(struct access13* ac, objid13_t objid, char* name, acc_perm_t perm);
+    error13_t acc_perm_group_rm(struct access13* ac, objid13_t objid, char* name, acc_perm_t perm);
+	error13_t acc_perm_uid_chk(struct access13* ac, objid13_t objid, uid13_t uid, acc_perm_t perm);
+    error13_t acc_perm_uid_add(struct access13* ac, objid13_t objid, uid13_t uid, acc_perm_t perm);
+    error13_t acc_perm_uid_rm(struct access13* ac, objid13_t objid, uid13_t uid, acc_perm_t perm);
+	error13_t acc_perm_gid_chk(struct access13* ac, objid13_t objid, gid13_t gid, acc_perm_t perm);
+    error13_t acc_perm_gid_add(struct access13* ac, objid13_t objid, gid13_t gid, acc_perm_t perm);
+    error13_t acc_perm_gid_rm(struct access13* ac, objid13_t objid, gid13_t gid, acc_perm_t perm);
+
 #ifdef __cplusplus
     }
 #endif
-
-    /***        ***ACL***       ***/
-
-//ac PERMISSIONS
-typedef uint8_t acc_perm_t;
-#define ACC_PERM_RD  (0x01<<0)
-#define ACC_PERM_WR  (0x01<<1)
-#define ACC_PERM_EX  (0x01<<2)
-
-typedef uint8_t acc_acl_t;
-
-struct acc_acl_entry{
-    acc_acl_t type;
-    gid13_t gid;
-    uid13_t uid;
-    struct acc_acl_entry* next;
-};
 
 #endif // ACC13_H

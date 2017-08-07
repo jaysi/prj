@@ -1438,4 +1438,106 @@ error13_t acc_user_group_check(struct access13 *ac, char *username, char* group)
     return ret;
 }
 
+error13_t acc_user_join_group(struct access13* ac, char* username, char* group){
+
+    struct db_stmt st;
+    struct db_logic_s logic[2];
+    error13_t ret;
+    db_table_id tid;
+    struct user13 usr;
+    struct group13 grp;
+    size_t passlen;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+    if(acc_user_group_check(ac, username, group) == E13_OK){
+		return e13_error(E13_EXISTS);
+    }
+
+    if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
+		return ret;
+    }
+    if((ret = acc_group_chk(ac, group, &grp)) != E13_OK){
+		return ret;
+    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
+    if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
+    _deb_usr_chk("got tid %u", tid);
+
+    //the acc group add source
+    db_colid_t colids[2];
+    uchar* cols[ACC_TABLE_MEMBERSHIP_COLS];
+    size_t size[ACC_TABLE_MEMBERSHIP_COLS];
+    int stat;
+    struct db_logic_s logic;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+/*	COLUMNS
+                                "RegID",
+                                DB_T_INT,
+                                "شماره ثبت",
+                                "",
+                                DB_COLF_HIDE|DB_COLF_AUTO,
+
+                                "nrow",
+                                DB_T_BIGINT,
+                                "ردیف",
+                                "",
+                                DB_COLF_HIDE|DB_COLF_AUTO,
+
+                                "gid",
+                                DB_T_INT,
+                                "گروه",
+                                "@group:id>name",
+                                DB_COLF_LIST|DB_COLF_TRANSL,
+
+                                "uid",
+                                DB_T_INT,
+                                "کاربر",
+                                "@user:id>name",
+                                DB_COLF_LIST|DB_COLF_TRANSL,
+
+                                "stat",
+                                DB_T_INT,
+                                "وضعیت",
+                                "",
+                                0,
+
+                                "flags",
+                                DB_T_INT,
+                                "پرچم",
+                                "",
+                                DB_COLF_VIRTUAL|DB_COLF_HIDE
+
+*/
+
+    stat = ACC_MEMS_STT_ACTIVE;
+    cols[0] = (uchar*)&ac->regid;
+	cols[1] = NULL;/*(uchar*)&nrow;*/
+    cols[2] = (uchar*)&gid;
+    cols[3] = (uchar*)&uid;
+    cols[4] = (uchar*)&stat;
+    cols[5] = NULL;/*(uchar*)&flags;*/
+    size[0] = sizeof(regid_t);
+//    size[1] = sizeof(int);
+    size[2] = sizeof(gid13_t);
+    size[3] = sizeof(uid13_t);
+    size[4] = sizeof(int);
+//    size[5] = sizeof(int);
+    if((ret = db_insert(ac->db, tid, cols, size, &st)) != E13_OK){
+        db_finalize(&st);
+//        m13_free(cols);
+        return ret;
+    }
+
+    db_finalize(&st);
+//    m13_free(cols);
+    return E13_OK;
+}
 

@@ -1,19 +1,16 @@
 /*
 
-+ LAST: Make a RoadMap
-
-+ BUILD user/group membership in acc13
+--] The RoadMap
+	+ MAKE user/group membership in ACC13
+	+ MAKE permission management subsystem in ACC13 based on LINUX
+	+ REMOVE console and other unnecessatry code from MONET
+	+ ADD build-test-framework to MONET
+	+ ADD user/group/perm add/rm/chg/chk support to MONET
+	+ MAKE SESSION add/rm/pause/resume/chg/chk subsystem
+	+ MAKE MODULE add/rm/open/close/pause/resume/chg/chk subsystem
 
 //+ write poll link remove
 //+ there is a conflict between the mutex in the user array and poll list roles
 	=> the mutex ptr is pointing to the user_array mutex, don't worry
-
---] RoadMap:
-
-	- create test platform init functions
-	- create user access perms -> management routines
-	- create group subroutines
-    - create session subsystem
-    - create module subsystem
 
 */
