@@ -1467,17 +1467,6 @@ error13_t acc_user_join_group(struct access13* ac, char* username, char* group){
     if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
     _deb_usr_chk("got tid %u", tid);
 
-    //the acc group add source
-    db_colid_t colids[2];
-    uchar* cols[ACC_TABLE_MEMBERSHIP_COLS];
-    size_t size[ACC_TABLE_MEMBERSHIP_COLS];
-    int stat;
-    struct db_logic_s logic;
-
-    if(!_is_init(ac)){
-        return e13_error(E13_MISUSE);
-    }
-
 /*	COLUMNS
                                 "RegID",
                                 DB_T_INT,
@@ -1541,3 +1530,65 @@ error13_t acc_user_join_group(struct access13* ac, char* username, char* group){
     return E13_OK;
 }
 
+error13_t acc_user_leave_group(struct access13* ac, char* username, char* group){
+
+    struct db_stmt st;
+    struct db_logic_s logic[2];
+    error13_t ret;
+    db_table_id tid;
+    struct user13 usr;
+    struct group13 grp;
+    size_t passlen;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+    if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
+		return ret;
+    }
+    if((ret = acc_group_chk(ac, group, &grp)) != E13_OK){
+		return ret;
+    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
+    _deb_usr_chk("got tid %u", tid);
+
+    logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
+    logic.comb = DB_LOGICOMB_AND;
+    logic.flags = 0;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = usr.uid;
+
+    logic[1].col = db_get_colid_byname(ac->db, tid, "gid");
+    logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = 0;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = grp.gid;
+
+    _deb_usr_chk("collecting...");
+    if((ret = db_delete(ac->db, tid, 2, logic, &st)) != E13_OK){
+        _deb_usr_chk("fails %i", ret);
+        return ret;
+    }
+    _deb_usr_chk("collecting done");
+
+    switch((ret = db_step(&st))){
+        case E13_CONTINUE:
+        db_finalize(&st);
+        ret = E13_OK;
+        break;
+        case E13_OK:
+        _deb_usr_chk("step OK");
+        db_finalize(&st);
+        return e13_error(E13_NOTFOUND);
+        break;
+        default:
+        _deb_usr_chk("step %i", ret);
+        return ret;
+        break;
+    }
+
+    return ret;
+
+}

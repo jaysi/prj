@@ -1634,11 +1634,11 @@ bind_data:
 
 }
 
-error13_t db_collect(struct db13* db, db_table_id tid,
-           char** cols,
-           int nlogic, struct db_logic_s* logic,
-           char* sortcol, enum db_sort stype, int nlimit,
-           struct db_stmt* st){
+error13_t db_collect(	struct db13* db, db_table_id tid,
+						char** cols,
+						int nlogic, struct db_logic_s* logic,
+						char* sortcol, enum db_sort stype, int nlimit,
+						struct db_stmt* st){
 
     char sql[MAXSQL];
     int i;
@@ -1827,6 +1827,97 @@ error13_t db_collect(struct db13* db, db_table_id tid,
     return E13_OK;
 
 }
+
+error13_t db_delete(	struct db13* db, db_table_id tid,
+						int nlogic, struct db_logic_s* logic,
+						struct db_stmt* st){
+
+    char sql[MAXSQL];
+    int i;
+    int date[3];
+    size_t len = 0;
+    sqlite3_stmt* stmt = NULL;
+
+    switch(_db_get_drv_cls(db->driver)){
+    case DB_DRV_CLS_SQL:
+
+#define RLEN (MAXSQL - len)
+
+    snprintf(sql + len, RLEN, "DELETE * FROM %s", db->table_info[tid].name);
+    len = strlen(sql);
+
+    if(nlogic){
+
+        snprintf(sql + len, RLEN, " WHERE ");
+        len = strlen(sql);
+
+        for(i = 1; i < nlogic + 1; i++){
+
+            if(!(logic[i-1].flags & DB_LOGICF_COL_CMP)){
+
+                snprintf(sql + len, RLEN, "%s %s %s ?%i",
+                         i == 1?"":logic_sign[logic[i-1].comb].sign,
+                         db_get_col_name(db, tid, logic[i-1].col),
+                         logic_sign[logic[i-1].logic].sign,
+                         i
+                        );
+
+            } else {
+
+                snprintf(sql + len, RLEN, "%s %s %s %s",
+                         i == 1?"":logic_sign[logic[i-1].comb].sign,
+                         db_get_col_name(db, tid, logic[i-1].col),
+                         logic_sign[logic[i-1].logic].sign,
+                         logic[i-1].sval
+                        );
+
+            }
+
+            len = strlen(sql);
+
+        }
+
+    }
+
+#undef RLEN
+    strcat(sql, ";");
+
+    break;
+
+    default:
+        break;
+    }
+
+    _deb_collect("sql: %s", sql);
+
+    switch(db->driver){
+
+    case DB_DRV_NULL:
+        return E13_OK;
+        break;
+
+    case DB_DRV_SQLITE:
+
+        switch(sqlite3_prepare_v2(LITE(db), sql, -1, &stmt, NULL)){
+            case SQLITE_DONE:
+            case SQLITE_OK:
+
+                //set handles
+                st->h = stmt;
+                st->db = db;
+                st->magic = DB_STMT_MAGIC;
+
+                break;
+
+            default:
+                return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+                break;
+        }
+
+    return E13_OK;
+
+}
+
 
 /*
 int get_last_id(struct db_s* db, enum table_id tid){

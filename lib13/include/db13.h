@@ -231,17 +231,25 @@ db_table_id db_get_tid_byname(struct db13* db, char* name);
 db_table_id db_get_tid_byalias(struct db13* db, char* alias);
 char* db_get_table_name(struct db13* db, db_table_id tid);
 char* db_get_table_alias(struct db13* db, db_table_id tid);
-db_colid_t db_get_colid_byname(struct db13* db, db_table_id tid, char* col_name);
-db_colid_t db_get_colid_byalias(struct db13* db, db_table_id tid, char* col_alias);
+db_colid_t db_get_colid_byname(struct db13* db, db_table_id tid,
+							char* col_name);
+db_colid_t db_get_colid_byalias(struct db13* db, db_table_id tid,
+								char* col_alias);
 char* db_get_col_name(struct db13* db, db_table_id tid, db_colid_t colid);
 char* db_get_col_alias(struct db13* db, db_table_id tid, db_colid_t colid);
 db_colid_t db_col_count(struct db13* db, db_table_id tid);
-void db_set_colflag(struct db13* db, db_table_id tid, db_colid_t colid, db_colflag_t flags);
-void db_unset_colflag(struct db13* db, db_table_id tid, db_colid_t colid, db_colflag_t flags);
-db_colflag_t db_get_colflag(struct db13* db, db_table_id tid, db_colid_t colid);
-db_colid_t db_count_colflag(struct db13* db, db_table_id tid, db_colflag_t flags);
-enum db_type_id db_coltype(struct db13* db, db_table_id tid, db_colid_t colid);
-char* db_coltype_name(struct db13* db, db_table_id tid, db_colid_t colid);
+void db_set_colflag(struct db13* db, db_table_id tid, db_colid_t colid,
+					db_colflag_t flags);
+void db_unset_colflag(struct db13* db, db_table_id tid, db_colid_t colid,
+					db_colflag_t flags);
+db_colflag_t db_get_colflag(struct db13* db, db_table_id tid,
+							db_colid_t colid);
+db_colid_t db_count_colflag(struct db13* db, db_table_id tid,
+							db_colflag_t flags);
+enum db_type_id db_coltype(struct db13* db, db_table_id tid,
+						db_colid_t colid);
+char* db_coltype_name(struct db13* db, db_table_id tid,
+					db_colid_t colid);
 
 error13_t db_step(struct db_stmt* st);
 error13_t db_finalize(struct db_stmt* st);
@@ -253,24 +261,35 @@ error13_t db_create_table(struct db13* db, db_table_id tid);
 error13_t db_trunc_table(struct db13* db, db_table_id tid);
 error13_t db_rm_table(struct db13* db, db_table_id tid);
 
-error13_t db_column_text(struct db_stmt* st, db_colid_t col, size_t* len, unsigned char** text);
+error13_t db_column_text(struct db_stmt* st, db_colid_t col,
+						size_t* len, unsigned char** text);
 error13_t db_column_date(struct db_stmt* st, db_colid_t col, int date[3]);
 error13_t db_column_int(struct db_stmt* st, db_colid_t col, int* val);
 error13_t db_column_int64(struct db_stmt* st, db_colid_t col, int64_t* val);
 error13_t db_column_double(struct db_stmt* st, db_colid_t col, double* val);
 error13_t db_column_size(struct db_stmt* st, db_colid_t col, size_t* size);
-error13_t db_column_raw(struct db_stmt* st, db_colid_t col, size_t* datalen, void** data);
+error13_t db_column_raw(struct db_stmt* st, db_colid_t col,
+						size_t* datalen, void** data);
 
 error13_t db_select_all(struct db13* db, db_table_id tid, struct db_stmt* st);
-error13_t db_insert(struct db13* db, db_table_id tid, uchar **col, size_t* size, struct db_stmt* st);
-error13_t db_update_col_byobjid(struct db13* db, db_table_id tid, objid13_t objid, db_colid_t col, uchar *val, size_t size, struct db_stmt* st);
-error13_t db_update(struct db13* db, db_table_id tid, struct db_logic_s iflogic, db_colid_t ncol, db_colid_t* col, uchar** val, size_t* size, struct db_stmt* st);
+error13_t db_insert(struct db13* db, db_table_id tid,
+					uchar **col, size_t* size, struct db_stmt* st);
+error13_t db_update_col_byobjid(struct db13* db, db_table_id tid,
+								objid13_t objid, db_colid_t col,
+								uchar *val, size_t size, struct db_stmt* st);
+error13_t db_update(struct db13* db, db_table_id tid,
+					struct db_logic_s iflogic,
+					db_colid_t ncol, db_colid_t* col,
+					uchar** val, size_t* size, struct db_stmt* st);
+error13_t db_delete(struct db13* db, db_table_id tid,
+					int nlogic, struct db_logic_s* logic,
+					struct db_stmt* st);
 
-error13_t db_collect(struct db13* db, db_table_id tid,
-           char** cols,
-           int nlogic, struct db_logic_s* logic,
-           char* sortcol, enum db_sort stype, int nlimit,
-           struct db_stmt* st);
+error13_t db_collect(	struct db13* db, db_table_id tid,
+						char** cols,
+						int nlogic, struct db_logic_s* logic,
+						char* sortcol, enum db_sort stype, int nlimit,
+						struct db_stmt* st);
 
 error13_t db_set_table_slots(struct db13* db, db_table_id ntables);
 error13_t db_get_table_slots(struct db13* db, db_table_id* ntables);
@@ -279,7 +298,8 @@ error13_t db_get_full_table_slots(struct db13* db, db_table_id* ntables);
  *... is the list of columns followed by their properties, comes in order
  * name(char*), type(char*), alias(char*), ref(char*), flags(_colflag_t)
 */
-error13_t db_define_table(struct db13* db, char* name, char* alias, db_tableflag_t flags, db_colid_t ncols, ...);
+error13_t db_define_table(struct db13* db, char* name, char* alias,
+						db_tableflag_t flags, db_colid_t ncols, ...);
 error13_t db_undef_table(struct db13* db, char* name);
 
 error13_t db_istable_physical(struct db13* db, char* name);//check for table existance on disk, returns CONTINUE if table does not exists on disk but there is no other errors
