@@ -1592,3 +1592,79 @@ error13_t acc_user_leave_group(struct access13* ac, char* username, char* group)
     return ret;
 
 }
+
+error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
+						acc_perm_t perm, int _idtype){
+
+	//type 1 user, else group
+
+    struct db_stmt st;
+    struct db_logic_s logic[2];
+    error13_t ret;
+    db_table_id tid;
+    struct user13 usr;
+    struct group13 grp;
+    size_t passlen;
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
+    _deb_usr_chk("got tid %u", tid);
+
+    logic[0].col = db_get_colid_byname(ac->db, tid, "objid");
+    logic.comb = DB_LOGICOMB_AND;
+    logic.flags = 0;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = objid;
+
+	logic[1].col = db_get_colid_byname(ac->db, tid, _type==1?"uid":"gid");
+    logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = 0;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = aclid;
+
+    _deb_usr_chk("collecting...");
+    if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
+        _deb_usr_chk("fails %i", ret);
+        return ret;
+    }
+    _deb_usr_chk("collecting done");
+
+    //TODO: COMPLETE CHECKING THE PERM
+    switch((ret = db_step(&st))){
+        case E13_CONTINUE:
+        db_finalize(&st);
+        ret = E13_OK;
+        break;
+        case E13_OK:
+        _deb_usr_chk("step OK");
+        db_finalize(&st);
+        return e13_error(E13_NOTFOUND);
+        break;
+        default:
+        _deb_usr_chk("step %i", ret);
+        return ret;
+        break;
+    }
+
+    return ret;
+
+
+}
+
+error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name, acc_perm_t perm){
+
+    struct db_logic_s logic[2];
+    error13_t ret;
+    struct user13 usr;
+    struct group13 grp;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+    if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
+		return ret;
+    }
+
+
+
+}
