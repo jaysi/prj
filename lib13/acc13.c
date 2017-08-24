@@ -586,14 +586,106 @@ error13_t acc_group_add(struct access13 *ac, char *name){
 }
 
 //remove all uid record
-error13_t _acc_rm_user_membership(struct access13* ac, char* name, uid13_t uid){
-	struct db_stmt st;
-	return TODO;
+error13_t _acc_rm_user_membership(struct access13* ac, uid13_t uid){
+    struct db_stmt st;
+    struct db_logic_s logic;
+    error13_t ret;
+    db_table_id tid;
+//    struct user13 usr;
+//    size_t passlen;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+//    if((ret = acc_user_chk(ac, uid, &usr)) != E13_OK){
+//		return ret;
+//    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
+    _deb_usr_rm("got tid %u", tid);
+
+    logic.col = db_get_colid_byname(ac->db, tid, "uid");
+    logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = 0;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = uid;
+
+    _deb_usr_rm("collecting...");
+    if((ret = db_delete(ac->db, tid, 1, &logic, &st)) != E13_OK){
+        _deb_usr_rm("fails %i", ret);
+        return ret;
+    }
+    _deb_usr_rm("collecting done");
+
+    switch((ret = db_step(&st))){
+        case E13_CONTINUE:
+        db_finalize(&st);
+        ret = E13_OK;
+        break;
+        case E13_OK:
+        _deb_usr_rm("step OK");
+        db_finalize(&st);
+        return e13_error(E13_NOTFOUND);
+        break;
+        default:
+        _deb_usr_rm("step %i", ret);
+        return ret;
+        break;
+    }
+
+    return ret;
 }
 
-error13_t _acc_rm_group_membership(struct access13* ac, char* name, gid13_t gid){
-	struct db_stmt st;
-	return TODO;
+error13_t _acc_rm_group_membership(struct access13* ac, gid13_t gid){
+    struct db_stmt st;
+    struct db_logic_s logic;
+    error13_t ret;
+    db_table_id tid;
+//    struct group13 grp;
+//    size_t passlen;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+//    if((ret = acc_group_chk(ac, group, &grp)) != E13_OK){
+//		return ret;
+//    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
+    _deb_grp_rm("got tid %u", tid);
+
+    logic.col = db_get_colid_byname(ac->db, tid, "gid");
+    logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = 0;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = gid;
+
+    _deb_grp_rm("collecting...");
+    if((ret = db_delete(ac->db, tid, 1, &logic, &st)) != E13_OK){
+        _deb_grp_rm("fails %i", ret);
+        return ret;
+    }
+    _deb_grp_rm("collecting done");
+
+    switch((ret = db_step(&st))){
+        case E13_CONTINUE:
+        db_finalize(&st);
+        ret = E13_OK;
+        break;
+        case E13_OK:
+        _deb_grp_rm("step OK");
+        db_finalize(&st);
+        return e13_error(E13_NOTFOUND);
+        break;
+        default:
+        _deb_grp_rm("step %i", ret);
+        return ret;
+        break;
+    }
+
+    return ret;
 }
 
 //TODO: remove all user membership
@@ -622,7 +714,7 @@ error13_t acc_group_rm(struct access13 *ac, char *name){
 
     if(group.stt == ACC_GRP_STT_REMOVED) return e13_error(E13_OK);
 
-    _acc_rm_user_group_membership(ac, name);
+    if((ret = _acc_rm_group_membership(ac, group.gid)) != E13_OK) return ret;
 
     stt = ACC_GRP_STT_REMOVED;
     logic.col = db_get_colid_byname(ac->db, tid, "id");
@@ -1064,6 +1156,8 @@ error13_t acc_user_rm(struct access13 *ac, char *name){
     }
 
     if(user.stt == ACC_USR_STT_REMOVED) return e13_error(E13_OK);
+
+    if((ret = _acc_rm_user_membership(ac, user.uid)) != E13_OK) return ret;
 
     stt = ACC_USR_STT_REMOVED;
     logic.col = db_get_colid_byname(ac->db, tid, "id");
@@ -1666,5 +1760,5 @@ error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name, ac
     }
 
 
-
+    TODO...
 }

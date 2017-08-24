@@ -1,7 +1,7 @@
 /*
 
 --] The RoadMap
-	+ MAKE user/group membership in ACC13
+	+ MAKE user/group membership in ACC13 -- DONE, NOT TESTED
 	+ MAKE permission management subsystem in ACC13 based on LINUX
 	+ REMOVE console and other unnecessatry code from MONET
 	+ ADD build-test-framework to MONET
