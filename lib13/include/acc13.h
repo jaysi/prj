@@ -112,6 +112,7 @@ struct acc_acl_entry{
     error13_t acc_group_chk(struct access13* ac, char* name, struct group13 *group);
     error13_t acc_group_list(struct access13* ac, gid13_t* n, struct group13 **group);
     error13_t acc_group_list_free(struct group13* group);
+    error13_t acc_gid_chk(struct access13* ac, gid13_t gid, struct group13* group);
 
     error13_t acc_user_add(struct access13* ac, char* name, char* password);
     error13_t acc_user_rm(struct access13* ac, char* name);
@@ -119,10 +120,13 @@ struct acc_acl_entry{
     error13_t acc_user_chk(struct access13* ac, char* name, struct user13 *user);
     error13_t acc_user_list(struct access13* ac, uid13_t* n, struct user13 **user);
     error13_t acc_user_list_free(struct user13* user);
+    error13_t acc_uid_chk(struct access13* ac, uid13_t uid, struct user13 *user);//TODO
 
     error13_t acc_user_join_group(struct access13* ac, char* username, char* group);
     error13_t acc_user_leave_group(struct access13* ac, char* username, char* group);
     error13_t acc_user_group_check(struct access13* ac, char* username, char* group);
+    error13_t acc_user_group_list(struct access13 *ac, char *username, struct group13** grouplist, int resolve_name);
+    error13_t acc_group_user_list(struct access13 *ac, char *groupname, struct user13** userlist, int resolve_name);//TODO
 
     error13_t acc_user_login(struct access13* ac, char* username, char* password, uid13_t* uid);
     error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid);

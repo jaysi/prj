@@ -787,6 +787,60 @@ error13_t acc_group_chk(struct access13 *ac, char *name, struct group13* group){
     return ret;
 }
 
+error13_t acc_gid_chk(struct access13 *ac, gid13_t gid, struct group13* group){
+
+    struct db_stmt st;
+    struct db_logic_s logic;
+    error13_t ret;
+    db_table_id tid;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_GROUP);
+    _deb_grp_chk("got tid %u", tid);
+    if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
+
+    logic.col = db_get_colid_byname(ac->db, tid, "gid");
+    _deb_grp_chk("logic.col %u", logic.col);
+    logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = 0;
+    logic.logic = DB_LOGIC_LIKE;
+    logic.ival = gid;
+
+    _deb_grp_chk("collecting...");
+    if((ret = db_collect(ac->db, tid, NULL, 1, &logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
+        _deb_grp_chk("fails %i", ret);
+        return ret;
+    }
+    _deb_grp_chk("collecting done");
+
+    switch((ret = db_step(&st))){
+        case E13_CONTINUE:
+        _deb_grp_chk("step CONTINUE");
+        ret = db_column_text(&st, db_get_colid_byname(ac->db, tid, "name"), NULL, &group->name);
+        if(ret == E13_OK){
+            _deb_grp_chk("id %u", group->gid);
+            ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "stat"), &group->stt);
+            _deb_grp_chk("stat %i (%s)", group->stt, ret == E13_OK?"OK":"NOK");
+        }
+        db_finalize(&st);
+        break;
+        case E13_OK:
+        _deb_grp_chk("step OK");
+        db_finalize(&st);
+        return e13_error(E13_NOTFOUND);
+        break;
+        default:
+        _deb_grp_chk("step %i", ret);
+        return ret;
+        break;
+    }
+
+    return ret;
+}
+
 error13_t acc_group_list(struct access13 *ac, gid13_t *n, struct group13 **group){
 
     struct db_stmt st;
@@ -1470,6 +1524,80 @@ error13_t acc_destroy(struct access13* ac){
 	return e13_error(E13_IMPLEMENT);
 }
 
+error13_t acc_user_group_list(struct access13 *ac, char *username, struct group13** grouplist, int resolve_gid){
+
+    struct db_stmt st;
+    struct db_logic_s logic[2];
+    error13_t ret;
+    db_table_id tid;
+    struct user13 usr;
+    struct group13* grp, *gl_last, gtmp;
+    size_t passlen;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+    if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
+		return ret;
+    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
+    _deb_usr_chk("got tid %u", tid);
+
+    logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
+    logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = 0;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = usr.uid;
+
+    _deb_usr_chk("collecting...");
+    if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
+        _deb_usr_chk("fails %i", ret);
+        return ret;
+    }
+    _deb_usr_chk("collecting done");
+
+    *grouplist = NULL;
+    switch((ret = db_step(&st))){
+        case E13_CONTINUE:
+        *grp = (struct group13*)m13_malloc(sizeof(struct group13));
+        grp->next = NULL;
+
+        if(db_column_int(&st, db_get_colid_byname(ac->db, tid, "gid"), &grp->gid) != E13_OK){
+            grp->gid = GID13_INVAL;
+        }
+
+        if(resolve_gid){
+            if(acc_gid_chk(ac, grp->gid, &gtmp) == E13_OK){
+                grp->name = s13_malloc_strcpy(gtmp->name, 0);
+            }
+        } else {
+            grp->name = NULL;
+        }
+
+        if(!(*grouplist)) {
+                *grouplist = grp;
+                gl_last = grp;
+        } else {
+            gl_last->next = grp;
+            gl_last = grp;
+        }
+        break;
+        case E13_OK:
+        _deb_usr_chk("step OK");
+        db_finalize(&st);
+        return E13_OK;
+        break;
+        default:
+        _deb_usr_chk("step %i", ret);
+        return ret;
+        break;
+    }
+
+    return ret;
+}
+
 error13_t acc_user_group_check(struct access13 *ac, char *username, char* group){
 
     struct db_stmt st;
@@ -1740,7 +1868,6 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
     }
 
     return ret;
-
 
 }
 
