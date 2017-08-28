@@ -125,8 +125,8 @@ struct acc_acl_entry{
     error13_t acc_user_join_group(struct access13* ac, char* username, char* group);
     error13_t acc_user_leave_group(struct access13* ac, char* username, char* group);
     error13_t acc_user_group_check(struct access13* ac, char* username, char* group);
-    error13_t acc_user_group_list(struct access13 *ac, char *username, struct group13** grouplist, int resolve_name);
-    error13_t acc_group_user_list(struct access13 *ac, char *groupname, struct user13** userlist, int resolve_name);//TODO
+    error13_t acc_user_group_list(struct access13 *ac, char *username, struct group13** grouplist, int resolve_gid);
+    error13_t acc_group_user_list(struct access13 *ac, char *groupname, struct user13** userlist, int resolve_uid);//TODO
 
     error13_t acc_user_login(struct access13* ac, char* username, char* password, uid13_t* uid);
     error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid);

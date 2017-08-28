@@ -1,4 +1,4 @@
-﻿//TODO: VERY IMPORTANT! IGNORE FAKE COLS in physical acts!!!
+//TODO: VERY IMPORTANT! IGNORE FAKE COLS in physical acts!!!
 
 #include <string.h>
 #include "include/db13i.h"
@@ -1625,13 +1625,29 @@ bind_data:
     break;
 
     default:
-        return e13_ierror(&db->e, E13_IMPLEMENT, "s", msg13(M13_DRIVERNOTSUPPORTED));
+        return e13_ierror(&db->e, E13_IMPLEMENT, "s",
+						msg13(M13_DRIVERNOTSUPPORTED));
         break;
 
     } //switch(db->driver);
 
     return E13_OK;
 
+}
+
+error13_t _db_assert_logic(int nlogic, struct db_logic_s* logic){
+    int i;
+
+    for(i = 0; i < nlogic; i++){
+        if(
+           (logic[i].flags&DB_LOGICF_COL_CMP && logic[i].logic==DB_LOGIC_LIKE)||
+           ((logic[i].logic!=DB_LOGIC_LIKE&& logic[i].logic!=DB_LOGIC_NOTLIKE)&&
+			!(logic[i].flags & DB_LOGICF_COL_CMP))
+           ) return e13_error(E13_MISUSE);
+
+    }
+
+    return E13_OK;
 }
 
 error13_t db_collect(	struct db13* db, db_table_id tid,
@@ -1650,6 +1666,8 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
     case DB_DRV_CLS_SQL:
 
 #define RLEN (MAXSQL - len)
+
+	if(_db_assert_logic(nlogic, logic) != E13_OK) return e13_error(E13_MISUSE);
 
     snprintf(sql + len, RLEN, "SELECT ");
     len = strlen(sql);

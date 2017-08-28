@@ -1,4 +1,4 @@
-﻿#ifndef DB13I_H
+#ifndef DB13I_H
 #define DB13I_H
 
 #include "db13.h"
@@ -57,6 +57,7 @@ struct db_logic_comb_s{
 #endif
 
 error13_t _db_create_table_range(struct db13* db, db_table_id start, db_table_id end);
+error13_t _db_assert_logic(int nlogic, struct db_logic_s* logic);
 
 #ifdef __cplusplus
     }
