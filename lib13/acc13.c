@@ -1322,7 +1322,8 @@ error13_t acc_uid_chk(struct access13 *ac, uid13_t uid, struct user13* user){
     logic.ival = uid;
 
     _deb_usr_chk("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 1, &logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
+    if((ret = db_collect(ac->db, tid, NULL, 1, &logic,NULL,DB_SO_DONT,0,&st)) !=
+		E13_OK){
         _deb_usr_chk("fails %i", ret);
         return ret;
     }
@@ -1331,23 +1332,30 @@ error13_t acc_uid_chk(struct access13 *ac, uid13_t uid, struct user13* user){
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
         _deb_usr_chk("step CONTINUE");
-        ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "id"), (int*)&user->uid);
+        ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "id"),
+							(int*)&user->uid);
         if(ret == E13_OK){
             _deb_usr_chk("id %u", user->uid);
-            ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "stat"), &user->stt);
+            ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "stat"),
+								&user->stt);
             _deb_usr_chk("stat %i (%s)", user->stt, ret == E13_OK?"OK":"NOK");
         }
         if(ret == E13_OK){
-			_deb_usr_chk("checking getting passhash, colid = %u", db_get_colid_byname(ac->db, tid, "pass"));
-            ret = db_column_text(&st, db_get_colid_byname(ac->db, tid, "pass"), &passlen, &user->passhash);
+			_deb_usr_chk("checking getting passhash, colid = %u",
+							db_get_colid_byname(ac->db, tid, "pass"));
+            ret = db_column_text(&st, db_get_colid_byname(ac->db, tid, "pass"),
+								&passlen, &user->passhash);
         }
         if(ret == E13_OK){
 			_deb_usr_chk("passhash (%s)", user->passhash);
-            ret = db_column_date(&st, db_get_colid_byname(ac->db, tid, "lastdate"), user->lastdate);
-            _deb_usr_chk("date(j) (%i/%i/%i)", user->lastdate[0], user->lastdate[1], user->lastdate[2]);
+            ret = db_column_date(&st,db_get_colid_byname(ac->db,tid,"lastdate"),
+								user->lastdate);
+            _deb_usr_chk("date(j) (%i/%i/%i)", user->lastdate[0],
+						user->lastdate[1], user->lastdate[2]);
         }
         if(ret == E13_OK){
-            ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "lasttime"), (int*)&user->lasttime);
+            ret = db_column_int(&st, db_get_colid_byname(ac->db,tid,"lasttime"),
+								(int*)&user->lasttime);
             _deb_usr_chk("lasttime %i ", user->lasttime);
         }
 
@@ -1396,7 +1404,8 @@ error13_t acc_user_list(struct access13 *ac, uid13_t *n, struct user13 **user){
     logic.logic = DB_LOGIC_NE;
 
     _deb_usr_list("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 1, &logic, "name", DB_SO_INC, 0, &st)) != E13_OK){
+    if((ret = db_collect(ac->db, tid, NULL,1,&logic,"name",DB_SO_INC,0,&st)) !=
+		E13_OK){
         _deb_usr_list("fails@here");
         return ret;
     }
@@ -1407,14 +1416,17 @@ error13_t acc_user_list(struct access13 *ac, uid13_t *n, struct user13 **user){
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
         _deb_usr_list("step CONTINUE");
-        ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "id"), (int*)&id);
+        ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "id"),
+							(int*)&id);
         if(ret == E13_OK){
             _deb_usr_list("id ok, %u", id);
-            ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "stat"), &stt);
+            ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "stat"),
+								&stt);
         }
         if(ret == E13_OK){
             _deb_usr_list("stat ok, %i", stt);
-            ret = db_column_text(&st, db_get_colid_byname(ac->db, tid, "name"), &slen, &s);
+            ret = db_column_text(&st, db_get_colid_byname(ac->db, tid, "name"),
+								&slen, &s);
         }
         if(ret == E13_OK){
             _deb_usr_list("name ok: %s", s);
@@ -1496,7 +1508,7 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
 
     if(user.stt == ACC_USR_STT_IN) return e13_error(E13_EXISTS);
 
-    _deb_acc_login("login request username %s, password %s", username, password);
+    _deb_acc_login("login request username %s, password %s", username,password);
 
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
 
@@ -1593,7 +1605,8 @@ error13_t acc_destroy(struct access13* ac){
 	return e13_error(E13_IMPLEMENT);
 }
 
-error13_t acc_user_group_list(struct access13 *ac, char *username, struct group13** grouplist, int resolve_gid){
+error13_t acc_user_group_list(struct access13 *ac, char *username,
+							struct group13** grouplist, int resolve_gid){
 
     struct db_stmt st;
     struct db_logic_s logic[2];
@@ -1667,7 +1680,8 @@ error13_t acc_user_group_list(struct access13 *ac, char *username, struct group1
     return ret;
 }
 
-error13_t acc_group_user_list(struct access13 *ac, char *groupname, struct user13** userlist, int resolve_uid){
+error13_t acc_group_user_list(struct access13 *ac, char *groupname,
+							struct user13** userlist, int resolve_uid){
 
     struct db_stmt st;
     struct db_logic_s logic[2];
@@ -1694,7 +1708,8 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname, struct user1
     logic.ival = grp.gid;
 
     _deb_usr_chk("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
+    if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL,DB_SO_DONT,0,&st)) !=
+		E13_OK){
         _deb_usr_chk("fails %i", ret);
         return ret;
     }
@@ -1706,7 +1721,8 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname, struct user1
         *usr = (struct user13*)m13_malloc(sizeof(struct user13));
         usr->next = NULL;
 
-        if(db_column_int(&st, db_get_colid_byname(ac->db, tid, "uid"), &usr->uid) != E13_OK){
+        if(db_column_int(&st,db_get_colid_byname(ac->db,tid,"uid"),&usr->uid) !=
+			E13_OK){
             usr->uid = UID13_INVAL;
         }
 
@@ -1740,7 +1756,7 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname, struct user1
     return ret;
 }
 
-error13_t acc_user_group_check(struct access13 *ac, char *username, char* group){
+error13_t acc_user_group_check(struct access13 *ac, char *username,char* group){
 
     struct db_stmt st;
     struct db_logic_s logic[2];
@@ -1777,7 +1793,8 @@ error13_t acc_user_group_check(struct access13 *ac, char *username, char* group)
     logic.ival = grp.gid;
 
     _deb_usr_chk("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
+    if((ret = db_collect(ac->db, tid, NULL, 2, logic,NULL,DB_SO_DONT,0,&st)) !=
+		E13_OK){
         _deb_usr_chk("fails %i", ret);
         return ret;
     }
@@ -1894,7 +1911,7 @@ error13_t acc_user_join_group(struct access13* ac, char* username, char* group){
     return E13_OK;
 }
 
-error13_t acc_user_leave_group(struct access13* ac, char* username, char* group){
+error13_t acc_user_leave_group(struct access13* ac, char* username,char* group){
 
     struct db_stmt st;
     struct db_logic_s logic[2];
@@ -1969,6 +1986,7 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
     struct user13 usr;
     struct group13 grp;
     size_t passlen;
+    int dbperm;
 
     tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
     _deb_usr_chk("got tid %u", tid);
@@ -1986,7 +2004,8 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
     logic.ival = aclid;
 
     _deb_usr_chk("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
+    if((ret = db_collect(ac->db, tid, NULL, 2, logic,NULL,DB_SO_DONT,0,&st)) !=
+		E13_OK){
         _deb_usr_chk("fails %i", ret);
         return ret;
     }
@@ -1995,8 +2014,11 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
     //TODO: COMPLETE CHECKING THE PERM
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
+        ret = db_column_int(&st,db_get_colid_byname(ac->db,tid,"perm"),&dbperm);
+        if(ret == E13_OK){
+            if(!((acc_perm_t)dbperm & perm)) ret = e13_error(E13_PERM);
+        }
         db_finalize(&st);
-        ret = E13_OK;
         break;
         case E13_OK:
         _deb_usr_chk("step OK");
@@ -2013,7 +2035,8 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
 
 }
 
-error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name, acc_perm_t perm){
+error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name,
+							acc_perm_t perm){
 
     struct db_logic_s logic[2];
     error13_t ret;
@@ -2027,7 +2050,6 @@ error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name, ac
     if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
 		return ret;
     }
-
 
     TODO...
 }
