@@ -445,6 +445,7 @@ static inline error13_t _acc_get_free_gid(struct access13* ac, gid13_t* id){
         _deb_get_free_gid("step CONTINUE");
         ret = db_column_int(&st, cid, (int*)id);
         (*id)++;
+        if(*id == GID13_ANY) ret = e13_error(E13_FULL);
         _deb_get_free_gid("id %u, fin", *id);
         db_finalize(&st);
         break;
@@ -1018,6 +1019,7 @@ static inline error13_t _acc_get_free_uid(struct access13* ac, uid13_t* id){
         _deb_get_free_uid("step CONTINUE");
         ret = db_column_int(&st, cid, (int*)id);
         (*id)++;
+        if(*id == UID13_ANY) ret = e13_error(E13_FULL);
         _deb_get_free_uid("id %u, fin", *id);
         db_finalize(&st);
         break;
@@ -1975,7 +1977,7 @@ error13_t acc_user_leave_group(struct access13* ac, char* username,char* group){
 }
 
 error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
-						acc_perm_t perm, int _idtype){
+						acc_perm_t* perm, int _idtype){
 
 	//type 1 user, else group
 
@@ -2014,10 +2016,7 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
     //TODO: COMPLETE CHECKING THE PERM
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
-        ret = db_column_int(&st,db_get_colid_byname(ac->db,tid,"perm"),&dbperm);
-        if(ret == E13_OK){
-            if(!((acc_perm_t)dbperm & perm)) ret = e13_error(E13_PERM);
-        }
+        ret = db_column_int(&st, db_get_colid_byname(ac->db,tid,"perm"), perm);
         db_finalize(&st);
         break;
         case E13_OK:
@@ -2035,7 +2034,7 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
 
 }
 
-error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name,
+error13_t acc_perm_user_chk(struct access13* ac,objid13_t objid, char* username,
 							acc_perm_t perm){
 
     struct db_logic_s logic[2];
@@ -2051,5 +2050,13 @@ error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name,
 		return ret;
     }
 
-    TODO...
+    //1. load all acl entries to objid
+    //2. the rules are
+    //	a. if the user access is denied, fail
+	//	b. if the user access is permitted, success
+	//	c. if one of the groups in the user membership list is allowed, success
+	//	d. fail
+	//3. special users/groups: allusers/allgroups
+
+
 }

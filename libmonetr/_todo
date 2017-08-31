@@ -6,7 +6,8 @@
 	+ REMOVE console and other unnecessatry code from MONET
 	+ ADD build-test-framework to MONET
 	+ ADD user/group/perm add/rm/chg/chk support to MONET
-	+ MAKE SESSION add/rm/pause/resume/chg/chk subsystem
+	+ MAKE SESSION a
+	dd/rm/pause/resume/chg/chk subsystem
 	+ MAKE MODULE add/rm/open/close/pause/resume/chg/chk subsystem
 
 //+ write poll link remove

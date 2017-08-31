@@ -7,5 +7,6 @@
 		<Project filename="temo.cbp" />
 		<Project filename="../sqlite/sqlite.cbp" />
 		<Project filename="../libntru/libntru.cbp" />
+		<Project filename="../accon/accon.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
