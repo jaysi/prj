@@ -1504,7 +1504,7 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
         return e13_error(E13_MISUSE);
     }
 
-    if((ret = acc_user_chk(ac, name, &user)) != E13_OK){
+    if((ret = acc_user_chk(ac, username, &user)) != E13_OK){
         return ret;
     }
 
@@ -1553,12 +1553,13 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
     struct db_logic_s logic;
     db_colid_t colid[3];
     error13_t ret;
+    struct user13 user;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
     }
 
-    if((ret = acc_user_chk(ac, name, &user)) != E13_OK){
+    if((ret = acc_user_chk(ac, username, &user)) != E13_OK){
         return ret;
     }
 
@@ -1630,10 +1631,10 @@ error13_t acc_user_group_list(struct access13 *ac, char *username,
     _deb_usr_chk("got tid %u", tid);
 
     logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = usr.uid;
+    logic[0].comb = DB_LOGICOMB_NONE;
+    logic[0].flags = DB_LOGICF_COL_CMP;
+    logic[0].logic = DB_LOGIC_EQ;
+    logic[0].ival = usr.uid;
 
     _deb_usr_chk("collecting...");
     if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
@@ -1645,7 +1646,7 @@ error13_t acc_user_group_list(struct access13 *ac, char *username,
     *grouplist = NULL;
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
-        *grp = (struct group13*)m13_malloc(sizeof(struct group13));
+        grp = (struct group13*)m13_malloc(sizeof(struct group13));
         grp->next = NULL;
 
         if(db_column_int(&st, db_get_colid_byname(ac->db, tid, "gid"), &grp->gid) != E13_OK){
@@ -1654,7 +1655,7 @@ error13_t acc_user_group_list(struct access13 *ac, char *username,
 
         if(resolve_gid){
             if(acc_gid_chk(ac, grp->gid, &gtmp) == E13_OK){
-                grp->name = s13_malloc_strcpy(gtmp->name, 0);
+                grp->name = s13_malloc_strcpy(gtmp.name, 0);
             }
         } else {
             grp->name = NULL;
@@ -1690,7 +1691,7 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname,
     error13_t ret;
     db_table_id tid;
     struct group13 grp;
-    struct group13* usr, *ul_last, utmp;
+    struct user13* usr, *ul_last, utmp;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -1704,10 +1705,10 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname,
     _deb_usr_chk("got tid %u", tid);
 
     logic[0].col = db_get_colid_byname(ac->db, tid, "gid");
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = grp.gid;
+    logic[0].comb = DB_LOGICOMB_NONE;
+    logic[0].flags = DB_LOGICF_COL_CMP;
+    logic[0].logic = DB_LOGIC_EQ;
+    logic[0].ival = grp.gid;
 
     _deb_usr_chk("collecting...");
     if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL,DB_SO_DONT,0,&st)) !=
@@ -1720,7 +1721,7 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname,
     *userlist = NULL;
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
-        *usr = (struct user13*)m13_malloc(sizeof(struct user13));
+        usr = (struct user13*)m13_malloc(sizeof(struct user13));
         usr->next = NULL;
 
         if(db_column_int(&st,db_get_colid_byname(ac->db,tid,"uid"),&usr->uid) !=
@@ -1730,7 +1731,7 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname,
 
         if(resolve_uid){
             if(acc_uid_chk(ac, usr->uid, &utmp) == E13_OK){
-                usr->name = s13_malloc_strcpy(utmp->name, 0);
+                usr->name = s13_malloc_strcpy(utmp.name, 0);
             }
         } else {
             usr->name = NULL;
@@ -1783,16 +1784,16 @@ error13_t acc_user_group_check(struct access13 *ac, char *username,char* group){
     _deb_usr_chk("got tid %u", tid);
 
     logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
-    logic.comb = DB_LOGICOMB_AND;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = usr.uid;
+    logic[0].comb = DB_LOGICOMB_AND;
+    logic[0].flags = DB_LOGICF_COL_CMP;
+    logic[0].logic = DB_LOGIC_EQ;
+    logic[0].ival = usr.uid;
 
     logic[1].col = db_get_colid_byname(ac->db, tid, "gid");
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = grp.gid;
+    logic[1].comb = DB_LOGICOMB_NONE;
+    logic[1].flags = DB_LOGICF_COL_CMP;
+    logic[1].logic = DB_LOGIC_EQ;
+    logic[1].ival = grp.gid;
 
     _deb_usr_chk("collecting...");
     if((ret = db_collect(ac->db, tid, NULL, 2, logic,NULL,DB_SO_DONT,0,&st)) !=
@@ -1830,6 +1831,9 @@ error13_t acc_user_join_group(struct access13* ac, char* username, char* group){
     struct user13 usr;
     struct group13 grp;
     size_t passlen;
+    char stt;
+    uchar* cols[6];
+    size_t size[6];
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -1889,12 +1893,12 @@ error13_t acc_user_join_group(struct access13* ac, char* username, char* group){
 
 */
 
-    stat = ACC_MEMS_STT_ACTIVE;
+    stt = ACC_MEMS_STT_ACTIVE;
     cols[0] = (uchar*)&ac->regid;
 	cols[1] = NULL;/*(uchar*)&nrow;*/
-    cols[2] = (uchar*)&gid;
-    cols[3] = (uchar*)&uid;
-    cols[4] = (uchar*)&stat;
+    cols[2] = (uchar*)&grp.gid;
+    cols[3] = (uchar*)&usr.uid;
+    cols[4] = (uchar*)&stt;
     cols[5] = NULL;/*(uchar*)&flags;*/
     size[0] = sizeof(regid_t);
 //    size[1] = sizeof(int);
@@ -1938,16 +1942,16 @@ error13_t acc_user_leave_group(struct access13* ac, char* username,char* group){
     _deb_usr_chk("got tid %u", tid);
 
     logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
-    logic.comb = DB_LOGICOMB_AND;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = usr.uid;
+    logic[0].comb = DB_LOGICOMB_AND;
+    logic[0].flags = DB_LOGICF_COL_CMP;
+    logic[0].logic = DB_LOGIC_EQ;
+    logic[0].ival = usr.uid;
 
     logic[1].col = db_get_colid_byname(ac->db, tid, "gid");
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = grp.gid;
+    logic[1].comb = DB_LOGICOMB_NONE;
+    logic[1].flags = DB_LOGICF_COL_CMP;
+    logic[1].logic = DB_LOGIC_EQ;
+    logic[1].ival = grp.gid;
 
     _deb_usr_chk("collecting...");
     if((ret = db_delete(ac->db, tid, 2, logic, &st)) != E13_OK){
@@ -1994,16 +1998,16 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
     _deb_usr_chk("got tid %u", tid);
 
     logic[0].col = db_get_colid_byname(ac->db, tid, "objid");
-    logic.comb = DB_LOGICOMB_AND;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = objid;
+    logic[0].comb = DB_LOGICOMB_AND;
+    logic[0].flags = DB_LOGICF_COL_CMP;
+    logic[0].logic = DB_LOGIC_EQ;
+    logic[0].ival = objid;
 
-	logic[1].col = db_get_colid_byname(ac->db, tid, _type==1?"uid":"gid");
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = aclid;
+	logic[1].col = db_get_colid_byname(ac->db, tid, _idtype==1?"uid":"gid");
+    logic[1].comb = DB_LOGICOMB_NONE;
+    logic[1].flags = DB_LOGICF_COL_CMP;
+    logic[1].logic = DB_LOGIC_EQ;
+    logic[1].ival = aclid;
 
     _deb_usr_chk("collecting...");
     if((ret = db_collect(ac->db, tid, NULL, 2, logic,NULL,DB_SO_DONT,0,&st)) !=

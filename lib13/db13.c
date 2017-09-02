@@ -2012,5 +2012,6 @@ error13_t db_istable_physical(struct db13 *db, char *name){
         break;
     }
 
+	return e13_error(E13_UNK);
 }
 

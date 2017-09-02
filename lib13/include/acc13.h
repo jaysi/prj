@@ -3,6 +3,7 @@
 
 #include "type13.h"
 #include "hash13.h"
+#include "obj13.h"
 
 #define UID13_INVAL ((uint32_t)-1)
 #define GID13_INVAL ((uint32_t)-1)
