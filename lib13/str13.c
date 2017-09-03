@@ -595,7 +595,8 @@ error13_t s13_proglist_add(struct s13_proglist list, char* string, size_t len){
         list.buf = realloc(list.buf, list.bufsize + list.chunk);
         if(!list.buf) return e13_error(E13_NOMEM);
     }
-    memcpy()
+//    memcpy() TODO
+	return e13_error(E13_IMPLEMENT);
 }
 
 #ifdef TEST

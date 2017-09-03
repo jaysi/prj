@@ -22,6 +22,26 @@ enum cmd_code {
 	CODE_EMPTY,
 	CODE_HELP,
 	CODE_EXIT,
+	CODE_OPEN,
+	CODE_CLOSE,
+	CODE_GROUPADD,
+	CODE_RMGROUP,
+	CODE_GROUPSET,
+	CODE_GROUPCHK,
+    CODE_GROUPLIST,
+	CODE_USERADD,
+	CODE_RMUSER,
+	CODE_USERSET,
+	CODE_USERCHK,
+    CODE_USERLIST,
+    CODE_LOGIN,
+    CODE_LOGOUT,
+    CODE_PERM_USER_CHK,
+    CODE_PERM_USER_ADD,
+    CODE_PERM_USER_RM,
+    CODE_PERM_GROUP_CHK,
+    CODE_PERM_GROUP_ADD,
+    CODE_PERM_GROUP_RM,
 	CODE_INVAL
 };
 
@@ -29,7 +49,7 @@ struct _cmd {
     enum cmd_code code;
     char* cmd[10];
     char* desc;
-    char* usage;
+    char* syntax;
 } cmd[] = {
 	{
 			CODE_EMPTY,
@@ -42,10 +62,10 @@ struct _cmd {
 	{
 			CODE_HELP,
 			{
-            "?", "help", NULL
+            "help", "?", NULL
 			},
 			"prints help message",
-			"type it!"
+			"help"
 
 	},
 	{
@@ -54,7 +74,117 @@ struct _cmd {
             "quit", "exit", NULL
 			},
 			"exit the program",
-			"type it!"
+			"exit"
+
+	},
+	{
+			CODE_OPEN,
+			{
+            "open", NULL
+			},
+			"open database",
+			"open \'filename\'"
+
+	},
+	{
+			CODE_CLOSE,
+			{
+            "close", NULL
+			},
+			"close database",
+			"close"
+
+	},
+	{
+			CODE_GROUPADD,
+			{
+            "groupadd", "gadd", NULL
+			},
+			"add group(s)",
+			"groupadd \'groupname1\' \'groupname2\' ..."
+
+	},
+
+	{
+			CODE_RMGROUP,
+			{
+            "rmgroup", "grm", "grouprm", "rmg", "delgroup", "groupdel", "gdel", "delg", NULL
+			},
+			"removes group(s)",
+			"rmgroup \'groupname1\' \'groupname2\' ..."
+
+	},
+	{
+			CODE_GROUPSET,
+			{
+            "groupset", "gset", NULL
+			},
+			"sets group config",
+			"groupset \'groupname\'"
+
+	},
+	{
+			CODE_GROUPLIST,
+			{
+            "grouplist", "glist", NULL
+			},
+			"lists groups",
+			"grouplist"
+
+	},
+	{
+			CODE_USERADD,
+			{
+            "useradd", "uadd", NULL
+			},
+			"add user(s)",
+			"useradd \'username1\' \'username2\' ..."
+
+	},
+
+	{
+			CODE_RMUSER,
+			{
+            "rmuser", "urm", "userrm", "rmu", "deluser", "userdel", "udel", "delu", NULL
+			},
+			"removes user(s)",
+			"rmuser \'username1\' \'username2\' ..."
+
+	},
+	{
+			CODE_USERSET,
+			{
+            "userset", "uset", NULL
+			},
+			"sets user config",
+			"userset \'username\'"
+
+	},
+	{
+			CODE_USERLIST,
+			{
+            "userlist", "ulist", NULL
+			},
+			"lists users",
+			"userlist"
+
+	},
+	{
+			CODE_LOGIN,
+			{
+            "login", "lin", NULL
+			},
+			"login user",
+			"login \'username1\' \'password1\' \'username2\' \'password2\' ..."
+
+	},
+	{
+			CODE_LOGOUT,
+			{
+            "logout", "lout", NULL
+			},
+			"logout user",
+			"logout \'username1\' \'username2\' ..."
 
 	},
 	{
@@ -100,7 +230,7 @@ int help(){
 			i++;
 		}
 		printo("\ndescription: %s", c->desc);
-		printo("\nusage: %s\n", c->usage);
+		printo("\nsyntax: %s\n", c->syntax);
 	}
 	return 0;
 }
@@ -108,7 +238,6 @@ int help(){
 int main(int argc, char* argv[])
 {
 	char input[MAX_INPUT];
-	char cmd[MAX_CMD];
 	int n;
 	char** ary;
 
@@ -140,6 +269,8 @@ show_prompt:
 		printo("unknown input %s\n", input);
 		break;
 	}
+
+	s13_free_exmem(ary);
 
 	goto show_prompt;
 

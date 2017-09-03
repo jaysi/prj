@@ -174,3 +174,142 @@
 	<stdio.h>
 	<stdlib.h>
 
+1504421104 source:c:\intel\dev\prj\lib13\db13.c
+	<string.h>
+	"include/db13i.h"
+	"include/msg13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/bit13.h"
+	"include/day13.h"
+	"include/debug13.h"
+
+1504065628 c:\intel\dev\prj\lib13\include\db13i.h
+	"db13.h"
+	"error13.h"
+
+1418224194 c:\intel\dev\prj\lib13\include\msg13.h
+
+1360163874 source:c:\intel\dev\prj\lib13\des.c
+	"include/des.h"
+	<string.h>
+	<stdio.h>
+
+1359982530 c:\intel\dev\prj\lib13\include\des.h
+	"type13.h"
+
+1494765352 source:c:\intel\dev\prj\lib13\error13.c
+	<error.h>
+	<errno.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	"include/error13.h"
+	"include/str13.h"
+	"include/mem13.h"
+	"include/debug13.h"
+
+1393572674 source:c:\intel\dev\prj\lib13\hash13.c
+	"include/hash13i.h"
+	"include/end13.h"
+
+1358867464 c:\intel\dev\prj\lib13\include\hash13i.h
+	"hash13.h"
+
+1360007150 source:c:\intel\dev\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1481115180 source:c:\intel\dev\prj\lib13\io13.c
+	<unistd.h>
+	<errno.h>
+	<sys/types.h>
+	<stdio.h>
+	<string.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<sys/time.h>
+	<io.h>
+	<fcntl.h>
+	"include/io13i.h"
+	"include/path13.h"
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/str13.h"
+	"include/pack13.h"
+
+1360221102 c:\intel\dev\prj\lib13\include\io13i.h
+	"io13.h"
+
+1422876110 source:c:\intel\dev\prj\lib13\io13i.c
+
+1418304524 source:c:\intel\dev\prj\lib13\lib13.c
+
+1475141382 source:c:\intel\dev\prj\lib13\lock13.c
+	"include/const13.h"
+	"include/mem13.h"
+
+1480603930 source:c:\intel\dev\prj\lib13\mem13.c
+	<stddef.h>
+	<string.h>
+	<stdarg.h>
+	<stdlib.h>
+	"include/debug13.h"
+	"include/mem13.h"
+	"include/error13.h"
+	"include/bit13.h"
+
+1420986694 source:c:\intel\dev\prj\lib13\num2text.c
+	"include/str13.h"
+	<stdio.h>
+	<string.h>
+	<assert.h>
+
+1444229212 source:c:\intel\dev\prj\lib13\obj13.c
+	"include/mem13.h"
+	<assert.h>
+	<stdlib.h>
+
+1481009820 source:c:\intel\dev\prj\lib13\pack13.c
+	<string.h>
+	<ctype.h>
+	"include/pack13.h"
+	"include/error13.h"
+	"include/debug13.h"
+	"include/pack13i.c"
+
+1360007150 c:\intel\dev\prj\lib13\include\pack13i.c
+	<ctype.h>
+	<stdarg.h>
+	<string.h>
+
+1497357752 source:c:\intel\dev\prj\lib13\path13.c
+	<sys/types.h>
+	<sys/stat.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stdio.h>
+	<unistd.h>
+	"include/path13.h"
+	"include/debug13.h"
+
+1360662978 source:c:\intel\dev\prj\lib13\rand13.c
+
+1360163628 source:c:\intel\dev\prj\lib13\rc4.c
+	<string.h>
+	"include/rc4.h"
+
+1359982552 c:\intel\dev\prj\lib13\include\rc4.h
+	"type13.h"
+
+1475141864 source:c:\intel\dev\prj\lib13\rr13.c
+	"include/rr13.h"
+
+1360163618 source:c:\intel\dev\prj\lib13\sha256.c
+	<string.h>
+	"include/sha256.h"
+	<stdlib.h>
+	<stdio.h>
+

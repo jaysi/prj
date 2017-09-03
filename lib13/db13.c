@@ -1931,6 +1931,10 @@ error13_t db_delete(	struct db13* db, db_table_id tid,
                 return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
                 break;
         }
+			default:
+				return e13_ierror(&db->e, E13_IMPLEMENT, "s", msg13(M13_DRIVERNOTSUPPORTED));
+				break;
+    }
 
     return E13_OK;
 
@@ -2012,6 +2016,6 @@ error13_t db_istable_physical(struct db13 *db, char *name){
         break;
     }
 
-	return e13_error(E13_UNK);
+	return e13_error(E13_SYSE);
 }
 
