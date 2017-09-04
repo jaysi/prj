@@ -24,6 +24,9 @@
 #define ACC_USER_THIS       "this"
 #define ACC_USER_GUEST      "guest"
 
+#define ACC_GROUP_ALL	"allgroups"
+#define ACC_USER_ALL	"allusers"
+
 #define ACC_GRP_STT_ACTIVE  10
 #define ACC_GRP_STT_INACTIVE 20
 #define ACC_GRP_STT_REMOVED 30

@@ -1,0 +1,68 @@
+# depslib dependency file v1.0
+1504423953 source:c:\intel\dev\prj\accon\main.c
+	<stdio.h>
+	<stdlib.h>
+	"../lib13/include/acc13.h"
+	"../lib13/include/str13.h"
+
+1504349104 c:\intel\dev\prj\lib13\include\acc13.h
+	"type13.h"
+	"hash13.h"
+	"obj13.h"
+
+1419515766 c:\intel\dev\prj\lib13\include\type13.h
+	<sys/types.h>
+	<stdlib.h>
+	<stdint.h>
+	<stddef.h>
+
+1380023190 c:\intel\dev\prj\lib13\include\hash13.h
+	"error13.h"
+	"sha256.h"
+
+1435581866 c:\intel\dev\prj\lib13\include\error13.h
+	<sys/types.h>
+	"bit13.h"
+	"type13.h"
+	"const13.h"
+
+1377165792 c:\intel\dev\prj\lib13\include\bit13.h
+	"type13.h"
+
+1481612514 c:\intel\dev\prj\lib13\include\const13.h
+	"type13.h"
+
+1359982546 c:\intel\dev\prj\lib13\include\sha256.h
+	"type13.h"
+
+1499842070 c:\intel\dev\prj\lib13\include\obj13.h
+	<assert.h>
+	"error13.h"
+	"type13.h"
+	"const13.h"
+	"thread13.h"
+
+1495599804 c:\intel\dev\prj\lib13\include\thread13.h
+	"const13.h"
+	<semaphore.h>
+	<pthread.h>
+
+1498051596 c:\intel\dev\prj\lib13\include\str13.h
+	<string.h>
+	<stdio.h>
+	<wchar.h>
+	"error13.h"
+	"mem13.h"
+
+1475141730 c:\intel\dev\prj\lib13\include\mem13.h
+	<string.h>
+	"type13.h"
+	"error13.h"
+	"const13.h"
+	"lock13.h"
+
+1475141712 c:\intel\dev\prj\lib13\include\lock13.h
+	"type13.h"
+	"thread13.h"
+	"obj13.h"
+

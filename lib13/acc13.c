@@ -50,6 +50,18 @@
 #define ACC_TABLE_FREEOBJ_COLS  4
 //RegID, objid, type, FLAGS(FAKE)
 
+static inline error13_t _acc_assert_name(char* name, int user){
+	switch(user){
+	case 0:
+		if(!strcmp(name, ACC_GROUP_ALL)) return e13_error(E13_NOTVALID);
+		break;
+	default:
+		if(!strcmp(name, ACC_USER_ALL)) return e13_error(E13_NOTVALID);
+		break;
+	}
+	return E13_OK;
+}
+
 error13_t acc_init(struct access13* ac, struct db13* db, regid_t regid){
 
     error13_t ret;
@@ -359,7 +371,11 @@ error13_t acc_init(struct access13* ac, struct db13* db, regid_t regid){
 
     ac->magic = MAGIC13_AC13;
 
-    return E13_OK;
+    //create default users and groups, TODO: handle errors better!
+    ret = acc_group_add(ac, ACC_GROUP_ALL);
+    if(ret == E13_OK) ret = acc_user_add(ac, ACC_USER_ALL);
+
+    return ret;
 
 }
 
@@ -463,7 +479,7 @@ static inline error13_t _acc_get_free_gid(struct access13* ac, gid13_t* id){
     return ret;
 }
 
-error13_t acc_group_set_stat(struct access13* ac, char* name, int stt){
+error13_t acc_group_set_stat(struct access13* ac, char* name, gid13_t gid, int stt){
 
     struct db_stmt st;
     db_table_id tid;
@@ -477,11 +493,19 @@ error13_t acc_group_set_stat(struct access13* ac, char* name, int stt){
 
     tid = db_get_tid_byname(ac->db, ACC_TABLE_GROUP);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "name");
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = 0;
-    logic.sval = name;
-    logic.logic = DB_LOGIC_LIKE;
+    if(name){
+		logic.col = db_get_colid_byname(ac->db, tid, "name");
+		logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = 0;
+		logic.sval = name;
+		logic.logic = DB_LOGIC_LIKE;
+    } else {
+		logic.col = db_get_colid_byname(ac->db, tid, "id");
+		logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_COL_CMP;
+		logic.ival = gid;
+		logic.logic = DB_LOGIC_EQ;
+    }
 
     colid = db_get_colid_byname(ac->db, tid, "stat");
 
@@ -690,7 +714,7 @@ error13_t _acc_rm_group_membership(struct access13* ac, gid13_t gid){
 }
 
 //TODO: remove all user membership
-error13_t acc_group_rm(struct access13 *ac, char *name){
+error13_t acc_group_rm(struct access13 *ac, char *name, gid13_t gid){
 
     struct db_stmt st;
     db_table_id tid;
@@ -709,7 +733,7 @@ error13_t acc_group_rm(struct access13 *ac, char *name){
     if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
 
     //1. check for existence
-    if(acc_group_chk(ac, name, &group) != E13_OK){
+    if(acc_group_chk(ac, name, gid, &group) != E13_OK){
         return e13_error(E13_NOTFOUND);
     }
 
@@ -734,7 +758,7 @@ error13_t acc_group_rm(struct access13 *ac, char *name){
 
 }
 
-error13_t acc_group_chk(struct access13 *ac, char *name, struct group13* group){
+error13_t acc_group_chk(struct access13 *ac, char *name, gid13_t gid, struct group13* group){
 
     struct db_stmt st;
     struct db_logic_s logic;
@@ -749,12 +773,21 @@ error13_t acc_group_chk(struct access13 *ac, char *name, struct group13* group){
     _deb_grp_chk("got tid %u", tid);
     if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "name");
-    _deb_grp_chk("logic.col %u", logic.col);
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = 0;
-    logic.logic = DB_LOGIC_LIKE;
-    logic.sval = name;
+    if(name){
+		logic.col = db_get_colid_byname(ac->db, tid, "name");
+		_deb_grp_chk("logic.col %u", logic.col);
+		logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = 0;
+		logic.logic = DB_LOGIC_LIKE;
+		logic.sval = name;
+    } else {
+		logic.col = db_get_colid_byname(ac->db, tid, "id");
+		_deb_grp_chk("logic.col %u", logic.col);
+		logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_COL_CMP;
+		logic.logic = DB_LOGIC_EQ;
+		logic.ival = gid;
+    }
 
     _deb_grp_chk("collecting...");
     if((ret = db_collect(ac->db, tid, NULL, 1, &logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
