@@ -265,6 +265,36 @@ show_prompt:
 	case CODE_EXIT:
 		return 0;
 		break;
+
+	case CODE_OPEN:
+		break;
+	case CODE_CLOSE:
+		break;
+	case CODE_GROUPADD:
+		break;
+	case CODE_RMGROUP:
+		break;
+	case CODE_GROUPSET:
+		break;
+	case CODE_GROUPCHK:
+		break;
+    case CODE_GROUPLIST:
+		break;
+	case CODE_USERADD:
+		break;
+	case CODE_RMUSER:
+		break;
+	case CODE_USERSET:
+		break;
+	case CODE_USERCHK:
+		break;
+    case CODE_USERLIST:
+		break;
+    case CODE_LOGIN:
+		break;
+    case CODE_LOGOUT:
+		break;
+
 	default:
 		printo("unknown input %s\n", input);
 		break;

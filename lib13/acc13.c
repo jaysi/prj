@@ -9,6 +9,11 @@
 #define ACC_TABLE_ACL               "acc"
 #define ACC_TABLE_FREEOBJ           "objfree"
 
+#define _ACC_FREEGIDF_INIT	(0x00)
+#define _ACC_FREEGIDF_ANY	(0x01<<0)
+#define _ACC_FREEUIDF_ANY	(0x01<<0)
+#define _ACC_FREEUIDF_INIT	(0x00)
+
 #define ACC_NTABLES 6
 
 #define _deb_acc_init   _NullMsg
@@ -50,13 +55,23 @@
 #define ACC_TABLE_FREEOBJ_COLS  4
 //RegID, objid, type, FLAGS(FAKE)
 
-static inline error13_t _acc_assert_name(char* name, int user){
+static inline error13_t _acc_assert(char* name, aclid13_t id, int user){
 	switch(user){
 	case 0:
-		if(!strcmp(name, ACC_GROUP_ALL)) return e13_error(E13_NOTVALID);
+		if(name){
+				if(!strcmp(name, ACC_GROUP_ALL)) return e13_error(E13_NOTVALID);
+		} else {
+			if(id == GID13_ANY || id == GID13_INVAL || id == GID13_NONE)
+				return e13_error(E13_NOTVALID);
+		}
 		break;
 	default:
-		if(!strcmp(name, ACC_USER_ALL)) return e13_error(E13_NOTVALID);
+		if(name){
+				if(!strcmp(name, ACC_USER_ALL)) return e13_error(E13_NOTVALID);
+		} else {
+			if(id == UID13_ANY || id == UID13_INVAL || id == UID13_NONE)
+				return e13_error(E13_NOTVALID);
+		}
 		break;
 	}
 	return E13_OK;
@@ -333,10 +348,15 @@ error13_t acc_init(struct access13* ac, struct db13* db, regid_t regid){
             _deb_acc_init("!db_create_table %s", ACC_TABLE_INFO);
             return ret;
         }
+
+		//create default users and groups, TODO: handle errors better!
+		ret = acc_group_add(ac, ACC_GROUP_ALL);
+		if(ret == E13_OK) ret = acc_user_add(ac, ACC_USER_ALL, ACC_USER_ALL_PASSWORD);
+
         ret = E13_CONTINUE;
         break;
     case E13_OK:
-        //the db struct must be ok! check it!
+        //TODO: the db struct must be ok! check it!
         break;
     default:
         _deb_acc_init("!db_istable_physical %s", ACC_TABLE_INFO);
@@ -371,10 +391,6 @@ error13_t acc_init(struct access13* ac, struct db13* db, regid_t regid){
 
     ac->magic = MAGIC13_AC13;
 
-    //create default users and groups, TODO: handle errors better!
-    ret = acc_group_add(ac, ACC_GROUP_ALL);
-    if(ret == E13_OK) ret = acc_user_add(ac, ACC_USER_ALL);
-
     return ret;
 
 }
@@ -389,7 +405,8 @@ error13_t acc_set_hash(struct access13* ac, size_t hashlen, void *hashfn){
 /*********************************  GROUP FN  *********************************/
 
 //return CONTINUE if an old gid reused
-static inline error13_t _acc_get_free_gid(struct access13* ac, gid13_t* id){
+static inline error13_t _acc_get_free_gid(struct access13* ac, gid13_t* id,
+										uint8_t flags){
 
     struct db_stmt st;
     struct db_logic_s logic;
@@ -397,11 +414,16 @@ static inline error13_t _acc_get_free_gid(struct access13* ac, gid13_t* id){
     db_table_id tid;
     db_colid_t cid;
 
-    *id = 1;
-
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
     }
+
+    if(flags & _ACC_FREEGIDF_ANY){
+		*id = GID13_ANY;
+		return E13_OK;
+    }
+
+	*id = 1;
 
     tid = db_get_tid_byname(ac->db, ACC_TABLE_GROUP);
 
@@ -491,6 +513,8 @@ error13_t acc_group_set_stat(struct access13* ac, char* name, gid13_t gid, int s
         return e13_error(E13_MISUSE);
     }
 
+    if(_acc_assert(name, gid, 0) != E13_OK) return e13_error(E13_NOTVALID);
+
     tid = db_get_tid_byname(ac->db, ACC_TABLE_GROUP);
 
     if(name){
@@ -527,9 +551,17 @@ error13_t acc_group_add(struct access13 *ac, char *name){
     int stat;
     struct db_logic_s logic;
     struct group13 group;
+    uint8_t flags = _ACC_FREEGIDF_INIT;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
+    }
+
+    if(strcmp(name, ACC_GROUP_ALL)){
+		if(_acc_assert(name, GID13_NONE, 0) != E13_OK)
+			return e13_error(E13_NOTVALID);
+    } else {
+    	flags |= _ACC_FREEGIDF_ANY;
     }
 
     tid = db_get_tid_byname(ac->db, ACC_TABLE_GROUP);
@@ -537,7 +569,7 @@ error13_t acc_group_add(struct access13 *ac, char *name){
     if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
 
     //1. check for existence
-    if(acc_group_chk(ac, name, &group) == E13_OK){
+    if(acc_group_chk(ac, name, GID13_NONE, &group) == E13_OK){
         _deb_grp_add("group exists");
         return e13_error(E13_EXISTS);
     }
@@ -549,7 +581,7 @@ error13_t acc_group_add(struct access13 *ac, char *name){
 //    cols = (char**)m13_malloc(sizeof(char*)*ACC_TABLE_GROUP_COLS);
 //    if(!cols) return e13_error(E13_NOMEM);
 
-    switch((ret = _acc_get_free_gid(ac, &gid))){
+    switch((ret = _acc_get_free_gid(ac, &gid, flags))){
     case E13_CONTINUE://an old gid is re-used, update
         _deb_grp_add("reusing old id, id = %u", gid);
         stat = ACC_GRP_STT_ACTIVE;
@@ -729,6 +761,8 @@ error13_t acc_group_rm(struct access13 *ac, char *name, gid13_t gid){
         return e13_error(E13_MISUSE);
     }
 
+    if(_acc_assert(name, gid, 0) != E13_OK) return e13_error(E13_NOTVALID);
+
     tid = db_get_tid_byname(ac->db, ACC_TABLE_GROUP);
     if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
 
@@ -853,7 +887,7 @@ error13_t acc_gid_chk(struct access13 *ac, gid13_t gid, struct group13* group){
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
         _deb_grp_chk("step CONTINUE");
-        ret = db_column_text(&st, db_get_colid_byname(ac->db, tid, "name"), NULL, &group->name);
+        ret = db_column_text(&st, db_get_colid_byname(ac->db, tid, "name"), NULL, (uchar**)&group->name);
         if(ret == E13_OK){
             _deb_grp_chk("id %u", group->gid);
             ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "stat"), &group->stt);
@@ -980,7 +1014,8 @@ error13_t acc_group_list_free(struct group13* group){
 /*********************************  USER FN  **********************************/
 
 //return CONTINUE if an old uid reused
-static inline error13_t _acc_get_free_uid(struct access13* ac, uid13_t* id){
+error13_t _acc_get_free_uid(struct access13* ac, uid13_t* id,
+										uint8_t flags){
 
     struct db_stmt st;
     struct db_logic_s logic;
@@ -988,11 +1023,16 @@ static inline error13_t _acc_get_free_uid(struct access13* ac, uid13_t* id){
     db_table_id tid;
     db_colid_t cid;
 
-    *id = 1;
-
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
     }
+
+    if(flags & _ACC_FREEUIDF_ANY){
+		*id = UID13_ANY;
+		return E13_OK;
+    }
+
+    *id = 1;
 
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
 
@@ -1070,7 +1110,7 @@ static inline error13_t _acc_get_free_uid(struct access13* ac, uid13_t* id){
     return ret;
 }
 
-error13_t acc_user_set_stat(struct access13* ac, char* name, int stt){
+error13_t acc_user_set_stat(struct access13* ac, char* name, uid13_t id, int stt){
 
     struct db_stmt st;
     db_table_id tid;
@@ -1082,13 +1122,23 @@ error13_t acc_user_set_stat(struct access13* ac, char* name, int stt){
         return e13_error(E13_MISUSE);
     }
 
+    if(_acc_assert(name, id, 1) != E13_OK) return e13_error(E13_NOTVALID);
+
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "name");
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = 0;
-    logic.sval = name;
-    logic.logic = DB_LOGIC_LIKE;
+    if(name){
+		logic.col = db_get_colid_byname(ac->db, tid, "name");
+		logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = 0;
+		logic.sval = name;
+		logic.logic = DB_LOGIC_LIKE;
+    } else {
+		logic.col = db_get_colid_byname(ac->db, tid, "id");
+		logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_COL_CMP;
+		logic.ival = id;
+		logic.logic = DB_LOGIC_EQ;
+    }
 
     colid = db_get_colid_byname(ac->db, tid, "stat");
 
@@ -1113,9 +1163,15 @@ error13_t acc_user_add(struct access13 *ac, char *name, char* pass){
     uint32_t lastdate = 0UL;
     uint32_t lasttime = 0UL;
     struct user13 user;
+    uint8_t flags = _ACC_FREEUIDF_INIT;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
+    }
+
+    if(strcmp(name, ACC_USER_ALL)){
+		if(_acc_assert(name, UID13_NONE, 0) != E13_OK)
+			return e13_error(E13_NOTVALID);
     }
 
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
@@ -1123,10 +1179,12 @@ error13_t acc_user_add(struct access13 *ac, char *name, char* pass){
     if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
 
     //1. check for existence
-    if(acc_user_chk(ac, name, &user) == E13_OK){
+    if(acc_user_chk(ac, name, UID13_NONE, &user) == E13_OK){
         _deb_usr_add("user exists");
         m13_free(user.passhash);
         return e13_error(E13_EXISTS);
+    } else {
+    	flags |= _ACC_FREEUIDF_ANY;
     }
 
     _deb_usr_add("user not exists");
@@ -1139,7 +1197,7 @@ error13_t acc_user_add(struct access13 *ac, char *name, char* pass){
     //TODO: ac->hash((uchar*)pass, strlen(pass), passhash);
     passhash[0] = 0;
 
-    switch((ret = _acc_get_free_uid(ac, &uid))){
+    switch((ret = _acc_get_free_uid(ac, &uid, flags))){
     case E13_CONTINUE://an old uid is re-used, update
         _deb_usr_add("reusing old id, id = %u", uid);
         stat = ACC_USR_STT_OUT;
@@ -1221,7 +1279,7 @@ error13_t acc_user_add(struct access13 *ac, char *name, char* pass){
 
 }
 
-error13_t acc_user_rm(struct access13 *ac, char *name){
+error13_t acc_user_rm(struct access13 *ac, char *name, uid13_t id){
 
     struct db_stmt st;
     db_table_id tid;
@@ -1236,11 +1294,13 @@ error13_t acc_user_rm(struct access13 *ac, char *name){
         return e13_error(E13_MISUSE);
     }
 
+    if(_acc_assert(name, id, 1) != E13_OK) return e13_error(E13_NOTVALID);
+
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
     if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
 
     //1. check for existence
-    if(acc_user_chk(ac, name, &user) != E13_OK){
+    if(acc_user_chk(ac, name, id, &user) != E13_OK){
         return e13_error(E13_NOTFOUND);
     }
 
@@ -1265,7 +1325,8 @@ error13_t acc_user_rm(struct access13 *ac, char *name){
 
 }
 
-error13_t acc_user_chk(struct access13 *ac, char *name, struct user13* user){
+error13_t acc_user_chk(struct access13 *ac, char *name, uid13_t id,
+					struct user13* user){
 
     struct db_stmt st;
     struct db_logic_s logic;
@@ -1280,12 +1341,21 @@ error13_t acc_user_chk(struct access13 *ac, char *name, struct user13* user){
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
     _deb_usr_chk("got tid %u", tid);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "name");
-    _deb_usr_chk("logic.col %u", logic.col);
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = 0;
-    logic.logic = DB_LOGIC_LIKE;
-    logic.sval = name;
+    if(name){
+		logic.col = db_get_colid_byname(ac->db, tid, "name");
+		_deb_usr_chk("logic.col %u", logic.col);
+		logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = 0;
+		logic.logic = DB_LOGIC_LIKE;
+		logic.sval = name;
+    } else {
+		logic.col = db_get_colid_byname(ac->db, tid, "id");
+		_deb_usr_chk("logic.col %u", logic.col);
+		logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_COL_CMP;
+		logic.logic = DB_LOGIC_EQ;
+		logic.ival = id;
+    }
 
     _deb_usr_chk("collecting...");
     if((ret = db_collect(ac->db, tid, NULL, 1, &logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
@@ -1537,7 +1607,10 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
         return e13_error(E13_MISUSE);
     }
 
-    if((ret = acc_user_chk(ac, username, &user)) != E13_OK){
+    if(_acc_assert(username, UID13_NONE, 1) != E13_OK)
+		return e13_error(E13_NOTVALID);
+
+    if((ret = acc_user_chk(ac, username, UID13_NONE, &user)) != E13_OK){
         return ret;
     }
 
@@ -1563,9 +1636,9 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
 
     val[0] = (char*)&stt;
     d13_today(date_);
-    val[1]=date_;
+    val[1]=(uchar*)date_;
     d13_clock(&time_);
-    val[2]=(char*)&time_;
+    val[2]=(uchar*)&time_;
 
     ret = db_update(ac->db, tid, logic, 1, colid, val, NULL, &st);
 
@@ -1592,7 +1665,10 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
         return e13_error(E13_MISUSE);
     }
 
-    if((ret = acc_user_chk(ac, username, &user)) != E13_OK){
+    if(_acc_assert(username, UID13_NONE, 1) != E13_OK)
+		return e13_error(E13_NOTVALID);
+
+    if((ret = acc_user_chk(ac, username, UID13_NONE, &user)) != E13_OK){
         return ret;
     }
 
@@ -1641,7 +1717,7 @@ error13_t acc_destroy(struct access13* ac){
 	return e13_error(E13_IMPLEMENT);
 }
 
-error13_t acc_user_group_list(struct access13 *ac, char *username,
+error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid,
 							struct group13** grouplist, int resolve_gid){
 
     struct db_stmt st;
@@ -1656,7 +1732,7 @@ error13_t acc_user_group_list(struct access13 *ac, char *username,
         return e13_error(E13_MISUSE);
     }
 
-    if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
+    if((ret = acc_user_chk(ac, username, uid, &usr)) != E13_OK){
 		return ret;
     }
 
@@ -1716,7 +1792,7 @@ error13_t acc_user_group_list(struct access13 *ac, char *username,
     return ret;
 }
 
-error13_t acc_group_user_list(struct access13 *ac, char *groupname,
+error13_t acc_group_user_list(struct access13 *ac, char *groupname, gid13_t gid,
 							struct user13** userlist, int resolve_uid){
 
     struct db_stmt st;
@@ -1730,7 +1806,7 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname,
         return e13_error(E13_MISUSE);
     }
 
-    if((ret = acc_group_chk(ac, groupname, &grp)) != E13_OK){
+    if((ret = acc_group_chk(ac, groupname, gid, &grp)) != E13_OK){
 		return ret;
     }
 
@@ -1792,7 +1868,8 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname,
     return ret;
 }
 
-error13_t acc_user_group_check(struct access13 *ac, char *username,char* group){
+error13_t acc_user_group_check(struct access13 *ac, char *username, uid13_t uid,
+							char* group, gid13_t gid){
 
     struct db_stmt st;
     struct db_logic_s logic[2];
@@ -1806,10 +1883,10 @@ error13_t acc_user_group_check(struct access13 *ac, char *username,char* group){
         return e13_error(E13_MISUSE);
     }
 
-    if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
+    if((ret = acc_user_chk(ac, username, uid, &usr)) != E13_OK){
 		return ret;
     }
-    if((ret = acc_group_chk(ac, group, &grp)) != E13_OK){
+    if((ret = acc_group_chk(ac, group, gid, &grp)) != E13_OK){
 		return ret;
     }
 
@@ -1855,7 +1932,8 @@ error13_t acc_user_group_check(struct access13 *ac, char *username,char* group){
     return ret;
 }
 
-error13_t acc_user_join_group(struct access13* ac, char* username, char* group){
+error13_t acc_user_join_group(struct access13* ac, char* username, uid13_t uid,
+							char* group, gid13_t gid){
 
     struct db_stmt st;
     struct db_logic_s logic[2];
@@ -1872,14 +1950,14 @@ error13_t acc_user_join_group(struct access13* ac, char* username, char* group){
         return e13_error(E13_MISUSE);
     }
 
-    if(acc_user_group_check(ac, username, group) == E13_OK){
+    if(acc_user_group_check(ac, username, uid, group, gid) == E13_OK){
 		return e13_error(E13_EXISTS);
     }
 
-    if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
+    if((ret = acc_user_chk(ac, username, uid, &usr)) != E13_OK){
 		return ret;
     }
-    if((ret = acc_group_chk(ac, group, &grp)) != E13_OK){
+    if((ret = acc_group_chk(ac, group, gid, &grp)) != E13_OK){
 		return ret;
     }
 
@@ -1950,7 +2028,8 @@ error13_t acc_user_join_group(struct access13* ac, char* username, char* group){
     return E13_OK;
 }
 
-error13_t acc_user_leave_group(struct access13* ac, char* username,char* group){
+error13_t acc_user_leave_group(struct access13* ac, char* username, uid13_t uid,
+							char* group, gid13_t gid){
 
     struct db_stmt st;
     struct db_logic_s logic[2];
@@ -1964,10 +2043,10 @@ error13_t acc_user_leave_group(struct access13* ac, char* username,char* group){
         return e13_error(E13_MISUSE);
     }
 
-    if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
+    if((ret = acc_user_chk(ac, username, uid, &usr)) != E13_OK){
 		return ret;
     }
-    if((ret = acc_group_chk(ac, group, &grp)) != E13_OK){
+    if((ret = acc_group_chk(ac, group, gid, &grp)) != E13_OK){
 		return ret;
     }
 
@@ -2053,7 +2132,7 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
     //TODO: COMPLETE CHECKING THE PERM
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
-        ret = db_column_int(&st, db_get_colid_byname(ac->db,tid,"perm"), perm);
+        ret = db_column_int(&st, db_get_colid_byname(ac->db,tid,"perm"), (int*)perm);
         db_finalize(&st);
         break;
         case E13_OK:
@@ -2071,8 +2150,8 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
 
 }
 
-error13_t acc_perm_user_chk(struct access13* ac,objid13_t objid, char* username,
-							acc_perm_t perm){
+error13_t acc_perm_user_chk(struct access13* ac,objid13_t objid,
+							char* username, uid13_t uid, acc_perm_t perm){
 
     struct db_logic_s logic[2];
     error13_t ret;
@@ -2083,7 +2162,7 @@ error13_t acc_perm_user_chk(struct access13* ac,objid13_t objid, char* username,
         return e13_error(E13_MISUSE);
     }
 
-    if((ret = acc_user_chk(ac, username, &usr)) != E13_OK){
+    if((ret = acc_user_chk(ac, username, uid, &usr)) != E13_OK){
 		return ret;
     }
 
@@ -2095,5 +2174,5 @@ error13_t acc_perm_user_chk(struct access13* ac,objid13_t objid, char* username,
 	//	d. fail
 	//3. special users/groups: allusers/allgroups
 
-
+	return e13_error(E13_IMPLEMENT);
 }
