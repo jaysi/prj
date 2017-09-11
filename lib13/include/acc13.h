@@ -26,6 +26,7 @@
 
 #define ACC_GROUP_ALL	"allgroups"
 #define ACC_USER_ALL	"allusers"
+#define ACC_USER_ALL_PASSWORD	"no_password!"
 
 #define ACC_GRP_STT_ACTIVE  10
 #define ACC_GRP_STT_INACTIVE 20
@@ -132,8 +133,8 @@ struct acc_acl_entry{
     error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid, struct group13** grouplist, int resolve_gid);
     error13_t acc_group_user_list(struct access13 *ac, char *groupname, gid13_t gid, struct user13** userlist, int resolve_uid);//TODO
 
-    error13_t acc_user_login(struct access13* ac, char* username, uid13_t uid, char* password, uid13_t* uid);
-    error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid);
+    error13_t acc_user_login(struct access13* ac, char* username, char* password, uid13_t* uid);
+    error13_t acc_user_logout(struct access13* ac, char* username, uid13_t id);
 
     error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t perm);
     error13_t acc_perm_user_add(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t perm);

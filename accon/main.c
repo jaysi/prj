@@ -5,6 +5,7 @@
 #define MAX_CMD		10
 #include "../lib13/include/acc13.h"
 #include "../lib13/include/str13.h"
+#include "../lib13/include/db13.h"
 #define printo printf
 #define scani gets
 
@@ -195,6 +196,20 @@ struct _cmd {
 	}
 };
 
+struct _cmd* translate_s(char* str){
+	struct _cmd* c;
+	int i;
+	for(c = cmd; c->cmd[0]; c++){
+		i = 0;
+		while(c->cmd[i]){
+//            printo("[%i]:%s\n", i, c->cmd[i]);
+			if(!strcmp(c->cmd[i], str)) return c;
+			i++;
+		}
+	}
+	return NULL;
+}
+
 enum cmd_code translate(char* str){
 	struct _cmd* c;
 	int i;
@@ -209,6 +224,11 @@ enum cmd_code translate(char* str){
 	return CODE_INVAL;
 }
 
+int printe13(error13_t err13, char* msg){
+	printo("\nERROR: %s (%s)\n", e13_codemsg(err13), msg?msg:"-");
+	return 0;
+}
+
 int prompt(char* init_str, char* input){
 
 	printo("\n%s>", init_str);
@@ -217,9 +237,25 @@ int prompt(char* init_str, char* input){
 	return 0;
 }
 
-int help(){
+int help(int n, char** ary){
 	struct _cmd* c;
 	int i;
+
+	if(n > 1){
+		c = translate_s(ary[1]);
+
+		i = 0;
+		while(c->cmd[i]){
+			printo("\nforms: ");
+			printo("%s, ", c->cmd[i]);
+			i++;
+		}
+
+		printo("\ndescription: %s", c->desc);
+		printo("\nsyntax: %s\n", c->syntax);
+
+		return 0;
+	}
 
 	printo("\n-- access13 console help --\n");
 	for(c = cmd; c->cmd[0]; c++){
@@ -232,7 +268,73 @@ int help(){
 		printo("\ndescription: %s", c->desc);
 		printo("\nsyntax: %s\n", c->syntax);
 	}
+
 	return 0;
+}
+
+int do_open(struct access13* ac, int n, char** ary){
+	error13_t ret;
+	struct db13* db;
+	if(n < 2){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+	db = m13_malloc(sizeof(struct db13));
+	if(!db){
+		printe13(e13_error(E13_NOMEM), "do_open()");
+		return -1;
+	}
+	ret = db_init(db, DB_DRV_SQLITE);
+	if(ret != E13_OK){
+		prine13(ret, "do_open()");
+		return -1;
+	}
+	ret = db_open(db, NULL, NULL, NULL, NULL, ary[1]);
+	if(ret != E13_OK){
+		prine13(ret, ary[1]);
+		return -1;
+	}
+
+	ret = acc_init(ac, db, 0);
+	if(ret != E13_OK){
+		prine13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("\nDONE\n");
+
+	return 0;
+
+}
+
+int do_close(struct access13* ac, int n, char** ary){
+	error13_t ret;
+    ret = acc_destroy(ac);
+	if(ret != E13_OK){
+		prine13(ret, NULL);
+		return -1;
+	}
+
+    return 0;
+}
+
+int do_groupadd(struct access13* ac, int n, char** ary){
+    error13_t ret;
+
+	if(n < 2){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+    ret = acc_group_add(ac, ary[1]);
+	if(ret != E13_OK){
+		prine13(ret, ary[1]);
+		return -1;
+	}
+
+    return 0;
+
 }
 
 int main(int argc, char* argv[])
@@ -240,6 +342,7 @@ int main(int argc, char* argv[])
 	char input[MAX_INPUT];
 	int n;
 	char** ary;
+	struct access13 ac;
 
 	escape = ESCAPE;
 	strcpy(delim, DELIM);
@@ -265,6 +368,38 @@ show_prompt:
 	case CODE_EXIT:
 		return 0;
 		break;
+
+	case CODE_OPEN:
+		do_open(&ac, n, ary);
+		break;
+	case CODE_CLOSE:
+		do_close(&ac, n, ary);
+		break;
+	case CODE_GROUPADD:
+		break;
+	case CODE_RMGROUP:
+		break;
+	case CODE_GROUPSET:
+		break;
+	case CODE_GROUPCHK:
+		break;
+    case CODE_GROUPLIST:
+		break;
+	case CODE_USERADD:
+		break;
+	case CODE_RMUSER:
+		break;
+	case CODE_USERSET:
+		break;
+	case CODE_USERCHK:
+		break;
+    case CODE_USERLIST:
+		break;
+    case CODE_LOGIN:
+		break;
+    case CODE_LOGOUT:
+		break;
+
 	default:
 		printo("unknown input %s\n", input);
 		break;
