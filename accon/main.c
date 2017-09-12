@@ -370,10 +370,15 @@ show_prompt:
 		break;
 
 	case CODE_OPEN:
+<<<<<<< HEAD
 		do_open(&ac, n, ary);
 		break;
 	case CODE_CLOSE:
 		do_close(&ac, n, ary);
+=======
+		break;
+	case CODE_CLOSE:
+>>>>>>> 5481e64fd72fe668c025d5d2d371831948804d7c
 		break;
 	case CODE_GROUPADD:
 		break;
