@@ -1670,30 +1670,35 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 	if(_db_assert_logic(nlogic, logic) != E13_OK) return e13_error(E13_MISUSE);
 
     snprintf(sql + len, RLEN, "SELECT ");
+    _deb_collect(sql);
     len = strlen(sql);
 
     if(!cols){
         snprintf(sql + len, RLEN, "* ");
+        _deb_collect(sql);
         len = strlen(sql);
     } else {
         while(*cols){
             snprintf(sql + len, RLEN, "%s%s", *cols, (cols+1)?",":" ");
+            _deb_collect(sql);
             len = strlen(sql);
             cols++;
         }
     }
 
     snprintf(sql + len, RLEN, "FROM %s", db->table_info[tid].name);
+    _deb_collect(sql);
     len = strlen(sql);
 
     if(nlogic){
 
         snprintf(sql + len, RLEN, " WHERE ");
+        _deb_collect(sql);
         len = strlen(sql);
 
         for(i = 1; i < nlogic + 1; i++){
 
-            if(!(logic[i-1].flags & DB_LOGICF_COL_CMP)){
+//            if(!(logic[i-1].flags & DB_LOGICF_COL_CMP)){
 
                 snprintf(sql + len, RLEN, "%s %s %s ?%i",
                          i == 1?"":logic_sign[logic[i-1].comb].sign,
@@ -1701,17 +1706,19 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
                          logic_sign[logic[i-1].logic].sign,
                          i
                         );
+                        _deb_collect(sql);
 
-            } else {
-
-                snprintf(sql + len, RLEN, "%s %s %s %s",
-                         i == 1?"":logic_sign[logic[i-1].comb].sign,
-                         db_get_col_name(db, tid, logic[i-1].col),
-                         logic_sign[logic[i-1].logic].sign,
-                         logic[i-1].sval
-                        );
-
-            }
+//            } else {
+//
+//                snprintf(sql + len, RLEN, "%s %s %s %ll",
+//                         i == 1?"":logic_sign[logic[i-1].comb].sign,
+//                         db_get_col_name(db, tid, logic[i-1].col),
+//                         logic_sign[logic[i-1].logic].sign,
+//                         logic[i-1].ival
+//                        );
+//                        _deb_collect(sql);
+//
+//            }
 
             len = strlen(sql);
 
@@ -1721,11 +1728,13 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 
     if(sortcol){
         snprintf(sql + len, RLEN, " ORDER BY %s %s", sortcol, stype == DB_SO_DEC?"DESC":"");
+        _deb_collect(sql);
         len = strlen(sql);
     }
 
     if(nlimit > 0){
         snprintf(sql + len, RLEN, " LIMIT %i", nlimit);
+        _deb_collect(sql);
         //len = strlen(sql);
     }
 
@@ -1772,7 +1781,7 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 
             _deb_collect("logic %i", i);
 
-            if(!(logic[i-1].flags & DB_LOGICF_COL_CMP)){
+//            if(!(logic[i-1].flags & DB_LOGICF_COL_CMP)){
 
                 switch(db_coltype(db, tid, logic[i-1].col)){
 
@@ -1826,7 +1835,7 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 
                 }
 
-            }//if(!(logic[i-1].col_flags & DB_LOGICF_COL_CMP))
+       //     }//if(!(logic[i-1].col_flags & DB_LOGICF_COL_CMP))
 
         }//for
 

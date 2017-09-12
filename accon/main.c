@@ -121,7 +121,7 @@ struct _cmd {
             "groupset", "gset", NULL
 			},
 			"sets group config",
-			"groupset \'groupname\'"
+			"groupset \'groupname\' \'stat=(A)ctive|(I)nactive|(R)emoved\'"
 
 	},
 	{
@@ -260,8 +260,8 @@ int help(int n, char** ary){
 	printo("\n-- access13 console help --\n");
 	for(c = cmd; c->cmd[0]; c++){
 		i = 0;
+		printo("\nforms: ");
 		while(c->cmd[i]){
-			printo("\nforms: ");
 			printo("%s, ", c->cmd[i]);
 			i++;
 		}
@@ -280,29 +280,35 @@ int do_open(struct access13* ac, int n, char** ary){
         return -1;
 	}
 
+	printo("openning %s...", ary[1]);
+
 	db = m13_malloc(sizeof(struct db13));
 	if(!db){
+		printo("failed\n");
 		printe13(e13_error(E13_NOMEM), "do_open()");
 		return -1;
 	}
 	ret = db_init(db, DB_DRV_SQLITE);
 	if(ret != E13_OK){
-		prine13(ret, "do_open()");
+		printo("failed\n");
+		printe13(ret, "do_open()");
 		return -1;
 	}
 	ret = db_open(db, NULL, NULL, NULL, NULL, ary[1]);
 	if(ret != E13_OK){
-		prine13(ret, ary[1]);
+		printo("failed\n");
+		printe13(ret, ary[1]);
 		return -1;
 	}
 
 	ret = acc_init(ac, db, 0);
 	if(ret != E13_OK){
-		prine13(ret, ary[1]);
+		printo("failed\n");
+		printe13(ret, ary[1]);
 		return -1;
 	}
 
-	printo("\nDONE\n");
+	printo("done\n");
 
 	return 0;
 
@@ -310,11 +316,17 @@ int do_open(struct access13* ac, int n, char** ary){
 
 int do_close(struct access13* ac, int n, char** ary){
 	error13_t ret;
+
+	printo("closing...");
+
     ret = acc_destroy(ac);
 	if(ret != E13_OK){
-		prine13(ret, NULL);
+		printo("failed\n");
+		printe13(ret, NULL);
 		return -1;
 	}
+
+	printo("done\n");
 
     return 0;
 }
@@ -327,13 +339,153 @@ int do_groupadd(struct access13* ac, int n, char** ary){
         return -1;
 	}
 
+	printo("adding %s...", ary[1]);
+
     ret = acc_group_add(ac, ary[1]);
 	if(ret != E13_OK){
-		prine13(ret, ary[1]);
+		printo("failed\n");
+		printe13(ret, ary[1]);
 		return -1;
 	}
 
+	printo("done\n");
+
     return 0;
+
+}
+
+int do_grouprm(struct access13* ac, int n, char** ary){
+    error13_t ret;
+    gid13_t id;
+
+	if(n < 2){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+    id = strtoul(ary[1], NULL, 10);
+
+    printo("removing %s[%u]...", id==ULONG_MAX?ary[1]:"-", id==ULONG_MAX?GID13_INVAL:id);
+
+    ret = acc_group_rm(ac, id==ULONG_MAX?ary[1]:NULL, id);
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done\n");
+
+    return 0;
+
+}
+
+int do_groupset(struct access13* ac, int n, char** ary){
+    error13_t ret;
+    gid13_t id;
+    int stt;
+
+	if(n < 3){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+    id = strtoul(ary[1], NULL, 10);
+
+    if(ary[2][0]=='i' || ary[2][0]=='I') stt = ACC_GRP_STT_INACTIVE;
+    if(ary[2][0]=='r' || ary[2][0]=='R') stt = ACC_GRP_STT_REMOVED;
+    else stt = ACC_GRP_STT_ACTIVE;
+
+    printo("setting status of %s[%u] to %s...",
+		id==ULONG_MAX?ary[1]:"-",
+		id==ULONG_MAX?GID13_INVAL:id,
+		stt==ACC_GRP_STT_ACTIVE?"ACTIVE":(stt==ACC_GRP_STT_INACTIVE?"INACTIVE":"REMOVED")
+		);
+
+    ret = acc_group_set_stat(ac, id==ULONG_MAX?ary[1]:NULL, id, stt);
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done\n");
+
+    return 0;
+
+}
+
+int do_groupchk(struct access13* ac, int n, char** ary){
+    error13_t ret;
+    gid13_t id;
+    struct group13 group;
+
+	if(n < 2){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+    id = strtoul(ary[1], NULL, 10);
+
+    printo("checking %s[%u]...", id==ULONG_MAX?ary[1]:"-", id==ULONG_MAX?GID13_INVAL:id);
+
+    ret = acc_group_chk(ac, id==ULONG_MAX?ary[1]:NULL, id, &group);
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done\n");
+
+	printo("-- group info --\n");
+	printo("name: %s\n", group.name);
+	printo("gid: %u\n", group.gid);
+	printo("status: %s\n", group.stt==ACC_GRP_STT_INACTIVE?"INACTIVE":(group.stt==ACC_GRP_STT_REMOVED?"REMOVED":"ACTIVE"));
+    printo("-- group info --\n");
+
+    return 0;
+
+}
+
+int do_grouplist(struct access13* ac, int n, char** ary){
+
+	gid13_t num, i;
+	struct group13* grouplist, *group;
+	error13_t ret;
+
+	printo("getting group list...");
+
+    ret = acc_group_list(ac, &num, &grouplist);
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done\n");
+
+	if(!num || !grouplist){
+		printo("-- empty --\n");
+		return 0;
+	}
+
+	group = grouplist;
+
+	printo("-- group list [%u] --\n", num);
+	i = 0;
+	while(group){
+		printo("No.: %u\n", i++);
+		printo("name: %s\n", group->name);
+		printo("gid: %u\n", group->gid);
+		printo("status: %s\n\n",
+				group->stt==ACC_GRP_STT_INACTIVE?"INACTIVE":(group->stt==ACC_GRP_STT_REMOVED?"REMOVED":"ACTIVE"));
+
+		group = group->next;
+	}
+	printo("-- group list --\n");
+
+	return 0;
 
 }
 
@@ -353,7 +505,6 @@ int main(int argc, char* argv[])
     printo("-- access13 console --\n");
 show_prompt:
 	prompt("main", input);
-	printo("translating %s...\n", input);
 
     n = s13_exparts(input, delim, pack, escape);
 
@@ -363,32 +514,32 @@ show_prompt:
 
 	switch(translate(ary[0])){
 	case CODE_HELP:
-	help();
+	help(n, ary);
 	break;
 	case CODE_EXIT:
 		return 0;
 		break;
 
 	case CODE_OPEN:
-<<<<<<< HEAD
 		do_open(&ac, n, ary);
 		break;
 	case CODE_CLOSE:
 		do_close(&ac, n, ary);
-=======
-		break;
-	case CODE_CLOSE:
->>>>>>> 5481e64fd72fe668c025d5d2d371831948804d7c
 		break;
 	case CODE_GROUPADD:
+		do_groupadd(&ac, n, ary);
 		break;
 	case CODE_RMGROUP:
+		do_grouprm(&ac, n, ary);
 		break;
 	case CODE_GROUPSET:
+		do_groupset(&ac, n, ary);
 		break;
 	case CODE_GROUPCHK:
+		do_groupchk(&ac, n, ary);
 		break;
     case CODE_GROUPLIST:
+    	do_grouplist(&ac, n, ary);
 		break;
 	case CODE_USERADD:
 		break;

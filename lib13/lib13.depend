@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1504358050 source:c:\intel\dev\prj\lib13\acc13.c
+1505207733 source:c:\intel\dev\prj\lib13\acc13.c
 	"include/lib13.h"
 
 1419232920 c:\intel\dev\prj\lib13\include\lib13.h
@@ -24,7 +24,7 @@
 	"type13.h"
 	"db13.h"
 
-1504349104 c:\intel\dev\prj\lib13\include\acc13.h
+1504784745 c:\intel\dev\prj\lib13\include\acc13.h
 	"type13.h"
 	"hash13.h"
 	"obj13.h"
@@ -174,7 +174,7 @@
 	<stdio.h>
 	<stdlib.h>
 
-1504421104 source:c:\intel\dev\prj\lib13\db13.c
+1505209231 source:c:\intel\dev\prj\lib13\db13.c
 	<string.h>
 	"include/db13i.h"
 	"include/msg13.h"

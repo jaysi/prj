@@ -1,11 +1,12 @@
 # depslib dependency file v1.0
-1504423953 source:c:\intel\dev\prj\accon\main.c
+1505209333 source:c:\intel\dev\prj\accon\main.c
 	<stdio.h>
 	<stdlib.h>
 	"../lib13/include/acc13.h"
 	"../lib13/include/str13.h"
+	"../lib13/include/db13.h"
 
-1504349104 c:\intel\dev\prj\lib13\include\acc13.h
+1504784745 c:\intel\dev\prj\lib13\include\acc13.h
 	"type13.h"
 	"hash13.h"
 	"obj13.h"
@@ -65,4 +66,14 @@
 	"type13.h"
 	"thread13.h"
 	"obj13.h"
+
+1504065628 c:\intel\dev\prj\lib13\include\db13.h
+	"../../sqlite/sqlite3.h"
+	"type13.h"
+	"const13.h"
+	"error13.h"
+	"obj13.h"
+
+1420986684 c:\intel\dev\prj\sqlite\sqlite3.h
+	<stdarg.h>
 

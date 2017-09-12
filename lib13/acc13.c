@@ -1,3 +1,4 @@
+#define NDEBUG
 #include "include/lib13.h"
 
 #define _is_init(ac)    ((ac)->magic == MAGIC13_AC13?true_:false_)
@@ -16,18 +17,18 @@
 
 #define ACC_NTABLES 6
 
-#define _deb_acc_init   _NullMsg
-#define _deb_grp_list   _NullMsg
-#define _deb_grp_add    _NullMsg
-#define _deb_get_free_gid _NullMsg
-#define _deb_grp_chk    _NullMsg
-#define _deb_grp_rm     _NullMsg
-#define _deb_usr_list   _NullMsg
-#define _deb_usr_add    _NullMsg
-#define _deb_get_free_uid _NullMsg
-#define _deb_usr_chk    _NullMsg
-#define _deb_usr_rm     _NullMsg
-#define _deb_acc_login	_NullMsg
+#define _deb_acc_init   _DebugMsg
+#define _deb_grp_list   _DebugMsg
+#define _deb_grp_add    _DebugMsg
+#define _deb_get_free_gid _DebugMsg
+#define _deb_grp_chk    _DebugMsg
+#define _deb_grp_rm     _DebugMsg
+#define _deb_usr_list   _DebugMsg
+#define _deb_usr_add    _DebugMsg
+#define _deb_get_free_uid _DebugMsg
+#define _deb_usr_chk    _DebugMsg
+#define _deb_usr_rm     _DebugMsg
+#define _deb_acc_login	_DebugMsg
 
 //CONTROL COLUMNS
 
@@ -929,7 +930,9 @@ error13_t acc_group_list(struct access13 *ac, gid13_t *n, struct group13 **group
     tid = db_get_tid_byname(ac->db, ACC_TABLE_GROUP);
     _deb_grp_list("got tid %u", tid);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "stat");
+    if((logic.col = db_get_colid_byname(ac->db, tid, "stat")) ==DB_COLID_INVAL){
+		return e13_error(E13_ABORT);
+    }
     _deb_grp_list("logic.col %u", logic.col);
     logic.comb = DB_LOGICOMB_NONE;
     logic.flags = DB_LOGICF_COL_CMP;
