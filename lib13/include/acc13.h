@@ -99,7 +99,9 @@ typedef uint8_t acc_acl_t;
 struct acc_acl_entry{
     acc_acl_t type;
     gid13_t gid;
+    char* group;
     uid13_t uid;
+    char* user;
     struct acc_acl_entry* next;
 };
 
@@ -139,16 +141,18 @@ struct acc_acl_entry{
     error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t perm);
     error13_t acc_perm_user_add(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t perm);
     error13_t acc_perm_user_rm(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t perm);
+    error13_t acc_perm_user_list(struct access13* ac, char* name, uid13_t uid, struct obj13** objlist, int resolve_id);
     error13_t acc_perm_group_chk(struct access13* ac, objid13_t objid, char* name, gid13_t gid, acc_perm_t perm);
     error13_t acc_perm_group_add(struct access13* ac, objid13_t objid, char* name, gid13_t gid, acc_perm_t perm);
     error13_t acc_perm_group_rm(struct access13* ac, objid13_t objid, char* name, gid13_t gid, acc_perm_t perm);
+    error13_t acc_perm_group_list(struct access13* ac, char* name, gid13_t gid, struct obj13** objlist, int resolve_id);
+    error13_t acc_perm_obj_list(struct access13* ac, objid13_t objid, struct acc_acl_entry** list, int resolve_id);
 //	error13_t acc_perm_uid_chk(struct access13* ac, objid13_t objid, uid13_t uid, acc_perm_t perm);
 //    error13_t acc_perm_uid_add(struct access13* ac, objid13_t objid, uid13_t uid, acc_perm_t perm);
 //    error13_t acc_perm_uid_rm(struct access13* ac, objid13_t objid, uid13_t uid, acc_perm_t perm);
 //	error13_t acc_perm_gid_chk(struct access13* ac, objid13_t objid, gid13_t gid, acc_perm_t perm);
 //    error13_t acc_perm_gid_add(struct access13* ac, objid13_t objid, gid13_t gid, acc_perm_t perm);
 //    error13_t acc_perm_gid_rm(struct access13* ac, objid13_t objid, gid13_t gid, acc_perm_t perm);
-
 	error13_t acc_user_access(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t perm);
 
 #ifdef __cplusplus

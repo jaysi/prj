@@ -37,12 +37,18 @@ enum cmd_code {
     CODE_USERLIST,
     CODE_LOGIN,
     CODE_LOGOUT,
+    CODE_USER_JOIN_GROUP,
+    CODE_USER_LEAVE_GROUP,
+    CODE_USER_GROUP_CHK,
+    CODE_USER_GROUP_LIST,
+    CODE_GROUP_USER_LIST,
     CODE_PERM_USER_CHK,
     CODE_PERM_USER_ADD,
     CODE_PERM_USER_RM,
     CODE_PERM_GROUP_CHK,
     CODE_PERM_GROUP_ADD,
     CODE_PERM_GROUP_RM,
+    CODE_USER_ACCESS,
 	CODE_INVAL
 };
 
@@ -158,7 +164,7 @@ struct _cmd {
             "userset", "uset", NULL
 			},
 			"sets user config",
-			"userset \'username\'"
+			"userset \'username\' \'stat=(A)ctive|(I)nactive|(R)emoved|(L)oggedIn|(L)oggedOut\'"
 
 	},
 	{
@@ -186,6 +192,86 @@ struct _cmd {
 			},
 			"logout user",
 			"logout \'username1\' \'username2\' ..."
+
+	},
+	{
+			CODE_USER_JOIN_GROUP,
+			{
+            "groupjoin", "gjoin", NULL
+			},
+			"joins user to group(s)",
+			"groupjoin \'username\' \'group1\' \'group2\' ..."
+
+	},
+	{
+			CODE_USER_LEAVE_GROUP,
+			{
+            "groupleave", "gleave", NULL
+			},
+			"leave user from group(s)",
+			"groupleave \'username\' \'group1\' \'group2\' ..."
+
+	},
+	{
+			CODE_USER_GROUP_CHK,
+			{
+            "groupcheck", "gcheck", "gchk", NULL
+			},
+			"checks user membership in group(s)",
+			"groupcheck \'username\' \'group1\' \'group2\' ..."
+
+	},
+	{
+			CODE_USER_GROUP_LIST,
+			{
+            "usergrouplist", "uglist", NULL
+			},
+			"list user group(s)",
+			"usergrouplist \'username\' ..."
+
+	},
+	{
+			CODE_GROUP_USER_LIST,
+			{
+            "groupuserlist", "gulist", NULL
+			},
+			"list users in a group",
+			"groupuserlist \'groupname\' ..."
+	},
+	{
+			CODE_PERM_GROUP_ADD,
+			{
+            "permgroupadd", "pgadd", NULL
+			},
+			"add group permission",
+			"permgroupadd \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'"
+
+	},
+	{
+			CODE_PERM_GROUP_RM,
+			{
+            "permgrouprm", "pgrm", NULL
+			},
+			"remove group permission",
+			"permgrouprm \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'"
+
+	},
+	{
+			CODE_PERM_GROUP_CHK,
+			{
+            "permgroupcheck", "pgchk", NULL
+			},
+			"check group permission",
+			"permgroupcheck \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute|(L)ist\'"
+
+	},
+	{
+			CODE_USER_ACCESS,
+			{
+            "access", "acc", NULL
+			},
+			"check user access",
+			"access \'username\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'"
 
 	},
 	{
@@ -483,7 +569,294 @@ int do_grouplist(struct access13* ac, int n, char** ary){
 
 		group = group->next;
 	}
+	acc_group_list_free(grouplist);
 	printo("-- group list --\n");
+
+	return 0;
+
+}
+
+int do_useradd(struct access13* ac, int n, char** ary){
+    error13_t ret;
+
+	if(n < 3){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+	printo("adding %s...", ary[1]);
+
+    ret = acc_user_add(ac, ary[1], ary[2]);
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done\n");
+
+    return 0;
+
+}
+
+int do_userrm(struct access13* ac, int n, char** ary){
+    error13_t ret;
+    uid13_t id;
+
+	if(n < 2){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+    id = strtoul(ary[1], NULL, 10);
+
+    printo("removing %s[%u]...", id==ULONG_MAX?ary[1]:"-", id==ULONG_MAX?UID13_INVAL:id);
+
+    ret = acc_user_rm(ac, id==ULONG_MAX?ary[1]:NULL, id);
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done\n");
+
+    return 0;
+
+}
+
+int do_userset(struct access13* ac, int n, char** ary){
+    error13_t ret;
+    gid13_t id;
+    int stt;
+    char* sttstr;
+
+	if(n < 3){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+    id = strtoul(ary[1], NULL, 10);
+
+    switch(ary[2][0]){
+	case 'i':
+	case 'I':
+		stt = ACC_USR_STT_INACTIVE;
+		sttstr = "INACTIVE";
+		break;
+	case 'r':
+	case 'R':
+		stt = ACC_USR_STT_REMOVED;
+		sttstr = "REMOVED";
+		break;
+	case 'l':
+	case 'L':
+		stt = ACC_USR_STT_LOGIN;
+		sttstr = "LOGGED IN";
+		break;
+	case 'o':
+	case 'O':
+		stt = ACC_USR_STT_LOGOUT;
+		sttstr = "LOGGED OUT";
+		break;
+	case 'a':
+	case 'A':
+		stt = ACC_USR_STT_ACTIVE;
+		sttstr = "ACTIVE";
+		break;
+	default:
+		printe13(e13_error(E13_NOTFOUND), ary[2]);
+		break;
+
+    }
+
+    printo("setting status of %s[%u] to %s...",
+		id==ULONG_MAX?ary[1]:"-",
+		id==ULONG_MAX?GID13_INVAL:id,
+		sttstr
+		);
+
+    ret = acc_user_set_stat(ac, id==ULONG_MAX?ary[1]:NULL, id, stt);
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done\n");
+
+    return 0;
+
+}
+
+int do_userchk(struct access13* ac, int n, char** ary){
+    error13_t ret;
+    uid13_t id;
+    struct user13 user;
+    char* sttstr;
+
+	if(n < 2){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+    id = strtoul(ary[1], NULL, 10);
+
+    printo("checking %s[%u]...", id==ULONG_MAX?ary[1]:"-", id==ULONG_MAX?UID13_INVAL:id);
+
+    ret = acc_user_chk(ac, id==ULONG_MAX?ary[1]:NULL, id, &user);
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done\n");
+
+	switch(user.stt){
+	case ACC_USR_STT_INACTIVE:
+		sttstr = "ACTIVE";
+		break;
+	case ACC_USR_STT_REMOVED:
+		sttstr = "REMOVED";
+		break;
+	case ACC_USR_STT_LOGIN:
+		sttstr = "LOGGED IN";
+		break;
+	case ACC_USR_STT_LOGOUT:
+		sttstr = "LOGGED OUT";
+		break;
+	case ACC_USR_STT_ACTIVE:
+		sttstr = "ACTIVE";
+		break;
+	default:
+		sttstr = "UNKNOWN";
+		break;
+	}
+
+	printo("-- user info --\n");
+	printo("name: %s\n", user.name);
+	printo("uid: %u\n", user.uid);
+	printo("status: %s\n", sttstr);
+	printo("last login: %u - %u\n", user.lastdate, user.lasttime);
+    printo("-- user info --\n");
+
+    return 0;
+
+}
+
+int do_userlist(struct access13* ac, int n, char** ary){
+
+	gid13_t num, i;
+	struct user13* userlist, *user;
+	error13_t ret;
+	char* sttstr;
+
+	printo("getting user list...");
+
+    ret = acc_user_list(ac, &num, &userlist);
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done\n");
+
+	if(!num || !userlist){
+		printo("-- empty --\n");
+		return 0;
+	}
+
+	user = userlist;
+
+	printo("-- user list [%u] --\n", num);
+	i = 0;
+	while(user){
+		printo("No.: %u\n", i++);
+		printo("name: %s\n", user->name);
+		printo("gid: %u\n", user->uid);
+
+		switch(user->stt){
+		case ACC_USR_STT_INACTIVE:
+			sttstr = "ACTIVE";
+			break;
+		case ACC_USR_STT_REMOVED:
+			sttstr = "REMOVED";
+			break;
+		case ACC_USR_STT_LOGIN:
+			sttstr = "LOGGED IN";
+			break;
+		case ACC_USR_STT_LOGOUT:
+			sttstr = "LOGGED OUT";
+			break;
+		case ACC_USR_STT_ACTIVE:
+			sttstr = "ACTIVE";
+			break;
+		default:
+			sttstr = "UNKNOWN";
+			break;
+		}
+
+		printo("status: %s\n\n", sttstr);
+
+		user = user->next;
+	}
+	acc_user_list_free(userlist);
+	printo("-- user list --\n");
+
+	return 0;
+
+}
+
+int do_login(struct access13* ac, int n, char** ary){
+
+	error13_t ret;
+	uid13_t uid;
+
+	if(n < 3){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+	printo("logging in %s...", ary[1]);
+
+	ret = acc_user_login(ac, ary[1], ary[2], &uid);
+
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done [uid = %u]...\n", uid);
+
+	return 0;
+}
+
+int do_logout(struct access13* ac, int n, char** ary){
+
+	error13_t ret;
+	uid13_t id;
+
+	if(n < 2){
+        printo("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+    id = strtoul(ary[1], NULL, 10);
+
+    printo("logging out %s[%u]...", id==ULONG_MAX?ary[1]:"-", id==ULONG_MAX?UID13_INVAL:id);
+
+	ret = acc_user_logout(ac, id==ULONG_MAX?ary[1]:NULL, id);
+
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printo("done [uid = %u]...\n", uid);
 
 	return 0;
 
@@ -504,7 +877,7 @@ int main(int argc, char* argv[])
 
     printo("-- access13 console --\n");
 show_prompt:
-	prompt("main", input);
+	prompt("access", input);
 
     n = s13_exparts(input, delim, pack, escape);
 
@@ -519,7 +892,6 @@ show_prompt:
 	case CODE_EXIT:
 		return 0;
 		break;
-
 	case CODE_OPEN:
 		do_open(&ac, n, ary);
 		break;
@@ -542,20 +914,26 @@ show_prompt:
     	do_grouplist(&ac, n, ary);
 		break;
 	case CODE_USERADD:
+		do_useradd(&ac, n, ary);
 		break;
 	case CODE_RMUSER:
+		do_userrm(&ac, n, ary);
 		break;
 	case CODE_USERSET:
+		do_userset(&ac, n, ary);
 		break;
 	case CODE_USERCHK:
+		do_userchk(&ac, n, ary);
 		break;
     case CODE_USERLIST:
+    	do_userlist(&ac, n, ary);
 		break;
     case CODE_LOGIN:
+    	do_login(&ac, n, ary);
 		break;
     case CODE_LOGOUT:
+    	do_logout(&ac, n, ary);
 		break;
-
 	default:
 		printo("unknown input %s\n", input);
 		break;
