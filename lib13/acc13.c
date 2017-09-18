@@ -1197,8 +1197,8 @@ error13_t acc_user_add(struct access13 *ac, char *name, char* pass){
 //    cols = (char**)m13_malloc(sizeof(char*)*ACC_TABLE_USER_COLS);
 //    if(!cols) return e13_error(E13_NOMEM);
 
-    //TODO: ac->hash((uchar*)pass, strlen(pass), passhash);
-    passhash[0] = 0;
+    ac->hash((uchar*)pass, s13_strlen(pass, ACC_MAX_PASSLEN), passhash);
+    //passhash[0] = 0;
 
     switch((ret = _acc_get_free_uid(ac, &uid, flags))){
     case E13_CONTINUE://an old uid is re-used, update
@@ -1325,6 +1325,48 @@ error13_t acc_user_rm(struct access13 *ac, char *name, uid13_t id){
     _deb_usr_rm("db_update ret: %i", ret);
     db_finalize(&st);
     return ret;
+
+}
+
+error13_t acc_user_chpass(struct access13* ac, char* name, uid13_t id,
+							char* oldpass,
+							char* newpass){
+	struct db_stmt st;
+    db_table_id tid;
+    uchar* col[1];
+    struct db_logic_s logic;
+    db_colid_t colid;
+	uchar passhash[ac->hashlen];
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+    if(_acc_assert(name, id, 1) != E13_OK) return e13_error(E13_NOTVALID);
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
+
+    if(name){
+		logic.col = db_get_colid_byname(ac->db, tid, "name");
+		logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = 0;
+		logic.sval = name;
+		logic.logic = DB_LOGIC_LIKE;
+    } else {
+		logic.col = db_get_colid_byname(ac->db, tid, "id");
+		logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_COL_CMP;
+		logic.ival = id;
+		logic.logic = DB_LOGIC_EQ;
+    }
+
+    colid = db_get_colid_byname(ac->db, tid, "pass");
+
+    ac->hash(newpass, s13_strlen(newpass, ACC_MAX_PASSLEN), passhash);
+
+	col[0] = passhash;
+
+    return db_update(ac->db, tid, logic, 1, &colid, col, NULL, &st);
 
 }
 
@@ -1604,7 +1646,7 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
     int date_[3];
     int time_;
     char now[20];
-
+    uchar passhash[ac->hashlen];
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -1618,6 +1660,10 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
     }
 
     if(user.stt == ACC_USR_STT_IN) return e13_error(E13_EXISTS);
+
+    ac->hash(password, s13_strlen(password, ACC_MAX_PASSLEN), passhash);
+
+    if(memcmp(passhash, user.passhash, ac->hashlen)) return e13_error(E13_AUTH);
 
     _deb_acc_login("login request username %s, password %s", username,password);
 

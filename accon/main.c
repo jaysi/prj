@@ -919,6 +919,9 @@ show_prompt:
 	case CODE_RMUSER:
 		do_userrm(&ac, n, ary);
 		break;
+	case CODE_CHUSERPASS:
+		do_chuserpass(&ac, n, ary);
+		break;
 	case CODE_USERSET:
 		do_userset(&ac, n, ary);
 		break;

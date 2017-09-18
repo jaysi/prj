@@ -42,6 +42,7 @@
 #define ACC_MEMS_STT_ACTIVE		10
 #define ACC_MEMS_STT_INACTIVE	20
 
+#define ACC_MAX_PASSLEN	2048
 
 struct group13{
 
@@ -123,6 +124,7 @@ struct acc_acl_entry{
 
     error13_t acc_user_add(struct access13* ac, char* name, char* password);
     error13_t acc_user_rm(struct access13* ac, char* name, uid13_t id);
+    error13_t acc_user_chpass(struct access13* ac, char* name, uid13_t id, char* oldpass, char* newpass);
     error13_t acc_user_set_stat(struct access13* ac, char* name, uid13_t id, int stt);
     error13_t acc_user_chk(struct access13* ac, char* name, uid13_t id, struct user13 *user);
     error13_t acc_user_list(struct access13* ac, uid13_t* n, struct user13 **user);
