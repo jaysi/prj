@@ -412,6 +412,13 @@ int do_close(struct access13* ac, int n, char** ary){
 		return -1;
 	}
 
+	ret = db_close(ac->db);
+	if(ret != E13_OK){
+		printo("failed\n");
+		printe13(ret, NULL);
+		return -1;
+	}
+
 	printo("done\n");
 
     return 0;

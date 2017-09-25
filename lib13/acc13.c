@@ -746,7 +746,6 @@ error13_t _acc_rm_group_membership(struct access13* ac, gid13_t gid){
     return ret;
 }
 
-//TODO: remove all user membership
 error13_t acc_group_rm(struct access13 *ac, char *name, gid13_t gid){
 
     struct db_stmt st;
@@ -1763,7 +1762,9 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
 
 error13_t acc_destroy(struct access13* ac){
 	//TODO
-	return db_close(ac->db);
+	if(!_is_init(ac)) return e13_error(E13_MISUSE);
+//	return db_close(ac->db);
+	return E13_OK;
 }
 
 error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid,
@@ -2178,7 +2179,6 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
     }
     _deb_usr_chk("collecting done");
 
-    //TODO: COMPLETE CHECKING THE PERM
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
         ret = db_column_int(&st, db_get_colid_byname(ac->db,tid,"perm"), (int*)perm);
@@ -2199,7 +2199,79 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
 
 }
 
-error13_t acc_perm_user_chk(struct access13* ac,objid13_t objid,
+error13_t _acc_load_acl(struct access13* ac, objid13_t objid,
+						acc_acl_entry** list){
+
+	acc_acl_entry* first = NULL, *last, *entry;
+	struct db_stmt st;
+    struct db_logic_s logic;
+    error13_t ret;
+    db_table_id tid;
+    db_colid_t colid_perm, colid_uid, colid_gid, colid_objid;
+    acc_perm_t perm;
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
+    _deb_usr_chk("got tid %u", tid);
+
+    logic.col = db_get_colid_byname(ac->db, tid, "objid");
+    logic.comb = DB_LOGICOMB_AND;
+    logic.flags = DB_LOGICF_COL_CMP;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = objid;
+
+   _deb_usr_chk("collecting...");
+    if((ret = db_collect(ac->db, tid, NULL, 1, &logic,NULL,DB_SO_DONT,0,&st))!=
+		E13_OK){
+        _deb_usr_chk("fails %i", ret);
+        return ret;
+    }
+    _deb_usr_chk("collecting done");
+
+    colid_perm = db_get_colid_byname(ac->db,tid,"perm");
+    colid_uid = db_get_colid_byname(ac->db,tid,"uid");
+    colid_gid = db_get_colid_byname(ac->db,tid,"gid");
+    colid_objid = db_get_colid_byname(ac->db,tid,"objid");
+
+loop:
+    switch((ret = db_step(&st))){
+        case E13_CONTINUE:
+        if((ret = db_column_int(&st, colid_perm, (int*)&perm)) != E13_OK) break;
+        if((ret = db_column_int(&st, colid_uid, (int*)&uid)) != E13_OK) break;
+        if((ret = db_column_int(&st, colid_gid, (int*)&gid)) != E13_OK) break;
+        if((ret = db_column_int64(&st, colid_objid, (int*)&objid)) != E13_OK)
+			break;
+        if(ret = E13_OK){
+				if(!(entry =(acc_acl_entry*)m13_malloc(sizeof(struct acc_acl_entry)))) break;
+				entry->perm = perm;
+				entry->uid = uid;
+				entry->gid = gid;
+				entry->objid = objid;
+				entry->next = NULL;
+			if(!first){
+				first = entry;
+                last = first;
+			} else {
+				last->next = entry;
+				last = entry;
+			}
+        }
+		goto loop;
+        break;
+        case E13_OK:
+        _deb_usr_chk("step OK");
+        db_finalize(&st);
+        return e13_error(E13_NOTFOUND);
+        break;
+        default:
+        _deb_usr_chk("step %i", ret);
+        return ret;
+        break;
+    }
+
+    return ret;
+}
+
+error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid,
 							char* username, uid13_t uid, acc_perm_t perm){
 
     struct db_logic_s logic[2];

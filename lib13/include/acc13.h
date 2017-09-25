@@ -1,4 +1,4 @@
-﻿#ifndef ACC13_H
+#ifndef ACC13_H
 #define ACC13_H
 
 #include "type13.h"
@@ -103,6 +103,8 @@ struct acc_acl_entry{
     char* group;
     uid13_t uid;
     char* user;
+    acc_perm_t perm;
+    objid13_t objid;
     struct acc_acl_entry* next;
 };
 
