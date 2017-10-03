@@ -40,6 +40,12 @@ struct db_logic_sign_s{
     {">"},
     {">="},
     {"BETWEEN"},
+    {"AND"},
+    {"OR"},
+    {"NOT"},
+    {"XOR"},
+    {"("},
+    {")"},
     {NULL}
 };
 

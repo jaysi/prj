@@ -397,6 +397,7 @@ error13_t acc_init(struct access13* ac, struct db13* db, regid_t regid){
 }
 
 error13_t acc_set_hash(struct access13* ac, size_t hashlen, void *hashfn){
+
     ac->hash = hashfn;
     ac->hashlen = hashlen;
 
@@ -430,10 +431,11 @@ static inline error13_t _acc_get_free_gid(struct access13* ac, gid13_t* id,
 
     _deb_get_free_gid("tid: %u", tid);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "stat");
+    //logic.col = db_get_colid_byname(ac->db, tid, "stat");
+    logic.colname = "stat";
     _deb_get_free_gid("logic.colid(stat): %u", logic.col);
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
+    //logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = DB_LOGICF_DEF;
     logic.logic = DB_LOGIC_EQ;
     logic.ival = ACC_GRP_STT_REMOVED;
 
@@ -519,15 +521,13 @@ error13_t acc_group_set_stat(struct access13* ac, char* name, gid13_t gid, int s
     tid = db_get_tid_byname(ac->db, ACC_TABLE_GROUP);
 
     if(name){
-		logic.col = db_get_colid_byname(ac->db, tid, "name");
-		logic.comb = DB_LOGICOMB_NONE;
-		logic.flags = 0;
+		logic.colname = "name";
+		logic.flags = DB_LOGICF_DEF;
 		logic.sval = name;
 		logic.logic = DB_LOGIC_LIKE;
     } else {
-		logic.col = db_get_colid_byname(ac->db, tid, "id");
-		logic.comb = DB_LOGICOMB_NONE;
-		logic.flags = DB_LOGICF_COL_CMP;
+		logic.colname = "id";
+		logic.flags = DB_LOGICF_DEF;
 		logic.ival = gid;
 		logic.logic = DB_LOGIC_EQ;
     }
@@ -586,11 +586,12 @@ error13_t acc_group_add(struct access13 *ac, char *name){
     case E13_CONTINUE://an old gid is re-used, update
         _deb_grp_add("reusing old id, id = %u", gid);
         stat = ACC_GRP_STT_ACTIVE;
-        logic.col = db_get_colid_byname(ac->db, tid, "id");
+        //logic.col = db_get_colid_byname(ac->db, tid, "id");
+        logic.colname = "id";
         _deb_grp_add("logic.colid(id): %u", logic.col);
         logic.comb = DB_LOGICOMB_NONE;
         logic.ival = gid;
-        logic.flags = DB_LOGICF_COL_CMP;
+        logic.flags = DB_LOGICF_DEF;
         logic.logic = DB_LOGIC_EQ;
         cols[0] = (uchar*)name;
         cols[1] = (uchar*)&stat;
@@ -643,113 +644,168 @@ error13_t acc_group_add(struct access13 *ac, char *name){
 
 }
 
-//remove all uid record
-error13_t _acc_rm_user_membership(struct access13* ac, uid13_t uid){
+/*
+remove all uid record from tid
+TODO: THIS COULD BE POSSIBLE!
+error13_t _acc_rm_uid_entries(struct access13* ac,
+							uid13_t nuid, uid13_t uid[],
+							db_table_id ntid, db_table_id tid[]){
+*/
+static inline error13_t _acc_rm_uid_entries(struct access13* ac,
+											uid13_t nuid, uid13_t uid[]
+											db_table_id ntid, db_table_id tid[]){
     struct db_stmt st;
     struct db_logic_s logic;
     error13_t ret;
+    uid13_t iuid;
+    db_table_id itid;
+
+//	not needed
+//    if(!_is_init(ac)){
+//        return e13_error(E13_MISUSE);
+//    }
+
+	for(itid = 0; itid < ntid; itid++){
+
+		//logic.col = db_get_colid_byname(ac->db, tid[itid], "uid");
+		logic.colname = "uid";
+
+		for(iuid = 0; iuid < nuid; iuid++){
+
+			//logic.comb = DB_LOGICOMB_NONE;
+			logic.flags = DB_LOGICF_DEF
+			logic.logic = DB_LOGIC_EQ;
+			logic.ival = uid[iuid];
+
+			_deb_usr_rm("collecting...");
+			if((ret = db_delete(ac->db, tid[itid], 1, &logic, &st)) != E13_OK){
+				_deb_usr_rm("fails %i", ret);
+				return ret;
+			}
+			_deb_usr_rm("collecting done");
+
+			switch((ret = db_step(&st))){
+				case E13_CONTINUE:
+				case E13_OK:
+				break;
+				default:
+				//TODO: what to do on error?
+				_deb_usr_rm("step %i", ret);
+				return ret;
+				break;
+			}
+
+            db_reset(&st);
+
+		}//iuid
+	}//itid
+
+    return ret;
+}
+
+static inline error13_t _acc_rm_gid_entries(struct access13* ac,
+											gid13_t ngid, gid13_t gid[]
+											db_table_id ntid, db_table_id tid[]){
+    struct db_stmt st;
+    struct db_logic_s logic;
+    error13_t ret;
+    gid13_t igid;
+    db_table_id itid;
+
+//	not needed
+//    if(!_is_init(ac)){
+//        return e13_error(E13_MISUSE);
+//    }
+
+	for(itid = 0; itid < ntid; itid++){
+
+		//logic.col = db_get_colid_byname(ac->db, tid[itid], "gid");
+		logic.colname = "gid";
+
+		for(igid = 0; igid < ngid; igid++){
+
+			//logic.comb = DB_LOGICOMB_NONE;
+			logic.flags = DB_LOGICF_DEF
+			logic.logic = DB_LOGIC_EQ;
+			logic.ival = gid[igid];
+
+			_deb_grp_rm("collecting...");
+			if((ret = db_delete(ac->db, tid[itid], 1, &logic, &st)) != E13_OK){
+				_deb_grp_rm("fails %i", ret);
+				return ret;
+			}
+			_deb_grp_rm("collecting done");
+
+			switch((ret = db_step(&st))){
+				case E13_CONTINUE:
+				case E13_OK:
+				break;
+				default:
+				//TODO: what to do on error?
+				_deb_grp_rm("step %i", ret);
+				return ret;
+				break;
+			}
+
+            db_reset(&st);
+
+		}//igid
+	}//itid
+
+    return ret;
+}
+/*
+error13_t acc_user_rm(struct access13 *ac, char *name, uid13_t id){
+
+    struct db_stmt st;
     db_table_id tid;
-//    struct user13 usr;
-//    size_t passlen;
+    error13_t ret;
+    int stt;
+    struct db_logic_s logic;
+    db_colid_t colids[1];
+    uchar* cols[1];
+    struct user13 user;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
     }
 
-//    if((ret = acc_user_chk(ac, uid, &usr)) != E13_OK){
-//		return ret;
-//    }
+    if(_acc_assert(name, id, 1) != E13_OK) return e13_error(E13_NOTVALID);
 
-    tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
-    _deb_usr_rm("got tid %u", tid);
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
+    if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "uid");
+    //1. check for existence
+    if(acc_user_chk(ac, name, id, &user) != E13_OK){
+        return e13_error(E13_NOTFOUND);
+    }
+
+    if(user.stt == ACC_USR_STT_REMOVED) return e13_error(E13_OK);
+
+    if((ret = _acc_rm_user_membership(ac, user.uid)) != E13_OK) return ret;
+
+    stt = ACC_USR_STT_REMOVED;
+    logic.col = db_get_colid_byname(ac->db, tid, "id");
+    _deb_usr_rm("logic.colid(id): %u", logic.col);
     logic.comb = DB_LOGICOMB_NONE;
+    logic.ival = user.uid;
+    _deb_usr_rm("uid: %u", user.uid);
     logic.flags = DB_LOGICF_COL_CMP;
     logic.logic = DB_LOGIC_EQ;
-    logic.ival = uid;
-
-    _deb_usr_rm("collecting...");
-    if((ret = db_delete(ac->db, tid, 1, &logic, &st)) != E13_OK){
-        _deb_usr_rm("fails %i", ret);
-        return ret;
-    }
-    _deb_usr_rm("collecting done");
-
-    switch((ret = db_step(&st))){
-        case E13_CONTINUE:
-        db_finalize(&st);
-        ret = E13_OK;
-        break;
-        case E13_OK:
-        _deb_usr_rm("step OK");
-        db_finalize(&st);
-        return e13_error(E13_NOTFOUND);
-        break;
-        default:
-        _deb_usr_rm("step %i", ret);
-        return ret;
-        break;
-    }
-
+    cols[0] = (uchar*)&stt;
+    colids[0] = db_get_colid_byname(ac->db, tid, "stat");
+    ret = db_update(ac->db, tid, logic, 1, colids, cols, NULL, &st);
+    _deb_usr_rm("db_update ret: %i", ret);
+    db_finalize(&st);
     return ret;
+
 }
-
-error13_t _acc_rm_group_membership(struct access13* ac, gid13_t gid){
-    struct db_stmt st;
-    struct db_logic_s logic;
-    error13_t ret;
-    db_table_id tid;
-//    struct group13 grp;
-//    size_t passlen;
-
-    if(!_is_init(ac)){
-        return e13_error(E13_MISUSE);
-    }
-
-//    if((ret = acc_group_chk(ac, group, &grp)) != E13_OK){
-//		return ret;
-//    }
-
-    tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
-    _deb_grp_rm("got tid %u", tid);
-
-    logic.col = db_get_colid_byname(ac->db, tid, "gid");
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = gid;
-
-    _deb_grp_rm("collecting...");
-    if((ret = db_delete(ac->db, tid, 1, &logic, &st)) != E13_OK){
-        _deb_grp_rm("fails %i", ret);
-        return ret;
-    }
-    _deb_grp_rm("collecting done");
-
-    switch((ret = db_step(&st))){
-        case E13_CONTINUE:
-        db_finalize(&st);
-        ret = E13_OK;
-        break;
-        case E13_OK:
-        _deb_grp_rm("step OK");
-        db_finalize(&st);
-        return e13_error(E13_NOTFOUND);
-        break;
-        default:
-        _deb_grp_rm("step %i", ret);
-        return ret;
-        break;
-    }
-
-    return ret;
-}
+*/
 
 error13_t acc_group_rm(struct access13 *ac, char *name, gid13_t gid){
 
     struct db_stmt st;
-    db_table_id tid;
+    db_table_id tid, tids[2];
     error13_t ret;
     int stt;
     struct db_logic_s logic;
@@ -767,21 +823,29 @@ error13_t acc_group_rm(struct access13 *ac, char *name, gid13_t gid){
     if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
 
     //1. check for existence
-    if(acc_group_chk(ac, name, gid, &group) != E13_OK){
-        return e13_error(E13_NOTFOUND);
-    }
+	if(acc_group_chk(ac, name, gid, &group) != E13_OK){
+		return e13_error(E13_NOTFOUND);
+	}
 
-    if(group.stt == ACC_GRP_STT_REMOVED) return e13_error(E13_OK);
+	if(group.stt == ACC_GRP_STT_REMOVED) return e13_error(E13_OK);
 
     if((ret = _acc_rm_group_membership(ac, group.gid)) != E13_OK) return ret;
 
-    stt = ACC_GRP_STT_REMOVED;
-    logic.col = db_get_colid_byname(ac->db, tid, "id");
+    tids[0] = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
+    tids[1] = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
+
+    if((ret = _acc_rm_gid_entries(ac, 1, &group.gid, 2, tids)) != E13_OK){
+        return ret;
+    }
+
+	stt = ACC_GRP_STT_REMOVED;
+    //logic.col = db_get_colid_byname(ac->db, tid, "id");
+    logic.colname = "id";
     _deb_grp_rm("logic.colid(id): %u", logic.col);
-    logic.comb = DB_LOGICOMB_NONE;
+    //logic.comb = DB_LOGICOMB_NONE;
     logic.ival = group.gid;
     _deb_grp_rm("gid: %u", group.gid);
-    logic.flags = DB_LOGICF_COL_CMP;
+    logic.flags = DB_LOGICF_DEF;
     logic.logic = DB_LOGIC_EQ;
     cols[0] = (uchar*)&stt;
     colids[0] = db_get_colid_byname(ac->db, tid, "stat");
@@ -792,7 +856,8 @@ error13_t acc_group_rm(struct access13 *ac, char *name, gid13_t gid){
 
 }
 
-error13_t acc_group_chk(struct access13 *ac, char *name, gid13_t gid, struct group13* group){
+error13_t acc_group_chk(struct access13 *ac, char *name, gid13_t gid,
+						struct group13* group){
 
     struct db_stmt st;
     struct db_logic_s logic;
@@ -808,17 +873,19 @@ error13_t acc_group_chk(struct access13 *ac, char *name, gid13_t gid, struct gro
     if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
 
     if(name){
-		logic.col = db_get_colid_byname(ac->db, tid, "name");
+		//logic.col = db_get_colid_byname(ac->db, tid, "name");
+		logic.colname = "name";
 		_deb_grp_chk("logic.col %u", logic.col);
-		logic.comb = DB_LOGICOMB_NONE;
-		logic.flags = 0;
+		//logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_DEF;
 		logic.logic = DB_LOGIC_LIKE;
 		logic.sval = name;
     } else {
-		logic.col = db_get_colid_byname(ac->db, tid, "id");
+		//logic.col = db_get_colid_byname(ac->db, tid, "id");
+		logic.colname = "id";
 		_deb_grp_chk("logic.col %u", logic.col);
-		logic.comb = DB_LOGICOMB_NONE;
-		logic.flags = DB_LOGICF_COL_CMP;
+		//logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_DEF;
 		logic.logic = DB_LOGIC_EQ;
 		logic.ival = gid;
     }
@@ -855,61 +922,8 @@ error13_t acc_group_chk(struct access13 *ac, char *name, gid13_t gid, struct gro
     return ret;
 }
 
-error13_t acc_gid_chk(struct access13 *ac, gid13_t gid, struct group13* group){
-
-    struct db_stmt st;
-    struct db_logic_s logic;
-    error13_t ret;
-    db_table_id tid;
-
-    if(!_is_init(ac)){
-        return e13_error(E13_MISUSE);
-    }
-
-    tid = db_get_tid_byname(ac->db, ACC_TABLE_GROUP);
-    _deb_grp_chk("got tid %u", tid);
-    if(tid == DB_TID_INVAL) return e13_error(E13_CORRUPT);
-
-    logic.col = db_get_colid_byname(ac->db, tid, "id");
-    _deb_grp_chk("logic.col %u", logic.col);
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = gid;
-
-    _deb_grp_chk("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 1, &logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
-        _deb_grp_chk("fails %i", ret);
-        return ret;
-    }
-    _deb_grp_chk("collecting done");
-
-    switch((ret = db_step(&st))){
-        case E13_CONTINUE:
-        _deb_grp_chk("step CONTINUE");
-        ret = db_column_text(&st, db_get_colid_byname(ac->db, tid, "name"), NULL, (uchar**)&group->name);
-        if(ret == E13_OK){
-            _deb_grp_chk("id %u", group->gid);
-            ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "stat"), &group->stt);
-            _deb_grp_chk("stat %i (%s)", group->stt, ret == E13_OK?"OK":"NOK");
-        }
-        db_finalize(&st);
-        break;
-        case E13_OK:
-        _deb_grp_chk("step OK");
-        db_finalize(&st);
-        return e13_error(E13_NOTFOUND);
-        break;
-        default:
-        _deb_grp_chk("step %i", ret);
-        return ret;
-        break;
-    }
-
-    return ret;
-}
-
-error13_t acc_group_list(struct access13 *ac, gid13_t *n, struct group13 **group){
+error13_t acc_group_list(struct access13 *ac, gid13_t *n,
+						struct group13 **group){
 
     struct db_stmt st;
     struct db_logic_s logic;
@@ -929,12 +943,12 @@ error13_t acc_group_list(struct access13 *ac, gid13_t *n, struct group13 **group
     tid = db_get_tid_byname(ac->db, ACC_TABLE_GROUP);
     _deb_grp_list("got tid %u", tid);
 
-    if((logic.col = db_get_colid_byname(ac->db, tid, "stat")) ==DB_COLID_INVAL){
-		return e13_error(E13_ABORT);
-    }
-    _deb_grp_list("logic.col %u", logic.col);
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
+//    if((logic.col = db_get_colid_byname(ac->db, tid, "stat")) ==DB_COLID_INVAL){
+//		return e13_error(E13_ABORT);
+//    }
+	logic.colname = "stat";
+    //logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = DB_LOGICF_DEF;
     logic.ival = ACC_GRP_STT_REMOVED;
     logic.logic = DB_LOGIC_NE;
 
@@ -1040,10 +1054,11 @@ error13_t _acc_get_free_uid(struct access13* ac, uid13_t* id,
 
     _deb_get_free_uid("tid: %u", tid);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "stat");
+    //logic.col = db_get_colid_byname(ac->db, tid, "stat");
+    logic.colname = "stat";
     _deb_get_free_uid("logic.colid(stat): %u", logic.col);
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
+    //logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = DB_LOGICF_DEF;
     logic.logic = DB_LOGIC_EQ;
     logic.ival = ACC_USR_STT_REMOVED;
 
@@ -1129,15 +1144,17 @@ error13_t acc_user_set_stat(struct access13* ac, char* name, uid13_t id, int stt
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
 
     if(name){
-		logic.col = db_get_colid_byname(ac->db, tid, "name");
-		logic.comb = DB_LOGICOMB_NONE;
+		//logic.col = db_get_colid_byname(ac->db, tid, "name");
+		logic.colname = "name";
+		//logic.comb = DB_LOGICOMB_NONE;
 		logic.flags = 0;
 		logic.sval = name;
 		logic.logic = DB_LOGIC_LIKE;
     } else {
-		logic.col = db_get_colid_byname(ac->db, tid, "id");
-		logic.comb = DB_LOGICOMB_NONE;
-		logic.flags = DB_LOGICF_COL_CMP;
+//		logic.col = db_get_colid_byname(ac->db, tid, "id");
+		logic.colname = "id";
+		//logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_DEF;
 		logic.ival = id;
 		logic.logic = DB_LOGIC_EQ;
     }
@@ -1203,11 +1220,12 @@ error13_t acc_user_add(struct access13 *ac, char *name, char* pass){
     case E13_CONTINUE://an old uid is re-used, update
         _deb_usr_add("reusing old id, id = %u", uid);
         stat = ACC_USR_STT_OUT;
-        logic.col = db_get_colid_byname(ac->db, tid, "id");
+//        logic.col = db_get_colid_byname(ac->db, tid, "id");
+		logic.colname = "id";
         _deb_usr_add("logic.colid(id): %u", logic.col);
-        logic.comb = DB_LOGICOMB_NONE;
+        //logic.comb = DB_LOGICOMB_NONE;
         logic.ival = uid;
-        logic.flags = DB_LOGICF_COL_CMP;
+        logic.flags = DB_LOGICF_DEF;
         logic.logic = DB_LOGIC_EQ;
         cols[0] = (uchar*)name;
         cols[1] = (uchar*)passhash;
@@ -1284,7 +1302,7 @@ error13_t acc_user_add(struct access13 *ac, char *name, char* pass){
 error13_t acc_user_rm(struct access13 *ac, char *name, uid13_t id){
 
     struct db_stmt st;
-    db_table_id tid;
+    db_table_id tid, tids[2];
     error13_t ret;
     int stt;
     struct db_logic_s logic;
@@ -1308,15 +1326,19 @@ error13_t acc_user_rm(struct access13 *ac, char *name, uid13_t id){
 
     if(user.stt == ACC_USR_STT_REMOVED) return e13_error(E13_OK);
 
-    if((ret = _acc_rm_user_membership(ac, user.uid)) != E13_OK) return ret;
+    tids[0] = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
+    tids[1] = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
+
+    if((ret = _acc_rm_uid_entries(ac, 1, &user.uid, 2, tids)) != E13_OK) return ret;
 
     stt = ACC_USR_STT_REMOVED;
-    logic.col = db_get_colid_byname(ac->db, tid, "id");
+    //logic.col = db_get_colid_byname(ac->db, tid, "id");
+    logic.colname = "id";
     _deb_usr_rm("logic.colid(id): %u", logic.col);
-    logic.comb = DB_LOGICOMB_NONE;
+    //logic.comb = DB_LOGICOMB_NONE;
     logic.ival = user.uid;
     _deb_usr_rm("uid: %u", user.uid);
-    logic.flags = DB_LOGICF_COL_CMP;
+    logic.flags = DB_LOGICF_DEF;
     logic.logic = DB_LOGIC_EQ;
     cols[0] = (uchar*)&stt;
     colids[0] = db_get_colid_byname(ac->db, tid, "stat");
@@ -1346,15 +1368,17 @@ error13_t acc_user_chpass(struct access13* ac, char* name, uid13_t id,
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
 
     if(name){
-		logic.col = db_get_colid_byname(ac->db, tid, "name");
-		logic.comb = DB_LOGICOMB_NONE;
-		logic.flags = 0;
+		//logic.col = db_get_colid_byname(ac->db, tid, "name");
+		logic.colname = "name";
+		//logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_DEF;
 		logic.sval = name;
 		logic.logic = DB_LOGIC_LIKE;
     } else {
 		logic.col = db_get_colid_byname(ac->db, tid, "id");
-		logic.comb = DB_LOGICOMB_NONE;
-		logic.flags = DB_LOGICF_COL_CMP;
+		logic.colname = "id";
+		//logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_DEF;
 		logic.ival = id;
 		logic.logic = DB_LOGIC_EQ;
     }
@@ -1386,17 +1410,19 @@ error13_t acc_user_chk(struct access13 *ac, char *name, uid13_t id,
     _deb_usr_chk("got tid %u", tid);
 
     if(name){
-		logic.col = db_get_colid_byname(ac->db, tid, "name");
-		_deb_usr_chk("logic.col %u", logic.col);
-		logic.comb = DB_LOGICOMB_NONE;
-		logic.flags = 0;
+		//logic.col = db_get_colid_byname(ac->db, tid, "name");
+		logic.colname = "name";
+//		_deb_usr_chk("logic.col %u", logic.col);
+		//logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_DEF;
 		logic.logic = DB_LOGIC_LIKE;
 		logic.sval = name;
     } else {
-		logic.col = db_get_colid_byname(ac->db, tid, "id");
-		_deb_usr_chk("logic.col %u", logic.col);
-		logic.comb = DB_LOGICOMB_NONE;
-		logic.flags = DB_LOGICF_COL_CMP;
+//		logic.col = db_get_colid_byname(ac->db, tid, "id");
+//		_deb_usr_chk("logic.col %u", logic.col);
+		logic.colname = "id";
+		//logic.comb = DB_LOGICOMB_NONE;
+		logic.flags = DB_LOGICF_DEF;
 		logic.logic = DB_LOGIC_EQ;
 		logic.ival = id;
     }
@@ -1448,82 +1474,82 @@ error13_t acc_user_chk(struct access13 *ac, char *name, uid13_t id,
     return ret;
 }
 
-error13_t acc_uid_chk(struct access13 *ac, uid13_t uid, struct user13* user){
-
-    struct db_stmt st;
-    struct db_logic_s logic;
-    error13_t ret;
-    db_table_id tid;
-    size_t passlen;
-
-    if(!_is_init(ac)){
-        return e13_error(E13_MISUSE);
-    }
-
-    tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
-    _deb_usr_chk("got tid %u", tid);
-
-    logic.col = db_get_colid_byname(ac->db, tid, "id");
-    _deb_usr_chk("logic.col %u", logic.col);
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = uid;
-
-    _deb_usr_chk("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 1, &logic,NULL,DB_SO_DONT,0,&st)) !=
-		E13_OK){
-        _deb_usr_chk("fails %i", ret);
-        return ret;
-    }
-    _deb_usr_chk("collecting done");
-
-    switch((ret = db_step(&st))){
-        case E13_CONTINUE:
-        _deb_usr_chk("step CONTINUE");
-        ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "id"),
-							(int*)&user->uid);
-        if(ret == E13_OK){
-            _deb_usr_chk("id %u", user->uid);
-            ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "stat"),
-								&user->stt);
-            _deb_usr_chk("stat %i (%s)", user->stt, ret == E13_OK?"OK":"NOK");
-        }
-        if(ret == E13_OK){
-			_deb_usr_chk("checking getting passhash, colid = %u",
-							db_get_colid_byname(ac->db, tid, "pass"));
-            ret = db_column_text(&st, db_get_colid_byname(ac->db, tid, "pass"),
-								&passlen, &user->passhash);
-        }
-        if(ret == E13_OK){
-			_deb_usr_chk("passhash (%s)", user->passhash);
-            ret = db_column_date(&st,db_get_colid_byname(ac->db,tid,"lastdate"),
-								user->lastdate);
-            _deb_usr_chk("date(j) (%i/%i/%i)", user->lastdate[0],
-						user->lastdate[1], user->lastdate[2]);
-        }
-        if(ret == E13_OK){
-            ret = db_column_int(&st, db_get_colid_byname(ac->db,tid,"lasttime"),
-								(int*)&user->lasttime);
-            _deb_usr_chk("lasttime %i ", user->lasttime);
-        }
-
-        db_finalize(&st);
-        ret = E13_OK;
-        break;
-        case E13_OK:
-        _deb_usr_chk("step OK");
-        db_finalize(&st);
-        return e13_error(E13_NOTFOUND);
-        break;
-        default:
-        _deb_usr_chk("step %i", ret);
-        return ret;
-        break;
-    }
-
-    return ret;
-}
+//error13_t acc_uid_chk(struct access13 *ac, uid13_t uid, struct user13* user){
+//
+//    struct db_stmt st;
+//    struct db_logic_s logic;
+//    error13_t ret;
+//    db_table_id tid;
+//    size_t passlen;
+//
+//    if(!_is_init(ac)){
+//        return e13_error(E13_MISUSE);
+//    }
+//
+//    tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
+//    _deb_usr_chk("got tid %u", tid);
+//
+//    logic.col = db_get_colid_byname(ac->db, tid, "id");
+//    _deb_usr_chk("logic.col %u", logic.col);
+//    logic.comb = DB_LOGICOMB_NONE;
+//    logic.flags = DB_LOGICF_COL_CMP;
+//    logic.logic = DB_LOGIC_EQ;
+//    logic.ival = uid;
+//
+//    _deb_usr_chk("collecting...");
+//    if((ret = db_collect(ac->db, tid, NULL, 1, &logic,NULL,DB_SO_DONT,0,&st)) !=
+//		E13_OK){
+//        _deb_usr_chk("fails %i", ret);
+//        return ret;
+//    }
+//    _deb_usr_chk("collecting done");
+//
+//    switch((ret = db_step(&st))){
+//        case E13_CONTINUE:
+//        _deb_usr_chk("step CONTINUE");
+//        ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "id"),
+//							(int*)&user->uid);
+//        if(ret == E13_OK){
+//            _deb_usr_chk("id %u", user->uid);
+//            ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "stat"),
+//								&user->stt);
+//            _deb_usr_chk("stat %i (%s)", user->stt, ret == E13_OK?"OK":"NOK");
+//        }
+//        if(ret == E13_OK){
+//			_deb_usr_chk("checking getting passhash, colid = %u",
+//							db_get_colid_byname(ac->db, tid, "pass"));
+//            ret = db_column_text(&st, db_get_colid_byname(ac->db, tid, "pass"),
+//								&passlen, &user->passhash);
+//        }
+//        if(ret == E13_OK){
+//			_deb_usr_chk("passhash (%s)", user->passhash);
+//            ret = db_column_date(&st,db_get_colid_byname(ac->db,tid,"lastdate"),
+//								user->lastdate);
+//            _deb_usr_chk("date(j) (%i/%i/%i)", user->lastdate[0],
+//						user->lastdate[1], user->lastdate[2]);
+//        }
+//        if(ret == E13_OK){
+//            ret = db_column_int(&st, db_get_colid_byname(ac->db,tid,"lasttime"),
+//								(int*)&user->lasttime);
+//            _deb_usr_chk("lasttime %i ", user->lasttime);
+//        }
+//
+//        db_finalize(&st);
+//        ret = E13_OK;
+//        break;
+//        case E13_OK:
+//        _deb_usr_chk("step OK");
+//        db_finalize(&st);
+//        return e13_error(E13_NOTFOUND);
+//        break;
+//        default:
+//        _deb_usr_chk("step %i", ret);
+//        return ret;
+//        break;
+//    }
+//
+//    return ret;
+//}
 
 error13_t acc_user_list(struct access13 *ac, uid13_t *n, struct user13 **user){
 
@@ -1545,10 +1571,11 @@ error13_t acc_user_list(struct access13 *ac, uid13_t *n, struct user13 **user){
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
     _deb_usr_list("got tid %u", tid);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "stat");
-    _deb_usr_list("logic.col %u", logic.col);
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = DB_LOGICF_COL_CMP;
+//    logic.col = db_get_colid_byname(ac->db, tid, "stat");
+//    _deb_usr_list("logic.col %u", logic.col);
+	logic.colname = "stat";
+    //logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = DB_LOGICF_DEF;
     logic.ival = ACC_USR_STT_REMOVED;
     logic.logic = DB_LOGIC_NE;
 
@@ -1668,9 +1695,10 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
 
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "name");
-    logic.comb = DB_LOGICOMB_NONE;
-    logic.flags = 0;
+//    logic.col = db_get_colid_byname(ac->db, tid, "name");
+	logic.colname = "name";
+    //logic.comb = DB_LOGICOMB_NONE;
+    logic.flags = DB_LOGICF_DEF;
     logic.sval = username;
     logic.logic = DB_LOGIC_LIKE;
 
@@ -1727,15 +1755,17 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
     tid = db_get_tid_byname(ac->db, ACC_TABLE_USER);
 
     if(username){
-        logic.col = db_get_colid_byname(ac->db, tid, "name");
-        logic.comb = DB_LOGICOMB_NONE;
-        logic.flags = 0;
+//        logic.col = db_get_colid_byname(ac->db, tid, "name");
+		logic.colname = "name";
+        //logic.comb = DB_LOGICOMB_NONE;
+        logic.flags = DB_LOGICF_DEF;
         logic.sval = username;
         logic.logic = DB_LOGIC_LIKE;
     } else {
-        logic.col = db_get_colid_byname(ac->db, tid, "id");
-        logic.comb = DB_LOGICOMB_NONE;
-        logic.flags = DB_LOGICF_COL_CMP;
+//        logic.col = db_get_colid_byname(ac->db, tid, "id");
+		logic.colname = "id";
+        //logic.comb = DB_LOGICOMB_NONE;
+        logic.flags = DB_LOGICF_DEF;
         logic.ival = uid;
         logic.logic = DB_LOGIC_EQ;
     }
@@ -1771,7 +1801,7 @@ error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid,
 							struct group13** grouplist, int resolve_gid){
 
     struct db_stmt st;
-    struct db_logic_s logic[2];
+    struct db_logic_s logic;
     error13_t ret;
     db_table_id tid;
     struct user13 usr;
@@ -1789,14 +1819,15 @@ error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid,
     tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
     _deb_usr_chk("got tid %u", tid);
 
-    logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
-    logic[0].comb = DB_LOGICOMB_NONE;
-    logic[0].flags = DB_LOGICF_COL_CMP;
-    logic[0].logic = DB_LOGIC_EQ;
-    logic[0].ival = usr.uid;
+//    logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
+	logic.colname = "uid";
+    //logic[0].comb = DB_LOGICOMB_NONE;
+    logic.flags = DB_LOGICF_DEF;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = usr.uid;
 
     _deb_usr_chk("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
+    if((ret = db_collect(ac->db, tid, NULL, 1, &logic, NULL, DB_SO_DONT, 0, &st)) != E13_OK){
         _deb_usr_chk("fails %i", ret);
         return ret;
     }
@@ -1846,7 +1877,7 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname, gid13_t gid,
 							struct user13** userlist, int resolve_uid){
 
     struct db_stmt st;
-    struct db_logic_s logic[2];
+    struct db_logic_s logic;
     error13_t ret;
     db_table_id tid;
     struct group13 grp;
@@ -1863,14 +1894,15 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname, gid13_t gid,
     tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
     _deb_usr_chk("got tid %u", tid);
 
-    logic[0].col = db_get_colid_byname(ac->db, tid, "gid");
-    logic[0].comb = DB_LOGICOMB_NONE;
-    logic[0].flags = DB_LOGICF_COL_CMP;
-    logic[0].logic = DB_LOGIC_EQ;
-    logic[0].ival = grp.gid;
+//    logic[0].col = db_get_colid_byname(ac->db, tid, "gid");
+	logic.colname = "gid";
+    //logic[0].comb = DB_LOGICOMB_NONE;
+    logic.flags = DB_LOGICF_DEF;
+    logic.logic = DB_LOGIC_EQ;
+    logic.ival = grp.gid;
 
     _deb_usr_chk("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 2, logic, NULL,DB_SO_DONT,0,&st)) !=
+    if((ret = db_collect(ac->db, tid, NULL, 1, &logic, NULL,DB_SO_DONT,0,&st)) !=
 		E13_OK){
         _deb_usr_chk("fails %i", ret);
         return ret;
@@ -1922,7 +1954,7 @@ error13_t acc_user_group_check(struct access13 *ac, char *username, uid13_t uid,
 							char* group, gid13_t gid){
 
     struct db_stmt st;
-    struct db_logic_s logic[2];
+    struct db_logic_s logic[3];
     error13_t ret;
     db_table_id tid;
     struct user13 usr;
@@ -1943,17 +1975,21 @@ error13_t acc_user_group_check(struct access13 *ac, char *username, uid13_t uid,
     tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
     _deb_usr_chk("got tid %u", tid);
 
-    logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
-    logic[0].comb = DB_LOGICOMB_AND;
-    logic[0].flags = DB_LOGICF_COL_CMP;
+//    logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
+	logic[0].colname = "uid";
+    //logic[0].comb = DB_LOGICOMB_AND;
+    logic[0].flags = DB_LOGICF_DEF;
     logic[0].logic = DB_LOGIC_EQ;
     logic[0].ival = usr.uid;
 
-    logic[1].col = db_get_colid_byname(ac->db, tid, "gid");
-    logic[1].comb = DB_LOGICOMB_NONE;
-    logic[1].flags = DB_LOGICF_COL_CMP;
-    logic[1].logic = DB_LOGIC_EQ;
-    logic[1].ival = grp.gid;
+    logic[1].logic = DB_LOGIC_AND;
+
+//    logic[2].col = db_get_colid_byname(ac->db, tid, "gid");
+	logic[2].colname = "gid";
+    //logic[2].comb = DB_LOGICOMB_NONE;
+    logic[2].flags = DB_LOGICF_DEF;
+    logic[2].logic = DB_LOGIC_EQ;
+    logic[2].ival = grp.gid;
 
     _deb_usr_chk("collecting...");
     if((ret = db_collect(ac->db, tid, NULL, 2, logic,NULL,DB_SO_DONT,0,&st)) !=
@@ -2082,7 +2118,7 @@ error13_t acc_user_leave_group(struct access13* ac, char* username, uid13_t uid,
 							char* group, gid13_t gid){
 
     struct db_stmt st;
-    struct db_logic_s logic[2];
+    struct db_logic_s logic[3];
     error13_t ret;
     db_table_id tid;
     struct user13 usr;
@@ -2103,17 +2139,21 @@ error13_t acc_user_leave_group(struct access13* ac, char* username, uid13_t uid,
     tid = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
     _deb_usr_chk("got tid %u", tid);
 
-    logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
-    logic[0].comb = DB_LOGICOMB_AND;
-    logic[0].flags = DB_LOGICF_COL_CMP;
+//    logic[0].col = db_get_colid_byname(ac->db, tid, "uid");
+	logic[0].colname = "uid";
+    //logic[0].comb = DB_LOGICOMB_AND;
+    logic[0].flags = DB_LOGICF_DEF;
     logic[0].logic = DB_LOGIC_EQ;
     logic[0].ival = usr.uid;
 
-    logic[1].col = db_get_colid_byname(ac->db, tid, "gid");
-    logic[1].comb = DB_LOGICOMB_NONE;
-    logic[1].flags = DB_LOGICF_COL_CMP;
-    logic[1].logic = DB_LOGIC_EQ;
-    logic[1].ival = grp.gid;
+    logic[1].logic = DB_LOGIC_AND;
+
+//    logic[1].col = db_get_colid_byname(ac->db, tid, "gid");
+	logic[2].colname = "gid";
+    //logic[2].comb = DB_LOGICOMB_NONE;
+    logic[2].flags = DB_LOGICF_DEF;
+    logic[2].logic = DB_LOGIC_EQ;
+    logic[2].ival = grp.gid;
 
     _deb_usr_chk("collecting...");
     if((ret = db_delete(ac->db, tid, 2, logic, &st)) != E13_OK){
@@ -2148,7 +2188,7 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
 	//type 1 user, else group
 
     struct db_stmt st;
-    struct db_logic_s logic[2];
+    struct db_logic_s logic[3];
     error13_t ret;
     db_table_id tid;
     struct user13 usr;
@@ -2159,17 +2199,21 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
     tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
     _deb_usr_chk("got tid %u", tid);
 
-    logic[0].col = db_get_colid_byname(ac->db, tid, "objid");
-    logic[0].comb = DB_LOGICOMB_AND;
-    logic[0].flags = DB_LOGICF_COL_CMP;
+//    logic[0].col = db_get_colid_byname(ac->db, tid, "objid");
+//    logic[0].comb = DB_LOGICOMB_AND;
+	logic[0].colname = "objid";
+    logic[0].flags = DB_LOGICF_DEF;
     logic[0].logic = DB_LOGIC_EQ;
     logic[0].ival = objid;
 
-	logic[1].col = db_get_colid_byname(ac->db, tid, _idtype==1?"uid":"gid");
-    logic[1].comb = DB_LOGICOMB_NONE;
-    logic[1].flags = DB_LOGICF_COL_CMP;
-    logic[1].logic = DB_LOGIC_EQ;
-    logic[1].ival = aclid;
+    logic[1].logic = DB_LOGIC_AND;
+
+//	logic[1].col = db_get_colid_byname(ac->db, tid, _idtype==1?"uid":"gid");
+	logic[2].colname = _idtype==1?"uid":"gid";
+//    logic[1].comb = DB_LOGICOMB_NONE;
+    logic[2].flags = DB_LOGICF_DEF;
+    logic[2].logic = DB_LOGIC_EQ;
+    logic[2].ival = aclid;
 
     _deb_usr_chk("collecting...");
     if((ret = db_collect(ac->db, tid, NULL, 2, logic,NULL,DB_SO_DONT,0,&st)) !=
@@ -2199,28 +2243,36 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
 
 }
 
-error13_t _acc_load_acl(struct access13* ac, objid13_t objid,
+error13_t _acc_load_acl(struct access13* ac,
+						objid13_t objid,
+						uid13_t nuid, uid13_t uid[],
+						gid13_t ngid, gid13_t gid[],
 						acc_acl_entry** list){
 
 	acc_acl_entry* first = NULL, *last, *entry;
 	struct db_stmt st;
-    struct db_logic_s logic;
+    struct db_logic_s logic[nuid+ngid+1];
     error13_t ret;
     db_table_id tid;
     db_colid_t colid_perm, colid_uid, colid_gid, colid_objid;
     acc_perm_t perm;
+    uid13_t iuid;
+    gid13_t igid;
 
     tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
     _deb_usr_chk("got tid %u", tid);
 
-    logic.col = db_get_colid_byname(ac->db, tid, "objid");
-    logic.comb = DB_LOGICOMB_AND;
-    logic.flags = DB_LOGICF_COL_CMP;
-    logic.logic = DB_LOGIC_EQ;
-    logic.ival = objid;
+    //logic[0].col = db_get_colid_byname(ac->db, tid, "objid");
+    logic[0].colname = "objid";
+//    logic[0].comb = DB_LOGICOMB_AND;
+    logic[0].flags = DB_LOGICF_PAREN_OPEN;
+    logic[0].logic = DB_LOGIC_EQ;
+    logic[0].ival = objid;
+
+
 
    _deb_usr_chk("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 1, &logic,NULL,DB_SO_DONT,0,&st))!=
+    if((ret = db_collect(ac->db, tid, NULL, 1, logic,NULL,DB_SO_DONT,0,&st))!=
 		E13_OK){
         _deb_usr_chk("fails %i", ret);
         return ret;

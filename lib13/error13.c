@@ -55,6 +55,7 @@ struct e13_code_strings{
     {E13_CONTINUE, "There is more data to process"},
     {E13_DONE, "Operation is done"},
     {E13_NEXT, "There is more data to process on next list item"},
+    {E13_SYNTAX, "Syntax error"},
     {E13_IMPLEMENT, "Feature not implemented"},
     {-1, NULL}
 };

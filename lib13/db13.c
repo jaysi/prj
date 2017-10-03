@@ -1636,17 +1636,6 @@ bind_data:
 }
 
 error13_t _db_assert_logic(int nlogic, struct db_logic_s* logic){
-    int i;
-
-    for(i = 0; i < nlogic; i++){
-        if(
-           (logic[i].flags&DB_LOGICF_COL_CMP && logic[i].logic==DB_LOGIC_LIKE)||
-           ((logic[i].logic!=DB_LOGIC_LIKE&& logic[i].logic!=DB_LOGIC_NOTLIKE)&&
-			!(logic[i].flags & DB_LOGICF_COL_CMP))
-           ) return e13_error(E13_MISUSE);
-
-    }
-
     return E13_OK;
 }
 
@@ -1700,25 +1689,24 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 
 //            if(!(logic[i-1].flags & DB_LOGICF_COL_CMP)){
 
-                snprintf(sql + len, RLEN, "%s %s %s ?%i",
-                         i == 1?"":logic_sign[logic[i-1].comb].sign,
-                         db_get_col_name(db, tid, logic[i-1].col),
-                         logic_sign[logic[i-1].logic].sign,
-                         i
-                        );
-                        _deb_collect(sql);
+			if(logic[i-1].logic >= DB_LOGIC_AND && logic[i-1].logic < DB_LOGIC_INVAL){
 
-//            } else {
-//
-//                snprintf(sql + len, RLEN, "%s %s %s %ll",
-//                         i == 1?"":logic_sign[logic[i-1].comb].sign,
-//                         db_get_col_name(db, tid, logic[i-1].col),
-//                         logic_sign[logic[i-1].logic].sign,
-//                         logic[i-1].ival
-//                        );
-//                        _deb_collect(sql);
-//
-//            }
+				if(i == nlogic && logic[i-1].logic != DB_LOGIC_CLOSEP)
+					return e13_error(E13_SYNTAX);
+
+				snprintf(sql + len, RLEN, " %s ", logic_sign[logic[i-1].logic].sign);
+				len = strlen(sql);
+				continue;
+			} else {
+
+				snprintf(sql + len, RLEN, "%s %s %s ?%i",
+						 i == 1?"":logic_sign[logic[i-1].comb].sign,
+						 logic[i-1].flags & DB_LOGICF_USE_COLID?db_get_col_name(db, tid, logic[i-1].colid):logic[i-1].colname,
+						 logic_sign[logic[i-1].logic].sign,
+						 i
+						);
+						_deb_collect(sql);
+			}
 
             len = strlen(sql);
 
@@ -1880,27 +1868,27 @@ error13_t db_delete(	struct db13* db, db_table_id tid,
 
         for(i = 1; i < nlogic + 1; i++){
 
-            if(!(logic[i-1].flags & DB_LOGICF_COL_CMP)){
+			if(logic[i-1].logic >= DB_LOGIC_AND && logic[i-1].logic < DB_LOGIC_INVAL){
 
-                snprintf(sql + len, RLEN, "%s %s %s ?%i",
-                         i == 1?"":logic_sign[logic[i-1].comb].sign,
-                         db_get_col_name(db, tid, logic[i-1].col),
-                         logic_sign[logic[i-1].logic].sign,
-                         i
-                        );
+				if(i == nlogic && logic[i-1].logic != DB_LOGIC_CLOSEP)
+					return e13_error(E13_SYNTAX);
 
-            } else {
+				snprintf(sql + len, RLEN, " %s ", logic_sign[logic[i-1].logic].sign);
+				len = strlen(sql);
+				continue;
 
-                snprintf(sql + len, RLEN, "%s %s %s %s",
-                         i == 1?"":logic_sign[logic[i-1].comb].sign,
-                         db_get_col_name(db, tid, logic[i-1].col),
-                         logic_sign[logic[i-1].logic].sign,
-                         logic[i-1].sval
-                        );
+			} else {
 
-            }
+				snprintf(sql + len, RLEN, "%s %s %s ?%i",
+						 i == 1?"":logic_sign[logic[i-1].comb].sign,
+						 logic[i-1].flags & DB_LOGICF_USE_COLID?db_get_col_name(db, tid, logic[i-1].colid):logic[i-1].colname,
+						 logic_sign[logic[i-1].logic].sign,
+						 i
+						);
 
-            len = strlen(sql);
+				len = strlen(sql);
+
+			}
 
         }
 

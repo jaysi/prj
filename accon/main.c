@@ -883,6 +883,7 @@ int main(int argc, char* argv[])
     pack[2] = NULL;
 
     printo("-- access13 console --\n");
+
 show_prompt:
 	prompt("access", input);
 

@@ -45,6 +45,7 @@
 #define E13_CONTINUE    1000100  /* There is more data to process */
 #define E13_DONE        1000101  /* No more data to process */
 #define E13_NEXT        1000102  /* There is more data to process on next list item */
+#define E13_SYNTAX		1000103	 /* Syntax error*/
 
 #define E13_IMPLEMENT   1000200  /* Feature not implemented */
 

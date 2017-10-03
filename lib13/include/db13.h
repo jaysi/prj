@@ -190,19 +190,27 @@ enum db_logic{
     DB_LOGIC_GT,
     DB_LOGIC_GE,
     DB_LOGIC_BETWEEN,
+    DB_LOGIC_AND,
+    DB_LOGIC_OR,
+    DB_LOGIC_NOT,
+    DB_LOGIC_XOR,
+    DB_LOGIC_OPENP,
+    DB_LOGIC_CLOSEP,
 
     DB_LOGIC_INVAL
 };
 
 #define DB_LOGICF_COL_CMP  (0x01<<0) //compare columns
-#define DB_LOGICF_PAREN_OPEN  (0x01<<1) //(
-#define DB_LOGICF_PAREN_CLOSE  (0x01<<2) //)
+#define DB_LOGICF_USE_COLID	(0x01<<2)
+#define DB_LOGICF_DEF	0x00
 
 struct db_logic_s{
     char flags;
-    enum db_logic_comb comb;
-    int col;
+    //enum db_logic_comb comb;
+    db_colid_t colid;
+    char* colname;
     enum db_logic logic;
+    void* value;//not in use for now
     char* sval;
     int64_t ival;// = size of sval in blob data type
 };
