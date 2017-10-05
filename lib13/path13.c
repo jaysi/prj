@@ -421,3 +421,16 @@ char* p13_get_home(){
     return home?home:".";
 #endif
 }
+
+int p13_get_type_id(char* path){
+
+	struct stat st;
+	if(stat(path, &st) < 0){
+        return P13_TYPE_ID_ERR;
+	}
+
+	return p13_type_id(st);
+
+}
+
+

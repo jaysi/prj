@@ -57,12 +57,14 @@ struct _cmd {
     char* cmd[10];
     char* desc;
     char* syntax;
+    int(*func)(struct access*, int, char**);
 } cmd[] = {
 	{
 			CODE_EMPTY,
 			{
             "", NULL
 			},
+			NULL,
 			NULL,
 			NULL,
 	},
@@ -72,8 +74,8 @@ struct _cmd {
             "help", "?", NULL
 			},
 			"prints help message",
-			"help"
-
+			"help",
+			&help
 	},
 	{
 			CODE_EXIT,
@@ -81,7 +83,8 @@ struct _cmd {
             "quit", "exit", NULL
 			},
 			"exit the program",
-			"exit"
+			"exit",
+			NULL
 
 	},
 	{
@@ -90,8 +93,8 @@ struct _cmd {
             "open", NULL
 			},
 			"open database",
-			"open \'filename\'"
-
+			"open \'filename\'",
+			&do_open
 	},
 	{
 			CODE_CLOSE,
@@ -99,7 +102,8 @@ struct _cmd {
             "close", NULL
 			},
 			"close database",
-			"close"
+			"close",
+			&do_close
 
 	},
 	{
@@ -108,7 +112,8 @@ struct _cmd {
             "groupadd", "gadd", NULL
 			},
 			"add group(s)",
-			"groupadd \'groupname1\' \'groupname2\' ..."
+			"groupadd \'groupname1\' \'groupname2\' ...",
+			&do_groupadd
 
 	},
 
@@ -118,7 +123,8 @@ struct _cmd {
             "rmgroup", "grm", "grouprm", "rmg", "delgroup", "groupdel", "gdel", "delg", NULL
 			},
 			"removes group(s)",
-			"rmgroup \'groupname1\' \'groupname2\' ..."
+			"rmgroup \'groupname1\' \'groupname2\' ...",
+			&do_grouprm
 
 	},
 	{
@@ -127,7 +133,8 @@ struct _cmd {
             "groupset", "gset", NULL
 			},
 			"sets group config",
-			"groupset \'groupname\' \'stat=(A)ctive|(I)nactive|(R)emoved\'"
+			"groupset \'groupname\' \'stat=(A)ctive|(I)nactive|(R)emoved\'",
+			&do_groupset
 
 	},
 	{
@@ -136,7 +143,8 @@ struct _cmd {
             "grouplist", "glist", NULL
 			},
 			"lists groups",
-			"grouplist"
+			"grouplist",
+			&do_grouplist
 
 	},
 	{
@@ -145,7 +153,8 @@ struct _cmd {
             "useradd", "uadd", NULL
 			},
 			"add user(s)",
-			"useradd \'username1\' \'username2\' ..."
+			"useradd \'username1\' \'username2\' ...",
+			&do_useradd
 
 	},
 
@@ -155,7 +164,8 @@ struct _cmd {
             "rmuser", "urm", "userrm", "rmu", "deluser", "userdel", "udel", "delu", NULL
 			},
 			"removes user(s)",
-			"rmuser \'username1\' \'username2\' ..."
+			"rmuser \'username1\' \'username2\' ...",
+			&do_userrm
 
 	},
 	{
@@ -164,7 +174,8 @@ struct _cmd {
             "userset", "uset", NULL
 			},
 			"sets user config",
-			"userset \'username\' \'stat=(A)ctive|(I)nactive|(R)emoved|(L)oggedIn|(L)oggedOut\'"
+			"userset \'username\' \'stat=(A)ctive|(I)nactive|(R)emoved|(L)oggedIn|(L)oggedOut\'",
+			&do_userset
 
 	},
 	{
@@ -173,7 +184,8 @@ struct _cmd {
             "userlist", "ulist", NULL
 			},
 			"lists users",
-			"userlist"
+			"userlist",
+			&do_userlist
 
 	},
 	{
@@ -182,7 +194,8 @@ struct _cmd {
             "login", "lin", NULL
 			},
 			"login user",
-			"login \'username1\' \'password1\' \'username2\' \'password2\' ..."
+			"login \'username1\' \'password1\' \'username2\' \'password2\' ...",
+			&do_login
 
 	},
 	{
@@ -191,7 +204,8 @@ struct _cmd {
             "logout", "lout", NULL
 			},
 			"logout user",
-			"logout \'username1\' \'username2\' ..."
+			"logout \'username1\' \'username2\' ...",
+			&do_logout
 
 	},
 	{
@@ -200,7 +214,8 @@ struct _cmd {
             "groupjoin", "gjoin", NULL
 			},
 			"joins user to group(s)",
-			"groupjoin \'username\' \'group1\' \'group2\' ..."
+			"groupjoin \'username\' \'group1\' \'group2\' ...",
+			NULL
 
 	},
 	{
@@ -209,7 +224,8 @@ struct _cmd {
             "groupleave", "gleave", NULL
 			},
 			"leave user from group(s)",
-			"groupleave \'username\' \'group1\' \'group2\' ..."
+			"groupleave \'username\' \'group1\' \'group2\' ...",
+			NULL
 
 	},
 	{
@@ -218,7 +234,8 @@ struct _cmd {
             "groupcheck", "gcheck", "gchk", NULL
 			},
 			"checks user membership in group(s)",
-			"groupcheck \'username\' \'group1\' \'group2\' ..."
+			"groupcheck \'username\' \'group1\' \'group2\' ...",
+			NULL
 
 	},
 	{
@@ -227,7 +244,8 @@ struct _cmd {
             "usergrouplist", "uglist", NULL
 			},
 			"list user group(s)",
-			"usergrouplist \'username\' ..."
+			"usergrouplist \'username\' ...",
+			NULL
 
 	},
 	{
@@ -236,7 +254,8 @@ struct _cmd {
             "groupuserlist", "gulist", NULL
 			},
 			"list users in a group",
-			"groupuserlist \'groupname\' ..."
+			"groupuserlist \'groupname\' ...",
+			NULL
 	},
 	{
 			CODE_PERM_GROUP_ADD,
@@ -244,7 +263,8 @@ struct _cmd {
             "permgroupadd", "pgadd", NULL
 			},
 			"add group permission",
-			"permgroupadd \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'"
+			"permgroupadd \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'",
+			NULL
 
 	},
 	{
@@ -253,7 +273,8 @@ struct _cmd {
             "permgrouprm", "pgrm", NULL
 			},
 			"remove group permission",
-			"permgrouprm \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'"
+			"permgrouprm \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'",
+			NULL
 
 	},
 	{
@@ -262,7 +283,8 @@ struct _cmd {
             "permgroupcheck", "pgchk", NULL
 			},
 			"check group permission",
-			"permgroupcheck \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute|(L)ist\'"
+			"permgroupcheck \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute|(L)ist\'",
+			NULL
 
 	},
 	{
@@ -271,12 +293,14 @@ struct _cmd {
             "access", "acc", NULL
 			},
 			"check user access",
-			"access \'username\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'"
+			"access \'username\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'",
+			NULL
 
 	},
 	{
 		CODE_INVAL,
 		{NULL},
+		NULL,
 		NULL,
 		NULL
 	}
@@ -323,7 +347,7 @@ int prompt(char* init_str, char* input){
 	return 0;
 }
 
-int help(int n, char** ary){
+int help(struct access* ac, int n, char** ary){
 	struct _cmd* c;
 	int i;
 
@@ -875,6 +899,7 @@ int main(int argc, char* argv[])
 	int n;
 	char** ary;
 	struct access13 ac;
+	struct _cmd* c;
 
 	escape = ESCAPE;
 	strcpy(delim, DELIM);
@@ -893,62 +918,81 @@ show_prompt:
 
     s13_explode(input, delim, pack, escape, ary);
 
-	switch(translate(ary[0])){
-	case CODE_HELP:
-	help(n, ary);
-	break;
+	if(!(c = translate_s(ary[0])){
+		printe13(e13_error(E13_SYNTAX), ary[0]);
+		return 0;
+	}
+
+	switch(c->code){
 	case CODE_EXIT:
 		return 0;
 		break;
-	case CODE_OPEN:
-		do_open(&ac, n, ary);
-		break;
-	case CODE_CLOSE:
-		do_close(&ac, n, ary);
-		break;
-	case CODE_GROUPADD:
-		do_groupadd(&ac, n, ary);
-		break;
-	case CODE_RMGROUP:
-		do_grouprm(&ac, n, ary);
-		break;
-	case CODE_GROUPSET:
-		do_groupset(&ac, n, ary);
-		break;
-	case CODE_GROUPCHK:
-		do_groupchk(&ac, n, ary);
-		break;
-    case CODE_GROUPLIST:
-    	do_grouplist(&ac, n, ary);
-		break;
-	case CODE_USERADD:
-		do_useradd(&ac, n, ary);
-		break;
-	case CODE_RMUSER:
-		do_userrm(&ac, n, ary);
-		break;
-	case CODE_CHUSERPASS:
-		do_chuserpass(&ac, n, ary);
-		break;
-	case CODE_USERSET:
-		do_userset(&ac, n, ary);
-		break;
-	case CODE_USERCHK:
-		do_userchk(&ac, n, ary);
-		break;
-    case CODE_USERLIST:
-    	do_userlist(&ac, n, ary);
-		break;
-    case CODE_LOGIN:
-    	do_login(&ac, n, ary);
-		break;
-    case CODE_LOGOUT:
-    	do_logout(&ac, n, ary);
-		break;
 	default:
-		printo("unknown input %s\n", input);
+		if(!c->func){
+			printe13(e13_error(E13_IMPLEMENT), ary[0]);
+		} else {
+			c->func(&ac, n, ary);
+		}
 		break;
 	}
+
+//	switch(translate(ary[0])){
+//	case CODE_HELP:
+//	help(n, ary);
+//	break;
+//	case CODE_EXIT:
+//		return 0;
+//		break;
+//	case CODE_OPEN:
+//		do_open(&ac, n, ary);
+//		break;
+//	case CODE_CLOSE:
+//		do_close(&ac, n, ary);
+//		break;
+//	case CODE_GROUPADD:
+//		do_groupadd(&ac, n, ary);
+//		break;
+//	case CODE_RMGROUP:
+//		do_grouprm(&ac, n, ary);
+//		break;
+//	case CODE_GROUPSET:
+//		do_groupset(&ac, n, ary);
+//		break;
+//	case CODE_GROUPCHK:
+//		do_groupchk(&ac, n, ary);
+//		break;
+//    case CODE_GROUPLIST:
+//    	do_grouplist(&ac, n, ary);
+//		break;
+//	case CODE_USERADD:
+//		do_useradd(&ac, n, ary);
+//		break;
+//	case CODE_RMUSER:
+//		do_userrm(&ac, n, ary);
+//		break;
+//	case CODE_CHUSERPASS:
+//		do_chuserpass(&ac, n, ary);
+//		break;
+//	case CODE_USERSET:
+//		do_userset(&ac, n, ary);
+//		break;
+//	case CODE_USERCHK:
+//		do_userchk(&ac, n, ary);
+//		break;
+//    case CODE_USERLIST:
+//    	do_userlist(&ac, n, ary);
+//		break;
+//    case CODE_LOGIN:
+//    	do_login(&ac, n, ary);
+//		break;
+//    case CODE_LOGOUT:
+//    	do_logout(&ac, n, ary);
+//		break;
+//	case CODE_
+//	default:
+//		printo("unknown input %s\n", input);
+//		break;
+//	}
 
 	s13_free_exmem(ary);
 

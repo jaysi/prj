@@ -24,15 +24,20 @@
 
 #define EXT_MARK    '.'
 
-#define P13_TYPE_DIR "dir"
-#define P13_TYPE_FILE "file"
-#define P13_TYPE_UNK "unknown"
+#define P13_TYPE_STR_DIR "dir"
+#define P13_TYPE_STR_FILE "file"
+#define P13_TYPE_STR_UNK "unknown"
+
+#define P13_TYPE_ID_ERR		-1
+#define P13_TYPE_ID_UNK		0
+#define P13_TYPE_ID_DIR		1
+#define P13_TYPE_ID_FILE	2
 
 #ifndef MAXPATHNAME
 #define MAXPATHNAME 1024
 #endif
 
-struct path13_entry{
+struct path13_entry {
 
     char* name;
     char* abs_path;
@@ -46,7 +51,8 @@ struct path13_entry{
     extern "C" {
 #endif
 
-#define p13_type_str(st) ((((st)->st_mode & S_IFMT)==S_IFDIR)?P13_TYPE_DIR:(((st)->st_mode & S_IFMT)==S_IFREG)?P13_TYPE_FILE:P13_TYPE_UNK)
+#define p13_type_str(st) ((((st)->st_mode & S_IFMT)==S_IFDIR)?P13_TYPE_STR_DIR:(((st)->st_mode & S_IFMT)==S_IFREG)?P13_TYPE_STR_FILE:P13_TYPE_STR_UNK)
+#define p13_type_id(st) ((((st)->st_mode & S_IFMT)==S_IFDIR)?P13_TYPE_ID_DIR:(((st)->st_mode & S_IFMT)==S_IFREG)?P13_TYPE_ID_FILE:P13_TYPE_ID_UNK)
 
 int p13_create_dir_struct(char* abs_path);
 char* p13_get_unix_path(char* abs_path);
@@ -60,6 +66,9 @@ char* p13_cut_from_start(char* path, char* tocut);
 char* p13_get_ext(char* path);
 
 char* p13_get_home();
+
+//returns path type, dir, file, etc...
+int p13_get_type_id(char* path);
 
 #define p13_merge_path2(source_base, source, target_base, buf) p13_merge_path(target_base, p13_cut_from_start(source, source_base), buf);
 
