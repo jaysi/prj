@@ -1,10 +1,14 @@
 #include "monet_internal.h"
 
+#define _deb_connect _DebugMsg
+
 error13_t _monet_user_login(struct monet* mn, struct infolink* link,
-							char username, char password){
+							char* username, char* password){
     struct obj13* node;
     error13_t ret;
     uid13_t uid;
+    struct monet_user* mn_user;
+    int i;
 
     //locking poll_list is not needed, the link is malloc'ed, not still in the list
 
@@ -72,13 +76,13 @@ error13_t _monet_user_login(struct monet* mn, struct infolink* link,
     mn->user_array.nactive++;
 
     //the user list is locked?
-    if((ret = obj13_bst_create_node(&node, (objid13_t)uid, user,
+    if((ret = obj13_bst_create_node(&node, (objid13_t)uid, mn_user,
 									OBJ13_FLAG_DEF)) != E13_OK){
         goto end;
     }
 
     if(mn->user_array.obj_root == NULL) mn->user_array.obj_root = node;
-    else ret = obj13_bst_insert_node((mn->user_array.obj_root, node);
+    else ret = obj13_bst_insert_node(mn->user_array.obj_root, node);
 
 end:
     if(ret != E13_OK){
@@ -114,7 +118,7 @@ error13_t _monet_user_logout(struct monet* mn, uid13_t uid){
 
     obj13_bst_delete_node(mn->user_array.obj_root, uid);
 
-    acc_user_logout(mn->ac, NULL, uid);
+    acc_user_logout(&mn->ac, NULL, uid);
 
     ilink_disconnect(((struct monet_user*)node->objptr)->link, ILINK_DC_ALL);
 
@@ -124,6 +128,8 @@ end:
 
 error13_t _monet_user_find(	struct monet* mn,char* name, uid13_t uid,
 							int unlock){
+
+	struct obj13* node;
 
 	error13_t ret;
 

@@ -7,6 +7,8 @@
 #define _deb_wait3      _NullMsg
 #define _deb_connect    _NullMsg
 
+void* _monet_proc_thread(void* arg);
+
 struct monet_conf def_conf = {
 
     MN_CONF_FLAG_DEF,
@@ -660,7 +662,11 @@ error13_t mn_wait(struct monet *mn){
 
     mn->req_fifo.first = NULL;
     mn->req_fifo.n = 0UL;
-    th13_mutex_init(&mn->req_fifo.mx);
+#ifdef _DEBUG_MUTEX
+    th13_mutex_init(&mn->req_fifo.mx, &attr);
+#else
+	th13_mutex_init(&mn->req_fifo.mx, NULL);
+#endif
     mn->req_fifo.flags = MN_FIFO_FLAG_INIT;
     th13_create(&mn->req_fifo.th, NULL, &_monet_proc_thread, &poll_arg);
 

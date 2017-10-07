@@ -510,6 +510,9 @@ static inline char* _db_type_str(struct db13 *db, enum db_type_id type){
     case DB_TY_DATE:
         return DB_T_DATE;
         break;
+	case DB_TY_D13STIME:
+		return DB_T_D13STIME;
+		break;
     case DB_TY_RAW:
         return DB_T_RAW;
         break;
@@ -532,6 +535,7 @@ enum db_type_id db_coltype(struct db13 *db, db_table_id tid, db_colid_t colid){
     else if(!strcmp(db->table_info[tid].col_type[colid], DB_T_REAL)) return DB_TY_REAL;
     else if(!strcmp(db->table_info[tid].col_type[colid], DB_T_TEXT)) return DB_TY_TEXT;
     else if(!strcmp(db->table_info[tid].col_type[colid], DB_T_DATE)) return DB_TY_DATE;
+    else if(!strcmp(db->table_info[tid].col_type[colid], DB_T_D13STIME)) return DB_TY_D13STIME;
     else if(!strcmp(db->table_info[tid].col_type[colid], DB_T_RAW)) return DB_TY_RAW;
     else return DB_TY_INVAL;
 }
@@ -1215,6 +1219,13 @@ bind_data:
         }
         break;
 
+    case DB_TY_D13STIME:
+
+        if(sqlite3_bind_int64(LITE_ST(st), 1, (int64_t)(*val)) != SQLITE_OK){
+            return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+        }
+        break;
+
     case DB_TY_TEXT:
         if(sqlite3_bind_text(LITE_ST(st), 1, (char*)val, size?size:-1, NULL) != SQLITE_OK){
             return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
@@ -1291,8 +1302,10 @@ error13_t db_update(struct db13* db, db_table_id tid, struct db_logic_s iflogic,
 
     len = strlen(sql);
 
-    snprintf(sql + len, RLEN, "WHERE %s %s ?%i",db_get_col_name(db, tid, iflogic.col),
-             logic_sign[iflogic.logic].sign, ACC_UP_IF_COL);
+    snprintf(sql + len, RLEN, "WHERE %s %s ?%i",
+			iflogic.colname,
+             logic_sign[iflogic.logic].sign,
+             ACC_UP_IF_COL);
 
 #undef RLEN
 
@@ -1335,6 +1348,10 @@ error13_t db_update(struct db13* db, db_table_id tid, struct db_logic_s iflogic,
 
     }
 
+	if(!(iflogic.flags & DB_LOGICF_USE_COLID)){
+			iflogic.colid = db_get_colid_byname(db, tid, iflogic.colname);
+	}
+
 bind_data:
 
     switch(db->driver){
@@ -1349,7 +1366,7 @@ bind_data:
 
         _deb_update("table.ncols = %u, col[%i] = %u", db->table_info[tid].ncols, i, col[i]);
 
-        switch(i==ncol?db_coltype(db, tid, iflogic.col):db_coltype(db, tid, col[i])){
+        switch(i==ncol?db_coltype(db, tid, iflogic.colid):db_coltype(db, tid, col[i])){
 
         case DB_TY_BOOL:
         case DB_TY_INT:
@@ -1373,6 +1390,12 @@ bind_data:
         case DB_TY_DATE:
             d13_resolve_date((char*)(i==ncol?iflogic.sval:val[i]), date);
             if(sqlite3_bind_int(LITE_ST(st), i==ncol?ACC_UP_IF_COL:col[i], (int)d13_jdayno(date[0], date[1], date[2])) != SQLITE_OK){
+                return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+            }
+            break;
+
+        case DB_TY_D13STIME:
+            if(sqlite3_bind_int64(LITE_ST(st), i==ncol?ACC_UP_IF_COL:col[i], (int64_t)(i==ncol?iflogic.ival:*val[i])) != SQLITE_OK){
                 return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
             }
             break;
@@ -1580,7 +1603,14 @@ bind_data:
         case DB_TY_DATE:
             d13_resolve_date((char*)val[i], date);
             _deb_insert("type: %s: %i/%i/%i", "DATE", date[0], date[1], date[2]);
-            if(sqlite3_bind_int(LITE_ST(st), i+1, (int)d13_jdayno(date[0], date[1], date[2])) != SQLITE_OK){
+            if(sqlite3_bind_int(LITE_ST(st), i+1, (int)d13_gdayno(date[0], date[1], date[2])) != SQLITE_OK){
+                return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+            }
+            break;
+
+        case DB_TY_D13STIME:
+            _deb_insert("type: %s: %i", "TIME", (int64_t)(*val[i]));
+            if(sqlite3_bind_int64(LITE_ST(st), i+1, (int64_t)(*val[i])) != SQLITE_OK){
                 return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
             }
             break;
@@ -1699,8 +1729,7 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 				continue;
 			} else {
 
-				snprintf(sql + len, RLEN, "%s %s %s ?%i",
-						 i == 1?"":logic_sign[logic[i-1].comb].sign,
+				snprintf(sql + len, RLEN, " %s %s ?%i",
 						 logic[i-1].flags & DB_LOGICF_USE_COLID?db_get_col_name(db, tid, logic[i-1].colid):logic[i-1].colname,
 						 logic_sign[logic[i-1].logic].sign,
 						 i
@@ -1771,57 +1800,67 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 
 //            if(!(logic[i-1].flags & DB_LOGICF_COL_CMP)){
 
-                switch(db_coltype(db, tid, logic[i-1].col)){
+			if(!(logic[i-1].flags & DB_LOGICF_USE_COLID))
+				logic[i-1].colid = db_get_colid_byname(db, tid, logic[i-1].colname);
 
-                case DB_TY_BOOL:
-                case DB_TY_INT:
-                    _deb_collect("INT/BOOL %i", logic[i-1].ival);
-                    if(sqlite3_bind_int(stmt, i, logic[i-1].ival) != SQLITE_OK){
-                        return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
-                    }
-                break;
+			switch(db_coltype(db, tid, logic[i-1].colid)){
 
-                case DB_TY_BIGINT:
-                    _deb_collect("BIGINT %i", logic[i-1].ival);
-                    if(sqlite3_bind_int64(stmt, i, logic[i-1].ival) != SQLITE_OK){
-                        return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
-                    }
-                break;
+			case DB_TY_BOOL:
+			case DB_TY_INT:
+				_deb_collect("INT/BOOL %i", logic[i-1].ival);
+				if(sqlite3_bind_int(stmt, i, logic[i-1].ival) != SQLITE_OK){
+					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+				}
+			break;
 
-                case DB_TY_REAL:
-                    _deb_collect("REAL %f", (double)logic[i-1].ival);
-                    if(sqlite3_bind_double(stmt, i, (double)logic[i-1].ival) != SQLITE_OK){
-                        return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
-                    }
-                break;
+			case DB_TY_BIGINT:
+				_deb_collect("BIGINT %i", logic[i-1].ival);
+				if(sqlite3_bind_int64(stmt, i, logic[i-1].ival) != SQLITE_OK){
+					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+				}
+			break;
 
-                case DB_TY_DATE:
-                    _deb_collect("DATE %s", logic[i-1].sval);
-                    if(d13_resolve_date(logic[i-1].sval, date) != E13_OK){
-                        continue;
-                    }
+			case DB_TY_REAL:
+				_deb_collect("REAL %f", (double)logic[i-1].ival);
+				if(sqlite3_bind_double(stmt, i, (double)logic[i-1].ival) != SQLITE_OK){
+					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+				}
+			break;
 
-                    if(sqlite3_bind_int(stmt, i, (int)d13_jdayno(date[0], date[1], date[2])) != SQLITE_OK){
-                        return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
-                    }
-                    break;
+			case DB_TY_DATE:
+				_deb_collect("DATE %s", logic[i-1].sval);
+				if(d13_resolve_date(logic[i-1].sval, date) != E13_OK){
+					continue;
+				}
 
-                case DB_TY_TEXT:
-                    _deb_collect("TEXT %s", logic[i-1].sval);
-                    if(sqlite3_bind_text(stmt, i, logic[i-1].sval, -1, NULL) != SQLITE_OK){
-                        return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
-                    }
-                break;
+				if(sqlite3_bind_int(stmt, i, (int)d13_jdayno(date[0], date[1], date[2])) != SQLITE_OK){
+					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+				}
+				break;
 
-                default:
-                    //set ival as size for blob
-                    _deb_collect("BLOB %s size %i", logic[i-1].sval, logic[i-1].ival);
-                    if(sqlite3_bind_blob(stmt, i, logic[i-1].sval, logic[i-1].ival, NULL) != SQLITE_OK){
-                        return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
-                    }
-                    break;
+			case DB_TY_D13STIME:
+				_deb_collect("D13STIME %i", logic[i-1].ival);
+				if(sqlite3_bind_int64(stmt, i, logic[i-1].ival) != SQLITE_OK){
+					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+				}
+			break;
 
-                }
+			case DB_TY_TEXT:
+				_deb_collect("TEXT %s", logic[i-1].sval);
+				if(sqlite3_bind_text(stmt, i, logic[i-1].sval, -1, NULL) != SQLITE_OK){
+					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+				}
+			break;
+
+			default:
+				//set ival as size for blob
+				_deb_collect("BLOB %s size %i", logic[i-1].sval, logic[i-1].ival);
+				if(sqlite3_bind_blob(stmt, i, logic[i-1].sval, logic[i-1].ival, NULL) != SQLITE_OK){
+					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+				}
+				break;
+
+			}
 
        //     }//if(!(logic[i-1].col_flags & DB_LOGICF_COL_CMP))
 
@@ -1879,8 +1918,7 @@ error13_t db_delete(	struct db13* db, db_table_id tid,
 
 			} else {
 
-				snprintf(sql + len, RLEN, "%s %s %s ?%i",
-						 i == 1?"":logic_sign[logic[i-1].comb].sign,
+				snprintf(sql + len, RLEN, " %s %s ?%i",
 						 logic[i-1].flags & DB_LOGICF_USE_COLID?db_get_col_name(db, tid, logic[i-1].colid):logic[i-1].colname,
 						 logic_sign[logic[i-1].logic].sign,
 						 i

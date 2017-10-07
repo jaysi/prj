@@ -42,6 +42,6 @@ struct monet_user_array {
     struct monet_user* first, *last, *curr;
 };*/
 
-error13_t _monet_user_login(struct monet* mn, struct infolink* link, char username, char password);
+error13_t _monet_user_login(struct monet* mn, struct infolink* link, char* username, char* password);
 
 #endif // MONET_USER_H

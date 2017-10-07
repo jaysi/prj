@@ -108,7 +108,7 @@ error13_t _monet_proc_pkt(struct monet* mn,
 
         fentry = (struct monet_fifo_entry*)m13_malloc(sizeof(struct monet_fifo_entry));
         if(!fentry) {ret = e13_error(E13_NOMEM); goto end;}
-        fentry->flags = MONET_FIFO_ENTRY_FLAG_INIT;
+        fentry->flags = MN_FIFO_ENTRY_FLAG_INIT;
         fentry->reqid = 0UL;//TODO: TEMPORARY?? ever need a reqid?
         fentry->type = MN_FIFO_ENT_REQUEST_PKT;
         fentry->owner = ((struct monet_user*)ilink->ext_ctx)->uid;
@@ -138,6 +138,7 @@ error13_t _monet_proc_pkt(struct monet* mn,
     }
 
     //ilink_reset(link, ILINK_FLAG_RECV);
+end:
 
     if(e13_iserror(ret) && data) m13_free(data);
 

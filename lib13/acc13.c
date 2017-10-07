@@ -9,6 +9,7 @@
 #define ACC_TABLE_MEMBERSHIP        "memb"
 #define ACC_TABLE_ACL               "acc"
 #define ACC_TABLE_FREEOBJ           "objfree"
+#define ACC_TABLE_LOG				"log"
 
 #define _ACC_FREEGIDF_INIT	(0x00)
 #define _ACC_FREEGIDF_ANY	(0x01<<0)
@@ -204,15 +205,15 @@ error13_t acc_init(struct access13* ac, struct db13* db, regid_t regid){
                                 "",
                                 0,
 
-                                "lastdate",
-                                DB_T_DATE,
-                                "تاریخ آخرین ورود",
+                                "lastlogin",
+                                DB_T_D13STIME,
+                                "زمان آخرین ورود",
                                 "",
                                 0,
 
-                                "lasttime",
-                                DB_T_INT,
-                                "ساعت آخرین ورود",
+                                "lastlogout",
+                                DB_T_D13STIME,
+                                "زمان آخرین خروج",
                                 "",
                                 0,
 
@@ -589,7 +590,7 @@ error13_t acc_group_add(struct access13 *ac, char *name){
         //logic.col = db_get_colid_byname(ac->db, tid, "id");
         logic.colname = "id";
         _deb_grp_add("logic.colid(id): %u", logic.col);
-        logic.comb = DB_LOGICOMB_NONE;
+//        logic.comb = DB_LOGICOMB_NONE;
         logic.ival = gid;
         logic.flags = DB_LOGICF_DEF;
         logic.logic = DB_LOGIC_EQ;
@@ -652,8 +653,10 @@ error13_t _acc_rm_uid_entries(struct access13* ac,
 							db_table_id ntid, db_table_id tid[]){
 */
 static inline error13_t _acc_rm_uid_entries(struct access13* ac,
-											uid13_t nuid, uid13_t uid[]
-											db_table_id ntid, db_table_id tid[]){
+											uid13_t nuid,
+											uid13_t* uid,
+											db_table_id ntid,
+											db_table_id* tid){
     struct db_stmt st;
     struct db_logic_s logic;
     error13_t ret;
@@ -673,7 +676,7 @@ static inline error13_t _acc_rm_uid_entries(struct access13* ac,
 		for(iuid = 0; iuid < nuid; iuid++){
 
 			//logic.comb = DB_LOGICOMB_NONE;
-			logic.flags = DB_LOGICF_DEF
+			logic.flags = DB_LOGICF_DEF;
 			logic.logic = DB_LOGIC_EQ;
 			logic.ival = uid[iuid];
 
@@ -704,8 +707,10 @@ static inline error13_t _acc_rm_uid_entries(struct access13* ac,
 }
 
 static inline error13_t _acc_rm_gid_entries(struct access13* ac,
-											gid13_t ngid, gid13_t gid[]
-											db_table_id ntid, db_table_id tid[]){
+											gid13_t ngid,
+											gid13_t gid[],
+											db_table_id ntid,
+											db_table_id tid[]){
     struct db_stmt st;
     struct db_logic_s logic;
     error13_t ret;
@@ -725,7 +730,7 @@ static inline error13_t _acc_rm_gid_entries(struct access13* ac,
 		for(igid = 0; igid < ngid; igid++){
 
 			//logic.comb = DB_LOGICOMB_NONE;
-			logic.flags = DB_LOGICF_DEF
+			logic.flags = DB_LOGICF_DEF;
 			logic.logic = DB_LOGIC_EQ;
 			logic.ival = gid[igid];
 
@@ -828,8 +833,6 @@ error13_t acc_group_rm(struct access13 *ac, char *name, gid13_t gid){
 	}
 
 	if(group.stt == ACC_GRP_STT_REMOVED) return e13_error(E13_OK);
-
-    if((ret = _acc_rm_group_membership(ac, group.gid)) != E13_OK) return ret;
 
     tids[0] = db_get_tid_byname(ac->db, ACC_TABLE_MEMBERSHIP);
     tids[1] = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
@@ -1375,7 +1378,7 @@ error13_t acc_user_chpass(struct access13* ac, char* name, uid13_t id,
 		logic.sval = name;
 		logic.logic = DB_LOGIC_LIKE;
     } else {
-		logic.col = db_get_colid_byname(ac->db, tid, "id");
+//		logic.col = db_get_colid_byname(ac->db, tid, "id");
 		logic.colname = "id";
 		//logic.comb = DB_LOGICOMB_NONE;
 		logic.flags = DB_LOGICF_DEF;
@@ -1449,12 +1452,12 @@ error13_t acc_user_chk(struct access13 *ac, char *name, uid13_t id,
         }
         if(ret == E13_OK){
 			_deb_usr_chk("passhash (%s)", user->passhash);
-            ret = db_column_date(&st, db_get_colid_byname(ac->db, tid, "lastdate"), user->lastdate);
-            _deb_usr_chk("date(j) (%i/%i/%i)", user->lastdate[0], user->lastdate[1], user->lastdate[2]);
+            ret = db_column_int64(&st, db_get_colid_byname(ac->db, tid, "lastlogin"), &user->lastlogin);
+            _deb_usr_chk("lastlogin %llu ", user->lastlogin);
         }
         if(ret == E13_OK){
-            ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "lasttime"), (int*)&user->lasttime);
-            _deb_usr_chk("lasttime %i ", user->lasttime);
+            ret = db_column_int64(&st, db_get_colid_byname(ac->db, tid, "lastlogout"), &user->lastlogout);
+            _deb_usr_chk("lastlogout %llu ", user->lastlogout);
         }
 
         db_finalize(&st);
@@ -1669,8 +1672,7 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
     db_colid_t colid[3];
     error13_t ret;
     struct user13 user;
-    int date_[3];
-    int time_;
+    d13s_time_t stime;
     char now[20];
     uchar passhash[ac->hashlen];
 
@@ -1703,20 +1705,20 @@ error13_t acc_user_login(struct access13* ac, char* username, char* password,
     logic.logic = DB_LOGIC_LIKE;
 
     colid[0] = db_get_colid_byname(ac->db, tid, "stat");
-    colid[1] = db_get_colid_byname(ac->db, tid, "lastdate");
-    colid[2] = db_get_colid_byname(ac->db, tid, "lasttime");
+    colid[1] = db_get_colid_byname(ac->db, tid, "lastlogin");
+    //colid[2] = db_get_colid_byname(ac->db, tid, "lastlogout");
 
     stt = ACC_USR_STT_IN;
 
     val = m13_malloc(3*sizeof(char*));
 
     val[0] = (char*)&stt;
-    d13_today(date_);
-    val[1]=(uchar*)date_;
-    d13_clock(&time_);
-    val[2]=(uchar*)&time_;
+    d13s_clock(&stime);
+    val[1]=(uchar*)&stime;
+    //d13_clock(&time_);
+    //val[2]=(uchar*)&time_;
 
-    ret = db_update(ac->db, tid, logic, 1, colid, val, NULL, &st);
+    ret = db_update(ac->db, tid, logic, 2, colid, val, NULL, &st);
 
     db_finalize(&st);
 
@@ -1736,6 +1738,7 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
     db_colid_t colid[3];
     error13_t ret;
     struct user13 user;
+    d13s_time_t stime;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -1771,16 +1774,19 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
     }
 
     colid[0] = db_get_colid_byname(ac->db, tid, "stat");
+    colid[1] = db_get_colid_byname(ac->db, tid, "lastlogout");
 
     stt = ACC_USR_STT_OUT;
 
     val = m13_malloc(3*sizeof(char*));
 
     val[0] = (char*)&stt;
+    d13s_clock(&stime);
+    val[1]=(uchar*)&stime;
 //    val[1] = ;
 //    val[2] = ;
 
-    ret = db_update(ac->db, tid, logic, 1, colid, val, NULL, &st);
+    ret = db_update(ac->db, tid, logic, 2, colid, val, NULL, &st);
 
     db_finalize(&st);
 
@@ -2243,13 +2249,15 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
 
 }
 
+
+//TODO: MAKE THE LIST THING WORK!
 error13_t _acc_load_acl(struct access13* ac,
 						objid13_t objid,
 						uid13_t nuid, uid13_t uid[],
 						gid13_t ngid, gid13_t gid[],
-						acc_acl_entry** list){
+						struct acc_acl_entry** list){
 
-	acc_acl_entry* first = NULL, *last, *entry;
+	struct acc_acl_entry* first = NULL, *last, *entry;
 	struct db_stmt st;
     struct db_logic_s logic[nuid+ngid+1];
     error13_t ret;
@@ -2265,11 +2273,9 @@ error13_t _acc_load_acl(struct access13* ac,
     //logic[0].col = db_get_colid_byname(ac->db, tid, "objid");
     logic[0].colname = "objid";
 //    logic[0].comb = DB_LOGICOMB_AND;
-    logic[0].flags = DB_LOGICF_PAREN_OPEN;
+    logic[0].flags = DB_LOGICF_DEF;
     logic[0].logic = DB_LOGIC_EQ;
     logic[0].ival = objid;
-
-
 
    _deb_usr_chk("collecting...");
     if((ret = db_collect(ac->db, tid, NULL, 1, logic,NULL,DB_SO_DONT,0,&st))!=
@@ -2288,15 +2294,15 @@ loop:
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
         if((ret = db_column_int(&st, colid_perm, (int*)&perm)) != E13_OK) break;
-        if((ret = db_column_int(&st, colid_uid, (int*)&uid)) != E13_OK) break;
-        if((ret = db_column_int(&st, colid_gid, (int*)&gid)) != E13_OK) break;
-        if((ret = db_column_int64(&st, colid_objid, (int*)&objid)) != E13_OK)
+        if((ret = db_column_int(&st, colid_uid, (int*)&uid[0])) != E13_OK) break;
+        if((ret = db_column_int(&st, colid_gid, (int*)&gid[0])) != E13_OK) break;
+        if((ret = db_column_int64(&st, colid_objid, (int64_t*)&objid)) != E13_OK)
 			break;
         if(ret = E13_OK){
-				if(!(entry =(acc_acl_entry*)m13_malloc(sizeof(struct acc_acl_entry)))) break;
+				if(!(entry =(struct acc_acl_entry*)m13_malloc(sizeof(struct acc_acl_entry)))) break;
 				entry->perm = perm;
-				entry->uid = uid;
-				entry->gid = gid;
+				entry->uid = uid[0];
+				entry->gid = gid[0];
 				entry->objid = objid;
 				entry->next = NULL;
 			if(!first){

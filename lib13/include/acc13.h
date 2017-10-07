@@ -4,6 +4,7 @@
 #include "type13.h"
 #include "hash13.h"
 #include "obj13.h"
+#include "day13.h"
 
 #define UID13_INVAL ((uint32_t)-1)
 #define GID13_INVAL ((uint32_t)-1)
@@ -60,8 +61,7 @@ struct user13{
     uid13_t uid;
     int stt;
 
-    int32_t lastdate[3];
-    time_t lasttime;
+    d13s_time_t lastlogin, lastlogout;
 
     uchar* passhash;
 

@@ -24,8 +24,8 @@ void* _monet_proc_thread(void* arg){
     while(1){
         th13_sem_wait(mn->wait_sem);
         th13_mutex_lock(&mn->req_fifo.mx);
-        entry = mn->req_fifo->first;
-        mn->req_fifo->first = mn->req_fifo->first->next;
+        entry = mn->req_fifo.first;
+        mn->req_fifo.first = mn->req_fifo.first->next;
         mn->req_fifo.n--;
         th13_mutex_unlock(&mn->req_fifo.mx);
         //process entry

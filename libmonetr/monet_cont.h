@@ -3,7 +3,7 @@
 
 //#include <c:/intel/bak/prj/lib13/include/db13.h>
 //TODO: donno why it doesn't work under dev-cpp
-#include <c:/intel/sid/prj/lib13/include/db13.h>
+#include "../lib13/include/db13.h"
 
 typedef objid13_t mn_contid_t;
 

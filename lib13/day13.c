@@ -10,7 +10,7 @@
 #undef TEST
 //#define TEST
 
-unsigned long d13_gdayno(int g_y, int g_m, int g_d){
+uint32_t d13_gdayno(int g_y, int g_m, int g_d){
     int g_days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     //int j_days_in_month[] = {31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29};
     int i;
@@ -250,15 +250,15 @@ static inline error13_t _d13_get_proper_sys_time(time_t* t, int it13[D13_ITEMS])
     if(!tp) return e13_error(E13_SYSE);
 
     strftime(tmp, 10, "%Y", tp);
-    it13[0] = atoi(tmp);
+    it13[D13_ITEMS_YEAR] = atoi(tmp);
     strftime(tmp, 10, "%m", tp);
-    it13[1] = atoi(tmp);
+    it13[D13_ITEMS_MON] = atoi(tmp);
     strftime(tmp, 10, "%d", tp);
-    it13[2] = atoi(tmp);
+    it13[D13_ITEMS_DAY] = atoi(tmp);
 
-    it13[3] = tp->tm_hour;
-    it13[4] = tp->tm_min;
-    it13[5] = tp->tm_sec;
+    it13[D13_ITEMS_HOUR] = tp->tm_hour;
+    it13[D13_ITEMS_MIN] = tp->tm_min;
+    it13[D13_ITEMS_SEC] = tp->tm_sec;
 
     return E13_OK;
 }
@@ -326,7 +326,6 @@ error13_t d13_clock(int* t13_time){
 
     return E13_OK;
 }
-
 
 error13_t d13_today(int it13[D13_ITEMS]){
 
@@ -451,28 +450,118 @@ error13_t d13_fix_jdate(char *src, char date[MAXTIME]){
     return E13_OK;
 }
 
-#ifdef TEST
-int d13_test(){
+/*	--	serialize-able format functions	--	*/
+
+error13_t d13s_clock(d13s_time_t* d13stime){
 
     time_t t;
+    int it13[D13_ITEMS];
+	char buf[MAXTIME];
+	char* end;
 
-    int conv = 0;//means g2j;
-    int in[3], out[3];
-    printf("enter conversion dir (0=g2j, 1=jtog): ");
-    scanf("%i", &conv);
-    printf("year: ");
-    scanf("%i", &in[0]);
-    printf("month: ");
-    scanf("%i", &in[1]);
-    printf("day: ");
-    scanf("%i", &in[2]);
-
-    if(!conv){
-        d13_g2j(in[0], in[1], in[2], out);
-    } else {
-        d13_j2g(in[0], in[1], in[2], out);
+    if(time(&t) == -1){
+        return e13_error(E13_SYSE);
     }
 
-    printf("out: %i / %i / %i\n", out[0], out[1], out[2]);
+    _d13_get_proper_sys_time(&t, it13);
+
+	snprintf(buf, MAXTIME, "%0.4i%0.2i%0.2i%0.2i%0.2i%0.2i",
+			it13[D13_ITEMS_YEAR],
+			it13[D13_ITEMS_MON],
+			it13[D13_ITEMS_DAY],
+			it13[D13_ITEMS_HOUR],
+			it13[D13_ITEMS_MIN],
+			it13[D13_ITEMS_SEC]);
+
+    //convert to the format
+
+    *d13stime = strtoull(buf, &end, 10);
+
+
+
+    return E13_OK;
+}
+
+error13_t _d13s_break(d13s_time_t stime, int d13time[D13_ITEMS]){
+	int i;
+	char buf[MAXTIME];
+	char c;
+
+    snprintf(buf, MAXTIME, "%llu", stime);
+
+    d13time[D13_ITEMS_SEC] = atoi(buf+12);
+    *(buf+12) = '\0';
+	d13time[D13_ITEMS_MIN] = atoi(buf+10);
+	*(buf+10) = '\0';
+	d13time[D13_ITEMS_HOUR] = atoi(buf+8);
+	*(buf+8) = '\0';
+	d13time[D13_ITEMS_DAY] = atoi(buf+6);
+	*(buf+6) = '\0';
+	d13time[D13_ITEMS_MON] = atoi(buf+4);
+	*(buf+4) = '\0';
+	d13time[D13_ITEMS_YEAR] = atoi(buf);
+
+    return E13_OK;
+}
+
+error13_t d13s_get_gtime(d13s_time_t stime, int gtime[D13_ITEMS]){
+
+    return	_d13s_break(stime, gtime);
+
+}
+
+error13_t d13s_get_jtime(d13s_time_t t, int jtime[D13_ITEMS]){
+    _d13s_break(t, jtime);
+	return d13_g2j(	jtime[D13_ITEMS_YEAR],
+					jtime[D13_ITEMS_MON],
+					jtime[D13_ITEMS_DAY],
+					jtime);
+}
+
+#ifdef TEST
+int main(){
+
+    time_t t;
+    d13s_time_t stime;
+    int gt[D13_ITEMS], jt[D13_ITEMS];
+
+//    int conv = 0;//means g2j;
+//    int in[3], out[3];
+//    printf("enter conversion dir (0=g2j, 1=jtog): ");
+//    scanf("%i", &conv);
+//    printf("year: ");
+//    scanf("%i", &in[0]);
+//    printf("month: ");
+//    scanf("%i", &in[1]);
+//    printf("day: ");
+//    scanf("%i", &in[2]);
+//
+//    if(!conv){
+//        d13_g2j(in[0], in[1], in[2], out);
+//    } else {
+//        d13_j2g(in[0], in[1], in[2], out);
+//    }
+//
+//    printf("out: %i / %i / %i\n", out[0], out[1], out[2]);
+
+    d13s_clock(&stime);
+	d13s_get_gtime(stime, gt);
+	d13s_get_jtime(stime, jt);
+    printf("\nstime: gtime, jtime: %llu: %i-%i-%i-%i-%i-%i, %i-%i-%i-%i-%i-%i\n",
+			stime,
+			gt[D13_ITEMS_YEAR],
+			gt[D13_ITEMS_MON],
+			gt[D13_ITEMS_DAY],
+			gt[D13_ITEMS_HOUR],
+			gt[D13_ITEMS_MIN],
+			gt[D13_ITEMS_SEC],
+			jt[D13_ITEMS_YEAR],
+			jt[D13_ITEMS_MON],
+			jt[D13_ITEMS_DAY],
+			jt[D13_ITEMS_HOUR],
+			jt[D13_ITEMS_MIN],
+			jt[D13_ITEMS_SEC]);
+
+	getchar(); getchar();
 }
 #endif

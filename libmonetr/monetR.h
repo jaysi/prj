@@ -89,7 +89,7 @@ enum monet_op_mode {
     MONET_OPMODE_INVAL
 };
 
-typedef uint64_t monet_reqid_t;
+//typedef uint64_t monet_reqid_t; //defined in monet_fifo
 typedef uint8_t mn_conf_flag_t;
 
 //struct monet_poll;

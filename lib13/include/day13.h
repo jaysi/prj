@@ -15,15 +15,47 @@
 #define BASEYEAR    1970
 #endif
 
-#define D13_ITEMS	6 //year; month; day; hour; minute; second
+#define D13_ITEMS		6 //year; month; day; hour; minute; second
+#define D13_ITEMS_YEAR	0
+#define D13_ITEMS_MON	1
+#define D13_ITEMS_DAY	2
+#define D13_ITEMS_HOUR	3
+#define D13_ITEMS_MIN	4
+#define D13_ITEMS_SEC	5
+#define	D13S_ITEMS_YEAR_MULTI	(10^10)
+#define	D13S_ITEMS_MON_MULTI	(10^8)
+#define	D13S_ITEMS_DAY_MULTI	(10^6)
+#define	D13S_ITEMS_HOUR_MULTI	(10^4)
+#define	D13S_ITEMS_MIN_MULTI	(10^2)
+#define	D13S_ITEMS_SEC_MULTI	(10^0)
+#define D13S_ITEMS_YEAR_SHIFT	20
+#define D13S_ITEMS_MON_SHIFT    16
+#define D13S_ITEMS_DAY_SHIFT	12
+#define D13S_ITEMS_HOUR_SHIFT	8
+#define D13S_ITEMS_MIN_SHIFT	4
+#define D13S_ITEMS_SEC_SHIFT	0
+#define D13S_ITEMS_YEAR_MASK	(0x00FFFF0000000000)
+#define D13S_ITEMS_MON_MASK		(0x000000FF00000000)
+#define D13S_ITEMS_DAY_MASK		(0x00000000FF000000)
+#define D13S_ITEMS_HOUR_MASK	(0x0000000000FF0000)
+#define D13S_ITEMS_MIN_MASK		(0x000000000000FF00)
+#define D13S_ITEMS_SEC_MASK		(0x00000000000000FF)
+
 
 #define MAXTIME     20  //yyyy-mm-dd-hh-mm-ss
 
 #define d13_datesep "/.-"
 
+typedef uint64_t d13s_time_t;
+
 #ifdef __cplusplus
 	extern "C" {
 #endif
+
+/*		--	serialize-able time functions	-- */
+error13_t d13s_clock(d13s_time_t* t);
+error13_t d13s_get_gtime(d13s_time_t t, int gtime[D13_ITEMS]);
+error13_t d13s_get_jtime(d13s_time_t t, int jtime[D13_ITEMS]);
 
 //date-conversion
 error13_t d13_g2j(int g_y, int g_m, int g_d, int jdate[D13_ITEMS]);

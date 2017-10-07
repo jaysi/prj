@@ -725,6 +725,7 @@ int do_userchk(struct access13* ac, int n, char** ary){
     uid13_t id;
     struct user13 user;
     char* sttstr;
+    int t13[D13_ITEMS];
 
 	if(n < 2){
         printo("bad usage, try help '%s'", ary[0]);
@@ -769,7 +770,27 @@ int do_userchk(struct access13* ac, int n, char** ary){
 	printo("name: %s\n", user.name);
 	printo("uid: %u\n", user.uid);
 	printo("status: %s\n", sttstr);
-	printo("last login: %u - %u\n", user.lastdate, user.lasttime);
+
+	d13s_get_jtime(user.lastlogin, t13)
+	printo("last login: %u/%u/%u - %u:%u:%u (%u)\n",
+			t13[D13_ITEMS_YEAR],
+			t13[D13_ITEMS_MON],
+			t13[D13_ITEMS_DAY],
+			t13[D13_ITEMS_HOUR],
+			t13[D13_ITEMS_MIN],
+			t13[D13_ITEMS_SEC],
+			user.lastlogin);
+
+	d13s_get_jtime(user.lastlogout, t13)
+	printo("last logout: %u/%u/%u - %u:%u:%u (%u)\n",
+			t13[D13_ITEMS_YEAR],
+			t13[D13_ITEMS_MON],
+			t13[D13_ITEMS_DAY],
+			t13[D13_ITEMS_HOUR],
+			t13[D13_ITEMS_MIN],
+			t13[D13_ITEMS_SEC],
+			user.lastlogout);
+
     printo("-- user info --\n");
 
     return 0;
@@ -830,6 +851,26 @@ int do_userlist(struct access13* ac, int n, char** ary){
 		}
 
 		printo("status: %s\n\n", sttstr);
+
+	d13s_get_jtime(user->lastlogin, t13)
+	printo("last login: %u/%u/%u - %u:%u:%u (%u)\n",
+			t13[D13_ITEMS_YEAR],
+			t13[D13_ITEMS_MON],
+			t13[D13_ITEMS_DAY],
+			t13[D13_ITEMS_HOUR],
+			t13[D13_ITEMS_MIN],
+			t13[D13_ITEMS_SEC],
+			user->lastlogin);
+
+	d13s_get_jtime(user->lastlogout, t13)
+	printo("last logout: %u/%u/%u - %u:%u:%u (%u)\n",
+			t13[D13_ITEMS_YEAR],
+			t13[D13_ITEMS_MON],
+			t13[D13_ITEMS_DAY],
+			t13[D13_ITEMS_HOUR],
+			t13[D13_ITEMS_MIN],
+			t13[D13_ITEMS_SEC],
+			user->lastlogout);
 
 		user = user->next;
 	}

@@ -297,8 +297,8 @@ error13_t ilink_poll_rm(struct ilink_poll_list* list, ilink_sock_t sockfd, uint8
     for(link = list->first; link; link = link->next){
 
         if(link->sock == sockfd){
-            if(list->first == entry){
-                if(list->last == entry){
+            if(list->first == link){
+                if(list->last == link){
                     list->last = NULL;
                 }
                 list->first = list->first->next;

@@ -148,6 +148,7 @@ struct db_stmt{
 #define DB_T_REAL  "REAL"
 #define DB_T_TEXT  "TEXT"
 #define DB_T_DATE  "DATE"
+#define DB_T_D13STIME  "D13STIME"
 #define DB_T_RAW    "BLOB"
 #define DB_T_INVAL  "INVAL"
 

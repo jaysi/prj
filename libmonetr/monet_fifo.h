@@ -16,6 +16,8 @@ enum monet_fifo_entry_t {
 
 #define MN_FIFO_ENTRY_FLAG_INIT   (0x00)
 
+typedef uint64_t monet_reqid_t;
+
 struct monet_fifo_entry {
 
     uint8_t flags;

@@ -38,7 +38,8 @@ enum db_type_id{
     DB_TY_BIGINT,
     DB_TY_REAL,
     DB_TY_TEXT,
-    DB_TY_DATE,
+    DB_TY_DATE,//deprecated
+    DB_TY_D13STIME,//day13 serialize-able time
     DB_TY_RAW,
     DB_TY_INVAL
 };

@@ -429,7 +429,7 @@ int p13_get_type_id(char* path){
         return P13_TYPE_ID_ERR;
 	}
 
-	return p13_type_id(st);
+	return p13_type_id(&st);
 
 }
 
