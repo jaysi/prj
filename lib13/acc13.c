@@ -1797,10 +1797,13 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
 }
 
 error13_t acc_destroy(struct access13* ac){
+	error13_t ret;
 	//TODO
 	if(!_is_init(ac)) return e13_error(E13_MISUSE);
-//	return db_close(ac->db);
-	return E13_OK;
+	ret = db_close(ac->db);
+	ret = db_destroy(ac->db);
+	m13_free(ac->db);
+	return ret;
 }
 
 error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid,
@@ -1850,7 +1853,7 @@ error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid,
         }
 
         if(resolve_gid){
-            if(acc_gid_chk(ac, grp->gid, &gtmp) == E13_OK){
+            if(acc_group_chk(ac, NULL, grp->gid, &gtmp) == E13_OK){
                 grp->name = s13_malloc_strcpy(gtmp.name, 0);
             }
         } else {
@@ -1927,7 +1930,7 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname, gid13_t gid,
         }
 
         if(resolve_uid){
-            if(acc_uid_chk(ac, usr->uid, &utmp) == E13_OK){
+            if(acc_user_chk(ac, NULL, usr->uid, &utmp) == E13_OK){
                 usr->name = s13_malloc_strcpy(utmp.name, 0);
             }
         } else {

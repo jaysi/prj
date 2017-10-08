@@ -1,27 +1,28 @@
 # depslib dependency file v1.0
-1505209333 source:c:\intel\dev\prj\accon\main.c
+1507471006 source:c:\intel\dev\prj\accon\main.c
 	<stdio.h>
 	<stdlib.h>
 	"../lib13/include/acc13.h"
 	"../lib13/include/str13.h"
 	"../lib13/include/db13.h"
 
-1504784745 c:\intel\dev\prj\lib13\include\acc13.h
+1507380236 c:\intel\dev\prj\lib13\include\acc13.h
 	"type13.h"
 	"hash13.h"
 	"obj13.h"
+	"day13.h"
 
-1419515766 c:\intel\dev\prj\lib13\include\type13.h
+1419508566 c:\intel\dev\prj\lib13\include\type13.h
 	<sys/types.h>
 	<stdlib.h>
 	<stdint.h>
 	<stddef.h>
 
-1380023190 c:\intel\dev\prj\lib13\include\hash13.h
+1380015990 c:\intel\dev\prj\lib13\include\hash13.h
 	"error13.h"
 	"sha256.h"
 
-1435581866 c:\intel\dev\prj\lib13\include\error13.h
+1507031723 c:\intel\dev\prj\lib13\include\error13.h
 	<sys/types.h>
 	"bit13.h"
 	"type13.h"
@@ -30,13 +31,13 @@
 1377165792 c:\intel\dev\prj\lib13\include\bit13.h
 	"type13.h"
 
-1481612514 c:\intel\dev\prj\lib13\include\const13.h
+1481605314 c:\intel\dev\prj\lib13\include\const13.h
 	"type13.h"
 
-1359982546 c:\intel\dev\prj\lib13\include\sha256.h
+1359975346 c:\intel\dev\prj\lib13\include\sha256.h
 	"type13.h"
 
-1499842070 c:\intel\dev\prj\lib13\include\obj13.h
+1507357037 c:\intel\dev\prj\lib13\include\obj13.h
 	<assert.h>
 	"error13.h"
 	"type13.h"
@@ -55,25 +56,31 @@
 	"error13.h"
 	"mem13.h"
 
-1475141730 c:\intel\dev\prj\lib13\include\mem13.h
+1475134530 c:\intel\dev\prj\lib13\include\mem13.h
 	<string.h>
 	"type13.h"
 	"error13.h"
 	"const13.h"
 	"lock13.h"
 
-1475141712 c:\intel\dev\prj\lib13\include\lock13.h
+1475134512 c:\intel\dev\prj\lib13\include\lock13.h
 	"type13.h"
 	"thread13.h"
 	"obj13.h"
 
-1504065628 c:\intel\dev\prj\lib13\include\db13.h
+1507470748 c:\intel\dev\prj\lib13\include\db13.h
 	"../../sqlite/sqlite3.h"
 	"type13.h"
 	"const13.h"
 	"error13.h"
 	"obj13.h"
 
-1420986684 c:\intel\dev\prj\sqlite\sqlite3.h
+1420979484 c:\intel\dev\prj\sqlite\sqlite3.h
 	<stdarg.h>
+
+1507370245 c:\intel\dev\prj\lib13\include\day13.h
+	<sys/types.h>
+	<sys/time.h>
+	<time.h>
+	"error13.h"
 

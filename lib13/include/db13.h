@@ -221,7 +221,7 @@ struct db_logic_s{
 #endif
 
 #define db_isinit(db) ((db)->magic == MAGIC13_DB13?true_:false_)
-#define db_isopen(db) (db_isinit(db)?((db)->flags&DB_FLAG_OPEN?true_:false_):false_)
+#define db_isopen(db) (((db)->flags&DB_FLAG_OPEN)?true_:false_)
 
 error13_t db_init(struct db13* db,
                   enum db_drv_id driver);

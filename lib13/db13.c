@@ -17,6 +17,7 @@
 #define _deb_insert _DebugMsg
 #define _deb_collect _DebugMsg
 #define _deb_update _DebugMsg
+#define _deb_close	_DebugMsg
 
 #define ACC_UP_IF_COL 900
 
@@ -62,8 +63,8 @@ error13_t db_init(struct db13* db,
 }
 
 error13_t db_destroy(struct db13* db){
+
     if(!db_isinit(db)) return e13_error(E13_MISUSE);
-    db_close(db);
     db->magic = MAGIC13_INV;
 
     return E13_OK;
@@ -83,6 +84,7 @@ error13_t db_open(struct db13 *db,
 //    int do_create = access(db_path(name), F_OK)?1:0;
 
     if(!db_isinit(db)) return e13_error(E13_MISUSE);
+    if(db_isopen(db)) return e13_error(E13_MISUSE);
 
     switch(db->driver){
     case DB_DRV_NULL:
@@ -135,6 +137,7 @@ error13_t db_close(struct db13 *db){
     db_table_id tid;
 
     if(!db_isinit(db)) return e13_error(E13_MISUSE);
+	if(!db_isopen(db)) return e13_error(E13_MISUSE);
 
     switch(db->driver){
     case DB_DRV_NULL:
@@ -148,13 +151,18 @@ error13_t db_close(struct db13 *db){
         break;
     }
 
+	_deb_close("ntableslots %lu, ntables %lu", db->ntableslots, db->ntables);
     for(tid = 0; tid < db->ntableslots; tid++){
+        _deb_close("tid %lu", tid);
         if(!(db->table_info[tid].flags & DB_TABLEF_EMPTY)){
+        	_deb_close("name %s", db->table_info[tid].name);
             db_undef_table(db, db->table_info[tid].name);
         }
     }
 
     if(db->table_info) m13_free(db->table_info);
+    db->ntableslots = 0UL;
+    db->ntables = 0UL;
 
     if(db->name) free(db->name);
 

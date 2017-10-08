@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1507380750 source:c:\intel\dev\prj\lib13\acc13.c
+1507469850 source:c:\intel\dev\prj\lib13\acc13.c
 	"include/lib13.h"
 
 1419225720 c:\intel\dev\prj\lib13\include\lib13.h
@@ -175,7 +175,7 @@
 	<stdio.h>
 	<stdlib.h>
 
-1505209231 source:c:\intel\dev\prj\lib13\db13.c
+1507382809 source:c:\intel\dev\prj\lib13\db13.c
 	<string.h>
 	"include/db13i.h"
 	"include/msg13.h"
@@ -185,11 +185,11 @@
 	"include/day13.h"
 	"include/debug13.h"
 
-1504065628 c:\intel\dev\prj\lib13\include\db13i.h
+1506517780 c:\intel\dev\prj\lib13\include\db13i.h
 	"db13.h"
 	"error13.h"
 
-1418224194 c:\intel\dev\prj\lib13\include\msg13.h
+1418216994 c:\intel\dev\prj\lib13\include\msg13.h
 
 1360156674 source:c:\intel\dev\prj\lib13\des.c
 	"include/des.h"
@@ -285,7 +285,7 @@
 	<stdarg.h>
 	<string.h>
 
-1497357752 source:c:\intel\dev\prj\lib13\path13.c
+1507382876 source:c:\intel\dev\prj\lib13\path13.c
 	<sys/types.h>
 	<sys/stat.h>
 	<stdlib.h>
