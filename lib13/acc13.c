@@ -83,6 +83,10 @@ error13_t acc_init(struct access13* ac, struct db13* db, regid_t regid){
 
     error13_t ret;
 
+    if(!db_isinit(db)){
+		return e13_error(E13_MISUSE);
+    }
+
     if(!db_isopen(db)){
         return e13_error(E13_MISUSE);
     }
@@ -1806,8 +1810,10 @@ error13_t acc_destroy(struct access13* ac){
 	return ret;
 }
 
-error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid,
-							struct group13** grouplist, int resolve_gid){
+error13_t acc_user_group_list(	struct access13 *ac,
+								char *username, uid13_t uid,
+								gid13_t* ngrp, struct group13** grouplist,
+								int resolve_gid){
 
     struct db_stmt st;
     struct db_logic_s logic;
@@ -1843,8 +1849,9 @@ error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid,
     _deb_usr_chk("collecting done");
 
     *grouplist = NULL;
-    switch((ret = db_step(&st))){
-        case E13_CONTINUE:
+    *ngrp = 0UL;
+
+    while((ret = db_step(&st)) == E13_CONTINUE){
         grp = (struct group13*)m13_malloc(sizeof(struct group13));
         grp->next = NULL;
 
@@ -1867,7 +1874,10 @@ error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid,
             gl_last->next = grp;
             gl_last = grp;
         }
-        break;
+		(*ngrp)++;
+    }
+
+    switch(ret){
         case E13_OK:
         _deb_usr_chk("step OK");
         db_finalize(&st);
@@ -1882,8 +1892,10 @@ error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid,
     return ret;
 }
 
-error13_t acc_group_user_list(struct access13 *ac, char *groupname, gid13_t gid,
-							struct user13** userlist, int resolve_uid){
+error13_t acc_group_user_list(	struct access13 *ac,
+								char *groupname, gid13_t gid,
+								uid13_t* nusr, struct user13** userlist,
+								int resolve_uid){
 
     struct db_stmt st;
     struct db_logic_s logic;
@@ -1919,8 +1931,8 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname, gid13_t gid,
     _deb_usr_chk("collecting done");
 
     *userlist = NULL;
-    switch((ret = db_step(&st))){
-        case E13_CONTINUE:
+    *nusr = 0UL;
+    while((ret = db_step(&st)) == E13_CONTINUE){
         usr = (struct user13*)m13_malloc(sizeof(struct user13));
         usr->next = NULL;
 
@@ -1944,7 +1956,10 @@ error13_t acc_group_user_list(struct access13 *ac, char *groupname, gid13_t gid,
             ul_last->next = usr;
             ul_last = usr;
         }
-        break;
+        (*nusr)++;
+    }
+
+    switch(ret){
         case E13_OK:
         _deb_usr_chk("step OK");
         db_finalize(&st);
@@ -2269,6 +2284,7 @@ error13_t _acc_load_acl(struct access13* ac,
     acc_perm_t perm;
     uid13_t iuid;
     gid13_t igid;
+    int ilogic;
 
     tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
     _deb_usr_chk("got tid %u", tid);
@@ -2280,8 +2296,52 @@ error13_t _acc_load_acl(struct access13* ac,
     logic[0].logic = DB_LOGIC_EQ;
     logic[0].ival = objid;
 
+    ilogic = 1;
+    perm = 0;//use as a flag here
+
+    while(nuid){
+
+		if(!perm){
+			logic[ilogic++].logic = DB_LOGIC_AND;
+			logic[ilogic++].logic = DB_LOGIC_OPENP;
+			perm = 1;
+		} else {
+			logic[ilogic++].logic = DB_LOGIC_OR;
+		}
+
+		logic[ilogic].colname = "uid";
+		logic[ilogic].logic = DB_LOGIC_EQ;
+		logic[ilogic++].ival = uid[--nuid];
+
+        if(!nuid){
+			logic[ilogic++].logic = DB_LOGIC_CLOSEP;
+			perm = 0;
+        }
+
+    }
+
+    while(ngid){
+
+		if(!perm){
+			logic[ilogic++].logic = DB_LOGIC_AND;
+			logic[ilogic++].logic = DB_LOGIC_OPENP;
+			perm = 1;
+		} else {
+			logic[ilogic++].logic = DB_LOGIC_OR;
+		}
+
+		logic[ilogic].colname = "gid";
+		logic[ilogic].logic = DB_LOGIC_EQ;
+		logic[ilogic++].ival = gid[--ngid];
+
+        if(!ngid){
+			logic[ilogic++].logic = DB_LOGIC_CLOSEP;
+        }
+
+    }
+
    _deb_usr_chk("collecting...");
-    if((ret = db_collect(ac->db, tid, NULL, 1, logic,NULL,DB_SO_DONT,0,&st))!=
+    if((ret = db_collect(ac->db, tid, NULL, nuid+ngid+1, logic,NULL,DB_SO_DONT,0,&st))!=
 		E13_OK){
         _deb_usr_chk("fails %i", ret);
         return ret;
@@ -2297,15 +2357,15 @@ loop:
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
         if((ret = db_column_int(&st, colid_perm, (int*)&perm)) != E13_OK) break;
-        if((ret = db_column_int(&st, colid_uid, (int*)&uid[0])) != E13_OK) break;
-        if((ret = db_column_int(&st, colid_gid, (int*)&gid[0])) != E13_OK) break;
+        if((ret = db_column_int(&st, colid_uid, (int*)&iuid)) != E13_OK) break;
+        if((ret = db_column_int(&st, colid_gid, (int*)&igid)) != E13_OK) break;
         if((ret = db_column_int64(&st, colid_objid, (int64_t*)&objid)) != E13_OK)
 			break;
         if(ret = E13_OK){
 				if(!(entry =(struct acc_acl_entry*)m13_malloc(sizeof(struct acc_acl_entry)))) break;
 				entry->perm = perm;
-				entry->uid = uid[0];
-				entry->gid = gid[0];
+				entry->uid = iuid;
+				entry->gid = igid;
 				entry->objid = objid;
 				entry->next = NULL;
 			if(!first){
@@ -2332,13 +2392,29 @@ loop:
     return ret;
 }
 
-error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid,
-							char* username, uid13_t uid, acc_perm_t perm){
+error13_t acc_pack_gid_list(struct group13* grouplist, gid13_t ngid, gid13_t gidarray[]){
+	gid13_t i;
+	struct group13* grp;
+	grp = grouplist;
+	for(i = 0; i < ngid; i++){
+		gidarray[i] = grp->gid;
+        grp = grp->next;
+	}
+	return E13_OK;
+}
+
+//TODO: NEEDS LOTS OF WORK AND TESTING!
+error13_t acc_perm_user_chk(struct access13* ac,
+							objid13_t objid,
+							char* username, uid13_t uid,
+							acc_perm_t perm){
 
     struct db_logic_s logic[2];
     error13_t ret;
     struct user13 usr;
-    struct group13 grp;
+    struct group13* grouplist;
+    gid13_t ngrp;
+    struct acc_acl_entry* acllist, *aclentry;;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -2348,6 +2424,7 @@ error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid,
 		return ret;
     }
 
+    //0. last all user groups
     //1. load all acl entries to objid
     //2. the rules are
     //	a. if the user access is denied, fail
@@ -2356,6 +2433,35 @@ error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid,
 	//	d. fail
 	//3. special users/groups: allusers/allgroups
 
-	return e13_error(E13_IMPLEMENT);
+	//0
+	acc_user_group_list(ac, NULL, usr.uid, &ngrp, &grouplist, 0);
+
+	gid13_t gidarray[ngrp];
+
+	acc_pack_gid_list(grouplist, ngrp, gidarray);
+
+	//1.
+	_acc_load_acl(	ac, objid,
+					1, &usr.uid,
+					ngid, gidarray,
+					&acllist);
+
+    //1.a. & 1.b.
+	for(aclentry = acllist; aclentry; aclentry = aclentry->next){
+        if(aclentry->perm & perm) ret = E13_OK;
+        if(aclentry->uid == usr.uid) break;
+	}
+
+	if(aclentry){
+		if(perm & aclentry.perm) return E13_OK;
+		else return e13_error(E13_PERM);
+	}
+
+	//1.c.
+	if(ret == E13_OK){
+        return E13_OK;
+	}
+
+	return e13_error(E13_PERM);
 }
 

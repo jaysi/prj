@@ -8,16 +8,18 @@
 #include "include/bit13.h"
 #include "include/day13.h"
 
-#define NDEBUG
+//#define NDEBUG
 #include "include/debug13.h"
 
-#define _deb_def_table _DebugMsg
-#define _deb_create_table _DebugMsg
-#define _deb_get_tid_byname _DebugMsg
-#define _deb_insert _DebugMsg
-#define _deb_collect _DebugMsg
-#define _deb_update _DebugMsg
-#define _deb_close	_DebugMsg
+#define _deb_def_table _NullMsg
+#define _deb_create_table _NullMsg
+#define _deb_get_tid_byname _NullMsg
+#define _deb_insert _NullMsg
+#define _deb_collect _NullMsg
+#define _deb_update _NullMsg
+#define _deb_close	_NullMsg
+#define _deb_collect_final _DebugMsg
+
 
 #define ACC_UP_IF_COL 900
 
@@ -65,7 +67,10 @@ error13_t db_init(struct db13* db,
 error13_t db_destroy(struct db13* db){
 
     if(!db_isinit(db)) return e13_error(E13_MISUSE);
+    if(db_isopen(db)) return e13_error(E13_MISUSE);
     db->magic = MAGIC13_INV;
+    //TODO: a very bad work-around
+    db->flags = 0;
 
     return E13_OK;
 }
@@ -1772,7 +1777,7 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
         break;
     }
 
-    _deb_collect("sql: %s", sql);
+    _deb_collect_final("sql: %s", sql);
 
     switch(db->driver){
 
