@@ -30,6 +30,7 @@
 #define _deb_usr_chk    _DebugMsg
 #define _deb_usr_rm     _DebugMsg
 #define _deb_acc_login	_DebugMsg
+#define _deb_pchk		_DebugMsg
 
 //CONTROL COLUMNS
 
@@ -2267,13 +2268,25 @@ error13_t _acc_perm_chk(struct access13* ac, objid13_t objid, aclid13_t aclid,
 
 }
 
+error13_t acc_acl_list_free(struct acc_acl_entry* acllist){
+    struct acc_acl_entry* first = acllist, *del;
+
+    while(first){
+        del = first;
+        first = first->next;
+        m13_free(del);
+    }
+
+    return E13_OK;
+}
 
 //TODO: MAKE THE LIST THING WORK!
 error13_t _acc_load_acl(struct access13* ac,
 						objid13_t objid,
 						uid13_t nuid, uid13_t uid[],
 						gid13_t ngid, gid13_t gid[],
-						struct acc_acl_entry** list){
+						uid13_t* nacl,
+						struct acc_acl_entry** acllist){
 
 	struct acc_acl_entry* first = NULL, *last, *entry;
 	struct db_stmt st;
@@ -2353,9 +2366,11 @@ error13_t _acc_load_acl(struct access13* ac,
     colid_gid = db_get_colid_byname(ac->db,tid,"gid");
     colid_objid = db_get_colid_byname(ac->db,tid,"objid");
 
+    *nacl = 0UL;
 loop:
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
+		(*nacl)++;
         if((ret = db_column_int(&st, colid_perm, (int*)&perm)) != E13_OK) break;
         if((ret = db_column_int(&st, colid_uid, (int*)&iuid)) != E13_OK) break;
         if((ret = db_column_int(&st, colid_gid, (int*)&igid)) != E13_OK) break;
@@ -2371,6 +2386,7 @@ loop:
 			if(!first){
 				first = entry;
                 last = first;
+                *acllist = first;
 			} else {
 				last->next = entry;
 				last = entry;
@@ -2414,7 +2430,8 @@ error13_t acc_perm_user_chk(struct access13* ac,
     struct user13 usr;
     struct group13* grouplist;
     gid13_t ngrp;
-    struct acc_acl_entry* acllist, *aclentry;;
+    uid13_t nacl;
+    struct acc_acl_entry* acllist, *aclentry;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -2433,35 +2450,103 @@ error13_t acc_perm_user_chk(struct access13* ac,
 	//	d. fail
 	//3. special users/groups: allusers/allgroups
 
-	//0
+	//0.
+	_deb_pchk("getting user(uid=%lu) groups", usr.uid);
 	acc_user_group_list(ac, NULL, usr.uid, &ngrp, &grouplist, 0);
+	_deb_pchk("got %lu entries", ngrp);
 
-	gid13_t gidarray[ngrp];
+	if(ngrp){
+		gid13_t gidarray[ngrp];
 
-	acc_pack_gid_list(grouplist, ngrp, gidarray);
+		acc_pack_gid_list(grouplist, ngrp, gidarray);
+		_deb_pchk("gid list packed", ngrp);
+	}
 
 	//1.
 	_acc_load_acl(	ac, objid,
 					1, &usr.uid,
-					ngid, gidarray,
+					ngrp, ngrp?gidarray:NULL,
+					&nacl,
 					&acllist);
+
+	_deb_pchk("got %lu acl entries", nacl);
 
     //1.a. & 1.b.
 	for(aclentry = acllist; aclentry; aclentry = aclentry->next){
-        if(aclentry->perm & perm) ret = E13_OK;
-        if(aclentry->uid == usr.uid) break;
+        if(aclentry->perm & perm){
+			_deb_pchk("uid=%lu, gid=%lu, perm OK", aclentry->uid, aclentry->gid);
+			ret = E13_OK;
+        }
+        if(aclentry->uid == usr.uid){
+				_deb_pchk("got uid entry %lu", aclentry->uid);
+				break;
+        }
 	}
 
 	if(aclentry){
-		if(perm & aclentry.perm) return E13_OK;
-		else return e13_error(E13_PERM);
+		_deb_pchk("has acl entry");
+		if(perm & aclentry.perm){
+				_deb_pchk("OK");
+				ret = E13_OK;
+		} else {
+			_deb_pchk("NOK");
+			ret = e13_error(E13_PERM);
+		}
+	} else {
+		ret = e13_error(E13_PERM);
 	}
+
+	if(nacl) acc_acl_list_free(acllist);
 
 	//1.c.
-	if(ret == E13_OK){
-        return E13_OK;
-	}
-
-	return e13_error(E13_PERM);
+	return ret;
 }
 
+error13_t acc_perm_user_add(struct access13* ac,
+							objid13_t objid,
+							char* name, uid13_t uid,
+							acc_perm_t perm){
+
+	error13_t ret;
+	struct user13 usr
+	uid13_t nacl;
+	struct acc_acl_entry* acllist;
+
+	//db vars
+    struct db_stmt st;
+    struct db_logic_s logic[2];
+    error13_t ret;
+    db_table_id tid;
+    uchar* cols[ACC_TABLE_ACL_COLS];
+    size_t size[ACC_TABLE_ACL_COLS];
+
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+	/*
+		1. check to see if user exists
+		2. check to see if there is an entry already exists
+		3. add or update if exists
+	*/
+
+    if((ret = acc_user_chk(ac, username, uid, &usr)) != E13_OK){
+		return ret;
+    }
+
+    if((ret = _acc_load_acl(ac, objid, 1, &usr.uid, 0, NULL, &nacl, &acllist))!=
+		E13_OK){
+		return ret;
+    }
+
+    if(nacl){//there is an entry
+		if(perm == acllist->perm) {
+				return E13_OK;
+		} else {//update current perm
+
+		}
+    } else {//add new entry
+
+    }
+}

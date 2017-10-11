@@ -158,6 +158,7 @@ struct acc_acl_entry{
 //    error13_t acc_perm_gid_add(struct access13* ac, objid13_t objid, gid13_t gid, acc_perm_t perm);
 //    error13_t acc_perm_gid_rm(struct access13* ac, objid13_t objid, gid13_t gid, acc_perm_t perm);
 	error13_t acc_user_access(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t perm);
+	error13_t acc_acl_list_free(struct acc_acl_entry* acllist);
 
 	//helper functions
 	error13_t acc_pack_gid_list(struct group13* grouplist, gid13_t ngrp, gid13_t** gidarray)
