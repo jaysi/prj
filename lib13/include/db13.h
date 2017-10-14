@@ -328,6 +328,8 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 						char* sortcol, enum db_sort stype, int nlimit,
 						struct db_stmt* st);
 
+///error13_t db_count_data(struct db_stmt* st, db_rowid_t* nrows);
+
 error13_t db_set_table_slots(struct db13* db, db_table_id ntables);
 error13_t db_get_table_slots(struct db13* db, db_table_id* ntables);
 error13_t db_get_full_table_slots(struct db13* db, db_table_id* ntables);

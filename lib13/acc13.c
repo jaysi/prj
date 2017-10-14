@@ -2531,7 +2531,7 @@ error13_t acc_perm_user_add(struct access13* ac,
 		3. add or update if exists
 	*/
 
-    if((ret = acc_user_chk(ac, username, uid, &usr)) != E13_OK){
+    if((ret = acc_user_chk(ac, name, uid, &usr)) != E13_OK){
 		return ret;
     }
 
@@ -2605,11 +2605,11 @@ error13_t acc_perm_user_add(struct access13* ac,
 
 */
 
-		val[0] = (uchar*)&ac->regid;
+		val[0] = (uchar*)&ac->regid;//regid
 		val[1] = NULL;/*(uchar*)&nrow;*/
-		val[2] = NULL
-		val[3] = (uchar*)&usr.uid;
-		val[4] = (uchar*)&objid;
+		val[2] = NULL;//gid
+		val[3] = (uchar*)&usr.uid;//uid
+		val[4] = (uchar*)&objid;//objid
 		val[5] = NULL;/*(uchar*)&flags;*/
 		size[0] = sizeof(regid_t);
 	//    size[1] = sizeof(int);
@@ -2624,4 +2624,411 @@ error13_t acc_perm_user_add(struct access13* ac,
     }
 
     return ret;
+}
+
+error13_t acc_perm_user_rm(	struct access13* ac,
+							objid13_t objid,
+							char* name, uid13_t uid,
+							acc_perm_t perm){
+
+	error13_t ret;
+	struct user13 usr
+
+	//db vars
+    struct db_stmt st;
+    struct db_logic_s logic;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+	/*
+		1. check to see if user exists
+	*/
+
+    if((ret = acc_user_chk(ac, name, uid, &usr)) != E13_OK){
+		return ret;
+    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
+
+    logic.colname = "uid";
+    logic.flags = DB_LOGICF_DEF;
+    logic.ival = usr.uid;
+    logic.logic = DB_LOGIC_EQ;
+
+    ret = db_delete(ac->db, tid, 1, &logic, &st);
+
+    db_finalize(&st);
+
+    return ret;
+}
+
+error13_t acc_perm_user_list(	struct access13* ac,
+								char* name, uid13_t uid,
+								struct acc_acl_entry** acllist, int resolve_id){
+	error13_t ret;
+	struct user13 usr
+
+	//db vars
+    struct db_stmt st;
+    struct db_logic_s logic;
+	objid13_t objid;
+	acc_perm_t perm;
+	struct acc_acl_entry* aclentry, *last;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+	/*
+		1. check to see if user exists
+	*/
+
+    if((ret = acc_user_chk(ac, name, uid, &usr)) != E13_OK){
+		return ret;
+    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
+
+    logic.colname = "uid";
+    logic.flags = DB_LOGICF_DEF;
+    logic.ival = usr.uid;
+    logic.logic = DB_LOGIC_EQ;
+
+    ret = db_collect(ac->db, tid, NULL, 1, &logic, NULL, DB_SO_DONT, -1, &st);
+    if(ret != E13_OK){
+		db_finalize(&st);
+		return ret;
+    }
+
+    *acllist = NULL;
+loop:
+    switch((ret = db_step(&st))){
+	case E13_CONTINUE:
+		db_column_int64(&st, db_get_colid_byname(tid, "objid"), (int64_t*)&objid);
+		db_column_int(&st, db_get_colid_byname(tid, "perm"), (int*)&perm);
+		aclentry = (struct acc_acl_entry*)m13_malloc(sizeof(struct acc_acl_entry));
+		aclentry->objid = objid;
+		aclentry->perm = perm;
+		aclentry->next = NULL;
+        if(!(*acllist)){
+            *acllist = aclentry;
+            last = aclentry;
+        } else {
+			last->next = aclentry;
+			last = last->next;
+        }
+        goto loop;
+		break;
+	case E13_OK:
+	case E13_DONE:
+		db_finalize(&st);
+		return E13_OK;
+		break;
+	default:
+		db_finalize(&st);
+		return ret;
+		break;
+
+    }
+}
+
+
+error13_t acc_perm_group_add(	struct access13* ac,
+								objid13_t objid,
+								char* name, gid13_t gid,
+								acc_perm_t perm){
+
+	error13_t ret;
+	struct group13 grp
+	gid13_t nacl;
+	struct acc_acl_entry* acllist;
+
+	//db vars
+    struct db_stmt st;
+    struct db_logic_s iflogic;
+    error13_t ret;
+    db_table_id tid;
+    uchar* val[ACC_TABLE_ACL_COLS];
+    size_t size[ACC_TABLE_ACL_COLS];
+    db_colid_t colid;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+	/*
+		1. check to see if user exists
+		2. check to see if there is an entry already exists
+		3. add or update if exists
+	*/
+
+    if((ret = acc_group_chk(ac, username, gid, &grp)) != E13_OK){
+		return ret;
+    }
+
+    if((ret = _acc_load_acl(ac, objid, 0, NULL, 1, &grp.gid, &nacl, &acllist))!=
+		E13_OK){
+		return ret;
+    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
+    if(nacl){//there is an entry
+		if(perm == acllist->perm) {
+				return E13_OK;
+		} else {//update current perm
+
+			iflogic.colname = "gid";
+			iflogic.ival = grp.gid;
+			iflogic.logic = DB_LOGIC_EQ;
+			iflogic.flags = DB_LOGICF_DEF;
+
+			colid = db_get_colid_byname(ac->db, tid, "perm");
+
+			val[0] = perm;
+
+			ret = db_update(ac->db, tid, iflogic, 1, &colid, val, NULL, &st);
+			db_finalize(&st);
+		}
+    } else {//add new entry
+
+/*
+                                "RegID",
+                                DB_T_INT,
+                                "شماره ثبت",
+                                "",
+                                DB_COLF_HIDE|DB_COLF_AUTO,
+
+                                "nrow",
+                                DB_T_BIGINT,
+                                "ردیف",
+                                "",
+                                DB_COLF_HIDE|DB_COLF_AUTO,
+
+                                "gid",
+                                DB_T_INT,
+                                "گروه",
+                                "@group:id>name",
+                                DB_COLF_LIST|DB_COLF_TRANSL,
+
+                                "gid",
+                                DB_T_INT,
+                                "کاربر",
+                                "@user:id>name",
+                                DB_COLF_LIST|DB_COLF_TRANSL,
+
+                                "objid",
+                                DB_T_BIGINT,
+                                "objid",
+                                "",
+                                0,
+
+                                "perm",
+                                DB_T_INT,
+                                "دسترسی",
+                                "",
+                                0,
+
+                                "flags",
+                                DB_T_INT,
+                                "پرچم",
+                                "",
+                                DB_COLF_VIRTUAL|DB_COLF_HIDE
+
+*/
+
+		val[0] = (uchar*)&ac->regid;//regid
+		val[1] = NULL;/*(uchar*)&nrow;*/
+		val[2] = (uchar*)&grp.gid;//gid
+		val[3] = NULL;//uid
+		val[4] = (uchar*)&objid;//objid
+		val[5] = NULL;/*(uchar*)&flags;*/
+		size[0] = sizeof(regid_t);
+	//    size[1] = sizeof(int);
+		size[2] = sizeof(gid13_t);
+//		size[3] = sizeof(uid13_t);
+		size[4] = sizeof(objid13_t);
+	//    size[5] = sizeof(int);
+
+        ret = db_insert(ac->db, tid, val, size, &st);
+        db_finalize(&st);
+
+    }
+
+    return ret;
+}
+
+error13_t acc_perm_group_rm(	struct access13* ac,
+							objid13_t objid,
+							char* name, gid13_t gid,
+							acc_perm_t perm){
+
+	error13_t ret;
+	struct group13 grp
+
+	//db vars
+    struct db_stmt st;
+    struct db_logic_s logic;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+	/*
+		1. check to see if group exists
+	*/
+
+    if((ret = acc_group_chk(ac, name, gid, &grp)) != E13_OK){
+		return ret;
+    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
+
+    logic.colname = "gid";
+    logic.flags = DB_LOGICF_DEF;
+    logic.ival = grp.gid;
+    logic.logic = DB_LOGIC_EQ;
+
+    ret = db_delete(ac->db, tid, 1, &logic, &st);
+
+    db_finalize(&st);
+
+    return ret;
+}
+
+error13_t acc_perm_group_list(	struct access13* ac,
+								char* name, gid13_t gid,
+								struct acc_acl_entry** acllist, int resolve_id){
+	error13_t ret;
+	struct group13 grp
+
+	//db vars
+    struct db_stmt st;
+    struct db_logic_s logic;
+	objid13_t objid;
+	acc_perm_t perm;
+	struct acc_acl_entry* aclentry, *last;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+	/*
+		1. check to see if group exists
+	*/
+
+    if((ret = acc_group_chk(ac, name, gid, &grp)) != E13_OK){
+		return ret;
+    }
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
+
+    logic.colname = "gid";
+    logic.flags = DB_LOGICF_DEF;
+    logic.ival = grp.gid;
+    logic.logic = DB_LOGIC_EQ;
+
+    ret = db_collect(ac->db, tid, NULL, 1, &logic, NULL, DB_SO_DONT, -1, &st);
+    if(ret != E13_OK){
+		db_finalize(&st);
+		return ret;
+    }
+
+    *acllist = NULL;
+loop:
+    switch((ret = db_step(&st))){
+	case E13_CONTINUE:
+		db_column_int64(&st, db_get_colid_byname(tid, "objid"), (int64_t*)&objid);
+		db_column_int(&st, db_get_colid_byname(tid, "perm"), (int*)&perm);
+		aclentry = (struct acc_acl_entry*)m13_malloc(sizeof(struct acc_acl_entry));
+		aclentry->objid = objid;
+		aclentry->perm = perm;
+		aclentry->next = NULL;
+		if(!(*acllist)){
+			*acllist = aclentry;
+			last = aclentry;
+		} else {
+			last->next = aclentry;
+			last = last->next;
+		}
+        goto loop;
+		break;
+	case E13_OK:
+	case E13_DONE:
+		db_finalize(&st);
+		return E13_OK;
+		break;
+	default:
+		db_finalize(&st);
+		return ret;
+		break;
+
+    }
+}
+
+error13_t acc_perm_obj_list(struct access13* ac, objid13_t objid, struct acc_acl_entry** acllist, int resolve_id){
+	error13_t ret;
+
+	//db vars
+    struct db_stmt st;
+    struct db_logic_s logic;
+	uid13_t uid;
+	gid13_t gid;
+	acc_perm_t perm;
+	struct acc_acl_entry* aclentry, *last;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+	/*
+		1. check to see if group exists
+	*/
+
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
+
+    logic.colname = "objid";
+    logic.flags = DB_LOGICF_DEF;
+    logic.ival = objid;
+    logic.logic = DB_LOGIC_EQ;
+
+    ret = db_collect(ac->db, tid, NULL, 1, &logic, NULL, DB_SO_DONT, -1, &st);
+    if(ret != E13_OK){
+		db_finalize(&st);
+		return ret;
+    }
+
+    *acllist = NULL;
+loop:
+    switch((ret = db_step(&st))){
+	case E13_CONTINUE:
+		db_column_int(&st, db_get_colid_byname(tid, "uid"), (int*)&uid);
+		db_column_int(&st, db_get_colid_byname(tid, "gid"), (int*)&gid);
+		db_column_int(&st, db_get_colid_byname(tid, "perm"), (int*)&perm);
+		aclentry = (struct acc_acl_entry*)m13_malloc(sizeof(struct acc_acl_entry));
+		aclentry->uid = uid;
+		aclentry->gid = gid;
+		aclentry->perm = perm;
+		aclentry->next = NULL;
+		if(!(*acllist)){
+			*acllist = aclentry;
+			last = aclentry;
+		} else {
+			last->next = aclentry;
+			last = last->next;
+		}
+        goto loop;
+		break;
+	case E13_OK:
+	case E13_DONE:
+		db_finalize(&st);
+		return E13_OK;
+		break;
+	default:
+		db_finalize(&st);
+		return ret;
+		break;
+
+    }
 }

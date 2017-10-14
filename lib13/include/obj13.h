@@ -103,7 +103,7 @@ struct obj13 {
     struct obj13_link* link;
 
     void* objptr;
-    struct obj13* left, *right;
+    struct obj13* left, *right;//right = next in list entries;
 };
 
 #define obj13_use(obj)      MACRO( (obj)->ref++; )
@@ -140,7 +140,7 @@ struct obj13 {
     error13_t obj13_bst_delete_node(struct obj13 *root, objid13_t objid);
     void obj13_bst_inorder_traversal(struct obj13 *root, void (*cb)(struct obj13*));
 
-#define obj13_bst_free_node(node) ((node)->flags & OBJ13_FLAG_FREEPTR?m13_free((node)->objptr):E13_OK)
+#define obj13_bst_free_objptr(node) ((node)->flags & OBJ13_FLAG_FREEPTR?m13_free((node)->objptr):E13_OK)
 
 #ifdef __cplusplus
     }

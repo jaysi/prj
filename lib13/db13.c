@@ -1899,6 +1899,31 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 
 }
 
+//error13_t db_count_data(struct db_stmt* st, db_rowid_t* nrows){
+//    switch(db->driver){
+//
+//    case DB_DRV_NULL:
+//        return E13_OK;
+//        break;
+//
+//    case DB_DRV_SQLITE:
+//    	*nrows = sqlite3_data_count(st);//counts ROWS!
+//    	if((*nrows)<0){
+//				*nrows = 0;
+//				return e13_ierror(&db->e, E13_SYSE, NULL, NULL);
+//    	}
+//    	break;
+//
+//	default:
+//		return e13_ierror(&db->e, E13_IMPLEMENT, "s", msg13(M13_DRIVERNOTSUPPORTED));
+//		break;
+//
+//    }
+//
+//    return E13_OK;
+//
+//}
+
 error13_t db_delete(	struct db13* db, db_table_id tid,
 						int nlogic, struct db_logic_s* logic,
 						struct db_stmt* st){
@@ -1976,6 +2001,19 @@ error13_t db_delete(	struct db13* db, db_table_id tid,
                 st->h = stmt;
                 st->db = db;
                 st->magic = DB_STMT_MAGIC;
+
+				switch(sqlite3_step(LITE_ST(st))){
+
+				case SQLITE_DONE:
+				case SQLITE_OK:
+					//everything's true but no real changes!
+					if(!sqlite3_changes(LITE(db))) return E13_CONTINUE;
+					break;
+				default:
+					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+					break;
+
+				}
 
                 break;
 
