@@ -1738,7 +1738,7 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
     struct db_stmt st;
     db_table_id tid;
     int stt;
-    uchar** val;
+    uchar* val[2];
     struct db_logic_s logic;
     db_colid_t colid[3];
     error13_t ret;
@@ -1783,7 +1783,7 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
 
     stt = ACC_USR_STT_OUT;
 
-    val = m13_malloc(3*sizeof(char*));
+    //val = m13_malloc(2*sizeof(char*));
 
     val[0] = (char*)&stt;
     d13s_clock(&stime);
@@ -1795,7 +1795,7 @@ error13_t acc_user_logout(struct access13* ac, char* username, uid13_t uid){
 
     db_finalize(&st);
 
-	m13_free(val);
+	//m13_free(val);
 
     return ret==E13_CONTINUE?E13_OK:ret;
 
@@ -2514,12 +2514,12 @@ error13_t acc_perm_user_add(struct access13* ac,
 
 	//db vars
     struct db_stmt st;
-    struct db_logic_s logic[2];
+    struct db_logic_s iflogic;
     error13_t ret;
     db_table_id tid;
-    uchar* cols[ACC_TABLE_ACL_COLS];
+    uchar* val[ACC_TABLE_ACL_COLS];
     size_t size[ACC_TABLE_ACL_COLS];
-
+    db_colid_t colid;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -2540,13 +2540,88 @@ error13_t acc_perm_user_add(struct access13* ac,
 		return ret;
     }
 
+    tid = db_get_tid_byname(ac->db, ACC_TABLE_ACL);
     if(nacl){//there is an entry
 		if(perm == acllist->perm) {
 				return E13_OK;
 		} else {//update current perm
 
+			iflogic.colname = "uid";
+			iflogic.ival = usr.uid;
+			iflogic.logic = DB_LOGIC_EQ;
+			iflogic.flags = DB_LOGICF_DEF;
+
+			colid = db_get_colid_byname(ac->db, tid, "perm");
+
+			val[0] = perm;
+
+			ret = db_update(ac->db, tid, iflogic, 1, &colid, val, NULL, &st);
+			db_finalize(&st);
 		}
     } else {//add new entry
 
+/*
+                                "RegID",
+                                DB_T_INT,
+                                "شماره ثبت",
+                                "",
+                                DB_COLF_HIDE|DB_COLF_AUTO,
+
+                                "nrow",
+                                DB_T_BIGINT,
+                                "ردیف",
+                                "",
+                                DB_COLF_HIDE|DB_COLF_AUTO,
+
+                                "gid",
+                                DB_T_INT,
+                                "گروه",
+                                "@group:id>name",
+                                DB_COLF_LIST|DB_COLF_TRANSL,
+
+                                "uid",
+                                DB_T_INT,
+                                "کاربر",
+                                "@user:id>name",
+                                DB_COLF_LIST|DB_COLF_TRANSL,
+
+                                "objid",
+                                DB_T_BIGINT,
+                                "objid",
+                                "",
+                                0,
+
+                                "perm",
+                                DB_T_INT,
+                                "دسترسی",
+                                "",
+                                0,
+
+                                "flags",
+                                DB_T_INT,
+                                "پرچم",
+                                "",
+                                DB_COLF_VIRTUAL|DB_COLF_HIDE
+
+*/
+
+		val[0] = (uchar*)&ac->regid;
+		val[1] = NULL;/*(uchar*)&nrow;*/
+		val[2] = NULL
+		val[3] = (uchar*)&usr.uid;
+		val[4] = (uchar*)&objid;
+		val[5] = NULL;/*(uchar*)&flags;*/
+		size[0] = sizeof(regid_t);
+	//    size[1] = sizeof(int);
+//		size[2] = sizeof(gid13_t);
+		size[3] = sizeof(uid13_t);
+		size[4] = sizeof(objid13_t);
+	//    size[5] = sizeof(int);
+
+        ret = db_insert(ac->db, tid, val, size, &st);
+        db_finalize(&st);
+
     }
+
+    return ret;
 }

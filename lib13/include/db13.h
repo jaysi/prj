@@ -35,6 +35,22 @@ enum db_drv_class_id {
 typedef uint16_t db_colid_t;
 #define DB_COLID_INVAL ((db_colid_t)-1)
 
+typedef uint32_t db_rowid_t;
+#define DB_ROWID_INVAL ((db_rowid_t)-1)
+
+typedef uint64_t db_recid_t;
+#define DB_RECID_INVAL ((db_recid_t)-1)
+
+typedef uint64_t db_fieldid_t;
+#define DB_RECID_INVAL ((db_fieldid_t)-1)
+
+typedef uint8_t db_logicflag_t;
+typedef uint16_t db_colflag_t;
+typedef uint16_t db_tableflag_t;
+typedef uint32_t db_table_id;
+#define DB_TID_INVAL   ((db_table_id)-1)
+
+
 #define DB_STR_EMPTY  ""
 
 #define DB_DEF_DRIVER   DB_DRV_SQLITE
@@ -57,12 +73,6 @@ enum db_colpref_t {
     DB_COLPREF_FLAGS,
     DB_COLPREF_INVAL
 };
-
-typedef uint16_t db_colflag_t;
-typedef uint16_t db_tableflag_t;
-typedef uint32_t db_table_id;
-
-#define DB_TID_INVAL   ((db_table_id)-1)
 
 #define DB_TABLEF_EMPTY   (0x0001<<0)
 #define DB_TABLEF_CORE    (0x0001<<1)//core table, the system designer's backyard!
@@ -201,9 +211,9 @@ enum db_logic{
     DB_LOGIC_INVAL
 };
 
-#define DB_LOGICF_COL_CMP  (0x01<<0) //compare columns
-#define DB_LOGICF_USE_COLID	(0x01<<2)
-#define DB_LOGICF_DEF	0x00
+#define DB_LOGICF_COL_CMP	(0x01<<0) //??? compare columns
+#define DB_LOGICF_USE_COLID	(0x01<<2)//
+#define DB_LOGICF_DEF		(0x00)
 
 struct db_logic_s{
     char flags;
@@ -215,7 +225,24 @@ struct db_logic_s{
     char* sval;
     int64_t ival;// = size of sval in blob data type
 };
+/*
+struct db_field {
+	char* colname;
+	db_colid_t colid;
+	db_rowid_t rowid;
+	db_fieldid_t recid;
+	db_type_id type;//this is for faster trans, you can always ask datatype from column
+    void* val;
+    struct db_record* next;
+};
 
+struct db_logic2 {
+	db_logicflag_t flags;
+	struct db_field* field;
+    enum db_logic logic;
+    struct db_logic2* next;
+};
+*/
 #ifdef __cplusplus
     extern "C" {
 #endif
@@ -240,8 +267,8 @@ db_table_id db_get_tid_byname(struct db13* db, char* name);
 db_table_id db_get_tid_byalias(struct db13* db, char* alias);
 char* db_get_table_name(struct db13* db, db_table_id tid);
 char* db_get_table_alias(struct db13* db, db_table_id tid);
-db_colid_t db_get_colid_byname(struct db13* db, db_table_id tid,
-							char* col_name);
+db_colid_t db_get_colid_byname(	struct db13* db, db_table_id tid,
+								char* col_name);
 db_colid_t db_get_colid_byalias(struct db13* db, db_table_id tid,
 								char* col_alias);
 char* db_get_col_name(struct db13* db, db_table_id tid, db_colid_t colid);
@@ -289,7 +316,8 @@ error13_t db_update_col_byobjid(struct db13* db, db_table_id tid,
 error13_t db_update(struct db13* db, db_table_id tid,
 					struct db_logic_s iflogic,
 					db_colid_t ncol, db_colid_t* col,
-					uchar** val, size_t* size, struct db_stmt* st);
+					uchar** val, size_t* size,
+					struct db_stmt* st);
 error13_t db_delete(struct db13* db, db_table_id tid,
 					int nlogic, struct db_logic_s* logic,
 					struct db_stmt* st);

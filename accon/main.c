@@ -948,8 +948,6 @@ int help(struct access13* ac, int n, char** ary){
 			printf("%s, ", c->cmd[i]);
 			i++;
 		}
-		printf("\ndescription: %s", c->desc);
-		printf("\nsyntax: %s\n", c->syntax);
 	}
 
 	return 0;
@@ -1000,64 +998,6 @@ show_prompt:
 			break;
 		}
 	}
-
-//	switch(translate(ary[0])){
-//	case CODE_HELP:
-//	help(n, ary);
-//	break;
-//	case CODE_EXIT:
-//		return 0;
-//		break;
-//	case CODE_OPEN:
-//		do_open(&ac, n, ary);
-//		break;
-//	case CODE_CLOSE:
-//		do_close(&ac, n, ary);
-//		break;
-//	case CODE_GROUPADD:
-//		do_groupadd(&ac, n, ary);
-//		break;
-//	case CODE_RMGROUP:
-//		do_grouprm(&ac, n, ary);
-//		break;
-//	case CODE_GROUPSET:
-//		do_groupset(&ac, n, ary);
-//		break;
-//	case CODE_GROUPCHK:
-//		do_groupchk(&ac, n, ary);
-//		break;
-//    case CODE_GROUPLIST:
-//    	do_grouplist(&ac, n, ary);
-//		break;
-//	case CODE_USERADD:
-//		do_useradd(&ac, n, ary);
-//		break;
-//	case CODE_RMUSER:
-//		do_userrm(&ac, n, ary);
-//		break;
-//	case CODE_CHUSERPASS:
-//		do_chuserpass(&ac, n, ary);
-//		break;
-//	case CODE_USERSET:
-//		do_userset(&ac, n, ary);
-//		break;
-//	case CODE_USERCHK:
-//		do_userchk(&ac, n, ary);
-//		break;
-//    case CODE_USERLIST:
-//    	do_userlist(&ac, n, ary);
-//		break;
-//    case CODE_LOGIN:
-//    	do_login(&ac, n, ary);
-//		break;
-//    case CODE_LOGOUT:
-//    	do_logout(&ac, n, ary);
-//		break;
-//	case CODE_
-//	default:
-//		printf("unknown input %s\n", input);
-//		break;
-//	}
 
 	s13_free_exmem(ary);
 

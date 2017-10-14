@@ -1285,7 +1285,11 @@ bind_data:
 
 }
 
-error13_t db_update(struct db13* db, db_table_id tid, struct db_logic_s iflogic, db_colid_t ncol, db_colid_t* col, uchar** val, size_t* size, struct db_stmt* st){
+error13_t db_update(struct db13* db, db_table_id tid,
+					struct db_logic_s iflogic,
+					db_colid_t ncol, db_colid_t* col,
+					uchar** val, size_t* size,
+					struct db_stmt* st){
 
     char sql[MAXSQL];
     int date[3];
