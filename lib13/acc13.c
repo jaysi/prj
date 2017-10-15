@@ -2423,82 +2423,19 @@ error13_t acc_pack_gid_list(struct group13* grouplist, gid13_t ngid, gid13_t gid
 error13_t acc_perm_user_chk(struct access13* ac,
 							objid13_t objid,
 							char* username, uid13_t uid,
-							acc_perm_t perm){
+							acc_perm_t* perm){
 
-    struct db_logic_s logic[2];
-    error13_t ret;
-    struct user13 usr;
-    struct group13* grouplist;
-    gid13_t ngrp;
-    uid13_t nacl;
-    struct acc_acl_entry* acllist, *aclentry;
-
-    if(!_is_init(ac)){
-        return e13_error(E13_MISUSE);
-    }
+	error13_t ret;
+	struct user13 usr;
 
     if((ret = acc_user_chk(ac, username, uid, &usr)) != E13_OK){
 		return ret;
     }
 
-    //0. last all user groups
-    //1. load all acl entries to objid
-    //2. the rules are
-    //	a. if the user access is denied, fail
-	//	b. if the user access is permitted, success
-	//	c. if one of the groups in the user membership list is allowed, success
-	//	d. fail
-	//3. special users/groups: allusers/allgroups
-
-	//0.
-	_deb_pchk("getting user(uid=%lu) groups", usr.uid);
-	acc_user_group_list(ac, NULL, usr.uid, &ngrp, &grouplist, 0);
-	_deb_pchk("got %lu entries", ngrp);
-
-	if(ngrp){
-		gid13_t gidarray[ngrp];
-
-		acc_pack_gid_list(grouplist, ngrp, gidarray);
-		_deb_pchk("gid list packed", ngrp);
+	if((ret = _acc_perm_chk(ac, objid, uid, perm, 1)) != E13_OK){
+		return ret;
 	}
 
-	//1.
-	_acc_load_acl(	ac, objid,
-					1, &usr.uid,
-					ngrp, ngrp?gidarray:NULL,
-					&nacl,
-					&acllist);
-
-	_deb_pchk("got %lu acl entries", nacl);
-
-    //1.a. & 1.b.
-	for(aclentry = acllist; aclentry; aclentry = aclentry->next){
-        if(aclentry->perm & perm){
-			_deb_pchk("uid=%lu, gid=%lu, perm OK", aclentry->uid, aclentry->gid);
-			ret = E13_OK;
-        }
-        if(aclentry->uid == usr.uid){
-				_deb_pchk("got uid entry %lu", aclentry->uid);
-				break;
-        }
-	}
-
-	if(aclentry){
-		_deb_pchk("has acl entry");
-		if(perm & aclentry.perm){
-				_deb_pchk("OK");
-				ret = E13_OK;
-		} else {
-			_deb_pchk("NOK");
-			ret = e13_error(E13_PERM);
-		}
-	} else {
-		ret = e13_error(E13_PERM);
-	}
-
-	if(nacl) acc_acl_list_free(acllist);
-
-	//1.c.
 	return ret;
 }
 
@@ -2734,6 +2671,24 @@ loop:
     }
 }
 
+error13_t acc_perm_group_chk(struct access13* ac,
+							objid13_t objid,
+							char* groupname, gid13_t gid,
+							acc_perm_t* perm){
+
+	error13_t ret;
+	struct group13 grp;
+
+    if((ret = acc_group_chk(ac, groupname, gid, &grp)) != E13_OK){
+		return ret;
+    }
+
+	if((ret = _acc_perm_chk(ac, objid, gid, perm, 0)) != E13_OK){
+		return ret;
+	}
+
+	return ret;
+}
 
 error13_t acc_perm_group_add(	struct access13* ac,
 								objid13_t objid,
@@ -3031,4 +2986,86 @@ loop:
 		break;
 
     }
+}
+
+error13_t acc_user_access(	struct access13* ac,
+							objid13_t objid,
+							char* username, uid13_t uid,
+							acc_perm_t perm){
+
+    struct db_logic_s logic[2];
+    error13_t ret;
+    struct user13 usr;
+    struct group13* grouplist;
+    gid13_t ngrp;
+    uid13_t nacl;
+    struct acc_acl_entry* acllist, *aclentry;
+
+    if(!_is_init(ac)){
+        return e13_error(E13_MISUSE);
+    }
+
+    if((ret = acc_user_chk(ac, username, uid, &usr)) != E13_OK){
+		return ret;
+    }
+
+    //0. last all user groups
+    //1. load all acl entries to objid
+    //2. the rules are
+    //	a. if the user access is denied, fail
+	//	b. if the user access is permitted, success
+	//	c. if one of the groups in the user membership list is allowed, success
+	//	d. fail
+	//3. special users/groups: allusers/allgroups
+
+	//0.
+	_deb_pchk("getting user(uid=%lu) groups", usr.uid);
+	acc_user_group_list(ac, NULL, usr.uid, &ngrp, &grouplist, 0);
+	_deb_pchk("got %lu entries", ngrp);
+
+	if(ngrp){
+		gid13_t gidarray[ngrp];
+
+		acc_pack_gid_list(grouplist, ngrp, gidarray);
+		_deb_pchk("gid list packed", ngrp);
+	}
+
+	//1.
+	_acc_load_acl(	ac, objid,
+					1, &usr.uid,
+					ngrp, ngrp?gidarray:NULL,
+					&nacl,
+					&acllist);
+
+	_deb_pchk("got %lu acl entries", nacl);
+
+    //1.a. & 1.b.
+	for(aclentry = acllist; aclentry; aclentry = aclentry->next){
+        if(aclentry->perm & perm){
+			_deb_pchk("uid=%lu, gid=%lu, perm OK", aclentry->uid, aclentry->gid);
+			ret = E13_OK;
+        }
+        if(aclentry->uid == usr.uid){
+				_deb_pchk("got uid entry %lu", aclentry->uid);
+				break;
+        }
+	}
+
+	if(aclentry){
+		_deb_pchk("has acl entry");
+		if(perm & aclentry.perm){
+				_deb_pchk("OK");
+				ret = E13_OK;
+		} else {
+			_deb_pchk("NOK");
+			ret = e13_error(E13_PERM);
+		}
+	} else {
+		ret = e13_error(E13_PERM);
+	}
+
+	if(nacl) acc_acl_list_free(acllist);
+
+	//1.c.
+	return ret;
 }

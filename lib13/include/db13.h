@@ -37,6 +37,7 @@ typedef uint16_t db_colid_t;
 
 typedef uint32_t db_rowid_t;
 #define DB_ROWID_INVAL ((db_rowid_t)-1)
+#define DB_ROWID_ZERO   0UL
 
 typedef uint64_t db_recid_t;
 #define DB_RECID_INVAL ((db_recid_t)-1)
@@ -328,7 +329,9 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 						char* sortcol, enum db_sort stype, int nlimit,
 						struct db_stmt* st);
 
-///error13_t db_count_data(struct db_stmt* st, db_rowid_t* nrows);
+error13_t db_count(	struct db13* db, db_table_id tid,
+					int nlogic, struct db_logic_s* logic,
+					db_rowid_t* nrows);
 
 error13_t db_set_table_slots(struct db13* db, db_table_id ntables);
 error13_t db_get_table_slots(struct db13* db, db_table_id* ntables);

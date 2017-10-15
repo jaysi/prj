@@ -1899,30 +1899,151 @@ error13_t db_collect(	struct db13* db, db_table_id tid,
 
 }
 
-//error13_t db_count_data(struct db_stmt* st, db_rowid_t* nrows){
-//    switch(db->driver){
-//
-//    case DB_DRV_NULL:
-//        return E13_OK;
-//        break;
-//
-//    case DB_DRV_SQLITE:
-//    	*nrows = sqlite3_data_count(st);//counts ROWS!
-//    	if((*nrows)<0){
-//				*nrows = 0;
-//				return e13_ierror(&db->e, E13_SYSE, NULL, NULL);
-//    	}
-//    	break;
-//
-//	default:
-//		return e13_ierror(&db->e, E13_IMPLEMENT, "s", msg13(M13_DRIVERNOTSUPPORTED));
-//		break;
-//
-//    }
-//
-//    return E13_OK;
-//
-//}
+/*
+#include <stdio.h>
+#include <sqlite3.h>
+
+static int callback(void *count, int argc, char **argv, char **azColName) {
+    int *c = count;
+    *c = atoi(argv[0]);
+    return 0;
+}
+
+int main(int argc, char **argv) {
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+    int count = 0;
+
+    rc = sqlite3_open("test.db", &db);
+    if (rc) {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        return(1);
+    }
+    rc = sqlite3_exec(db, "select count(*) from mytable", callback, &count, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        printf("count: %d\n", count);
+    }
+    sqlite3_close(db);
+    return 0;
+}
+*/
+
+error13_t db_count(	struct db13* db, db_table_id tid,
+					int nlogic, struct db_logic_s* logic,
+					db_rowid_t* nrows){
+
+    char sql[MAXSQL];
+    int i;
+    int date[3];
+    size_t len = 0;
+    sqlite3_stmt* stmt = NULL;
+
+    switch(_db_get_drv_cls(db->driver)){
+    case DB_DRV_CLS_SQL:
+
+#define RLEN (MAXSQL - len)
+
+    snprintf(sql + len, RLEN, "COUNT * FROM %s", db->table_info[tid].name);
+    len = strlen(sql);
+
+    if(nlogic){
+
+        snprintf(sql + len, RLEN, " WHERE ");
+        len = strlen(sql);
+
+        for(i = 1; i < nlogic + 1; i++){
+
+			if(logic[i-1].logic >= DB_LOGIC_AND && logic[i-1].logic < DB_LOGIC_INVAL){
+
+				if(i == nlogic && logic[i-1].logic != DB_LOGIC_CLOSEP)
+					return e13_error(E13_SYNTAX);
+
+				snprintf(sql + len, RLEN, " %s ", logic_sign[logic[i-1].logic].sign);
+				len = strlen(sql);
+				continue;
+
+			} else {
+
+				snprintf(sql + len, RLEN, " %s %s ?%i",
+						 logic[i-1].flags & DB_LOGICF_USE_COLID?db_get_col_name(db, tid, logic[i-1].colid):logic[i-1].colname,
+						 logic_sign[logic[i-1].logic].sign,
+						 i
+						);
+
+				len = strlen(sql);
+
+			}
+
+        }
+
+    }
+
+#undef RLEN
+    strcat(sql, ";");
+
+    break;
+
+    default:
+        break;
+    }
+
+    _deb_collect("sql: %s", sql);
+
+    switch(db->driver){
+
+    case DB_DRV_NULL:
+        return E13_OK;
+        break;
+
+    case DB_DRV_SQLITE:
+
+        switch(sqlite3_prepare_v2(LITE(db), sql, -1, &stmt, NULL)){
+            case SQLITE_DONE:
+            case SQLITE_OK:
+
+                //set handles
+                st->h = stmt;
+                st->db = db;
+                st->magic = DB_STMT_MAGIC;
+
+				switch(sqlite3_step(LITE_ST(st))){
+				case SQLITE_ROW:
+					i = sqlite3_column_int(LITE_ST(st), 0);
+					if(i > -1) *nrows = (db_rowid_t)i;
+					else *nrows = 0;
+					sqlite3_finalize(LITE_ST(st));
+					break;
+				case SQLITE_DONE:
+				case SQLITE_OK:
+					//everything's true but no real changes!
+					*nrows = DB_ROWID_ZERO;
+                    sqlite3_finalize(LITE_ST(st));
+					break;
+				default:
+					sqlite3_finalize(LITE_ST(st));
+					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+					break;
+
+				}
+
+                break;
+
+            default:
+                return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
+                break;
+        }
+			default:
+				return e13_ierror(&db->e, E13_IMPLEMENT, "s", msg13(M13_DRIVERNOTSUPPORTED));
+				break;
+    }
+
+    return E13_OK;
+
+}
 
 error13_t db_delete(	struct db13* db, db_table_id tid,
 						int nlogic, struct db_logic_s* logic,
