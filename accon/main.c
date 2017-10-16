@@ -465,10 +465,10 @@ int do_userchk(struct access13* ac, int n, char** ary){
 	printf("status: %s\n", sttstr);
 
 	d13s_get_jtime(user.lastlogin, t13);
-	printf("last login: %u/%u/%u - %u:%u:%u (%u)\n", t13[D13_ITEMS_YEAR], t13[D13_ITEMS_MON], t13[D13_ITEMS_DAY], t13[D13_ITEMS_HOUR], t13[D13_ITEMS_MIN], t13[D13_ITEMS_SEC], user.lastlogin);
+	printf("last login: %u/%u/%u - %u:%u:%u (%llu)\n", t13[D13_ITEMS_YEAR], t13[D13_ITEMS_MON], t13[D13_ITEMS_DAY], t13[D13_ITEMS_HOUR], t13[D13_ITEMS_MIN], t13[D13_ITEMS_SEC], user.lastlogin);
 
 	d13s_get_jtime(user.lastlogout, t13);
-	printf("last logout: %u/%u/%u - %u:%u:%u (%u)\n",
+	printf("last logout: %u/%u/%u - %u:%u:%u (%llu)\n",
 			t13[D13_ITEMS_YEAR],
 			t13[D13_ITEMS_MON],
 			t13[D13_ITEMS_DAY],
@@ -514,7 +514,7 @@ int do_userlist(struct access13* ac, int n, char** ary){
 	while(user){
 		printf("No.: %u\n", i++);
 		printf("name: %s\n", user->name);
-		printf("gid: %u\n", user->uid);
+		printf("uid: %lu\n", user->uid);
 
 		switch(user->stt){
 		case ACC_USR_STT_INACTIVE:
@@ -537,7 +537,7 @@ int do_userlist(struct access13* ac, int n, char** ary){
 			break;
 		}
 
-		printf("status: %s\n\n", sttstr);
+		printf("status: %s\n", sttstr);
 
 	d13s_get_jtime(user->lastlogin, t13);
 	printf("last login: %u/%u/%u - %u:%u:%u (%u)\n",
@@ -550,7 +550,7 @@ int do_userlist(struct access13* ac, int n, char** ary){
 			user->lastlogin);
 
 	d13s_get_jtime(user->lastlogout, t13);
-	printf("last logout: %u/%u/%u - %u:%u:%u (%u)\n",
+	printf("last logout: %u/%u/%u - %u:%u:%u (%u)\n\n",
 			t13[D13_ITEMS_YEAR],
 			t13[D13_ITEMS_MON],
 			t13[D13_ITEMS_DAY],
@@ -1674,9 +1674,9 @@ int help(struct access13* ac, int n, char** ary){
 		c = translate_s(ary[1]);
 
 		i = 0;
+		printf("forms: ");
 		while(c->cmd[i]){
-			printf("\nforms: ");
-			printf("%s, ", c->cmd[i]);
+			printf("%s%s", c->cmd[i], c->cmd[i+1]?", ":"");
 			i++;
 		}
 
@@ -1689,9 +1689,9 @@ int help(struct access13* ac, int n, char** ary){
 	printf("\n-- access13 console help --\n");
 	for(c = cmd; c->cmd[0]; c++){
 		i = 0;
-		printf("\nforms: ");
+		printf("\n");
 		while(c->cmd[i]){
-			printf("%s, ", c->cmd[i]);
+			printf("%s%s", c->cmd[i], c->cmd[i+1]?", ":"");
 			i++;
 		}
 	}

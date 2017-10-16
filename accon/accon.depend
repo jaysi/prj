@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1508144422 source:c:\intel\dev\prj\accon\main.c
+1508162509 source:c:\intel\dev\prj\accon\main.c
 	<stdio.h>
 	<stdlib.h>
 	"../lib13/include/acc13.h"
