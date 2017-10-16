@@ -1975,7 +1975,7 @@ error13_t acc_group_user_list(	struct access13 *ac,
     return ret;
 }
 
-error13_t acc_user_group_check(struct access13 *ac, char *username, uid13_t uid,
+error13_t acc_user_group_chk(struct access13 *ac, char *username, uid13_t uid,
 							char* group, gid13_t gid){
 
     struct db_stmt st;
@@ -2061,7 +2061,7 @@ error13_t acc_user_join_group(struct access13* ac, char* username, uid13_t uid,
         return e13_error(E13_MISUSE);
     }
 
-    if(acc_user_group_check(ac, username, uid, group, gid) == E13_OK){
+    if(acc_user_group_chk(ac, username, uid, group, gid) == E13_OK){
 		return e13_error(E13_EXISTS);
     }
 
@@ -2445,14 +2445,13 @@ error13_t acc_perm_user_add(struct access13* ac,
 							acc_perm_t perm){
 
 	error13_t ret;
-	struct user13 usr
+	struct user13 usr;
 	uid13_t nacl;
 	struct acc_acl_entry* acllist;
 
 	//db vars
     struct db_stmt st;
     struct db_logic_s iflogic;
-    error13_t ret;
     db_table_id tid;
     uchar* val[ACC_TABLE_ACL_COLS];
     size_t size[ACC_TABLE_ACL_COLS];
@@ -2565,15 +2564,15 @@ error13_t acc_perm_user_add(struct access13* ac,
 
 error13_t acc_perm_user_rm(	struct access13* ac,
 							objid13_t objid,
-							char* name, uid13_t uid,
-							acc_perm_t perm){
+							char* name, uid13_t uid){
 
 	error13_t ret;
-	struct user13 usr
+	struct user13 usr;
 
 	//db vars
     struct db_stmt st;
     struct db_logic_s logic;
+    db_table_id tid;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -2605,7 +2604,7 @@ error13_t acc_perm_user_list(	struct access13* ac,
 								char* name, uid13_t uid,
 								struct acc_acl_entry** acllist, int resolve_id){
 	error13_t ret;
-	struct user13 usr
+	struct user13 usr;
 
 	//db vars
     struct db_stmt st;
@@ -2613,6 +2612,7 @@ error13_t acc_perm_user_list(	struct access13* ac,
 	objid13_t objid;
 	acc_perm_t perm;
 	struct acc_acl_entry* aclentry, *last;
+	db_table_id tid;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -2643,8 +2643,12 @@ error13_t acc_perm_user_list(	struct access13* ac,
 loop:
     switch((ret = db_step(&st))){
 	case E13_CONTINUE:
-		db_column_int64(&st, db_get_colid_byname(tid, "objid"), (int64_t*)&objid);
-		db_column_int(&st, db_get_colid_byname(tid, "perm"), (int*)&perm);
+		if(db_column_int64(&st, db_get_colid_byname(ac->db, tid, "objid"), (int64_t*)&objid) != E13_OK){
+			//TODO
+		}
+		if(db_column_int(&st, db_get_colid_byname(ac->db, tid, "perm"), (int*)&perm) != E13_OK){
+			//TODO
+		}
 		aclentry = (struct acc_acl_entry*)m13_malloc(sizeof(struct acc_acl_entry));
 		aclentry->objid = objid;
 		aclentry->perm = perm;
@@ -2696,14 +2700,13 @@ error13_t acc_perm_group_add(	struct access13* ac,
 								acc_perm_t perm){
 
 	error13_t ret;
-	struct group13 grp
+	struct group13 grp;
 	gid13_t nacl;
 	struct acc_acl_entry* acllist;
 
 	//db vars
     struct db_stmt st;
     struct db_logic_s iflogic;
-    error13_t ret;
     db_table_id tid;
     uchar* val[ACC_TABLE_ACL_COLS];
     size_t size[ACC_TABLE_ACL_COLS];
@@ -2719,7 +2722,7 @@ error13_t acc_perm_group_add(	struct access13* ac,
 		3. add or update if exists
 	*/
 
-    if((ret = acc_group_chk(ac, username, gid, &grp)) != E13_OK){
+    if((ret = acc_group_chk(ac, name, gid, &grp)) != E13_OK){
 		return ret;
     }
 
@@ -2816,15 +2819,15 @@ error13_t acc_perm_group_add(	struct access13* ac,
 
 error13_t acc_perm_group_rm(	struct access13* ac,
 							objid13_t objid,
-							char* name, gid13_t gid,
-							acc_perm_t perm){
+							char* name, gid13_t gid){
 
 	error13_t ret;
-	struct group13 grp
+	struct group13 grp;
 
 	//db vars
     struct db_stmt st;
     struct db_logic_s logic;
+    db_table_id tid;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -2856,7 +2859,7 @@ error13_t acc_perm_group_list(	struct access13* ac,
 								char* name, gid13_t gid,
 								struct acc_acl_entry** acllist, int resolve_id){
 	error13_t ret;
-	struct group13 grp
+	struct group13 grp;
 
 	//db vars
     struct db_stmt st;
@@ -2864,6 +2867,7 @@ error13_t acc_perm_group_list(	struct access13* ac,
 	objid13_t objid;
 	acc_perm_t perm;
 	struct acc_acl_entry* aclentry, *last;
+	db_table_id tid;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -2894,8 +2898,12 @@ error13_t acc_perm_group_list(	struct access13* ac,
 loop:
     switch((ret = db_step(&st))){
 	case E13_CONTINUE:
-		db_column_int64(&st, db_get_colid_byname(tid, "objid"), (int64_t*)&objid);
-		db_column_int(&st, db_get_colid_byname(tid, "perm"), (int*)&perm);
+		if(db_column_int64(&st, db_get_colid_byname(ac->db, tid, "objid"), (int64_t*)&objid) != E13_OK){
+			//TODO
+		}
+		if(db_column_int(&st, db_get_colid_byname(ac->db, tid, "perm"), (int*)&perm) != E13_OK){
+			//TODO
+		}
 		aclentry = (struct acc_acl_entry*)m13_malloc(sizeof(struct acc_acl_entry));
 		aclentry->objid = objid;
 		aclentry->perm = perm;
@@ -2932,6 +2940,7 @@ error13_t acc_perm_obj_list(struct access13* ac, objid13_t objid, struct acc_acl
 	gid13_t gid;
 	acc_perm_t perm;
 	struct acc_acl_entry* aclentry, *last;
+	db_table_id tid;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -2958,9 +2967,15 @@ error13_t acc_perm_obj_list(struct access13* ac, objid13_t objid, struct acc_acl
 loop:
     switch((ret = db_step(&st))){
 	case E13_CONTINUE:
-		db_column_int(&st, db_get_colid_byname(tid, "uid"), (int*)&uid);
-		db_column_int(&st, db_get_colid_byname(tid, "gid"), (int*)&gid);
-		db_column_int(&st, db_get_colid_byname(tid, "perm"), (int*)&perm);
+		if(db_column_int(&st, db_get_colid_byname(ac->db, tid, "uid"), (int*)&uid) != E13_OK){
+			//TODO
+		}
+		if(db_column_int(&st, db_get_colid_byname(ac->db, tid, "gid"), (int*)&gid) != E13_OK){
+			//TODO
+		}
+		if(db_column_int(&st, db_get_colid_byname(ac->db, tid, "perm"), (int*)&perm) != E13_OK){
+			//TODO
+		}
 		aclentry = (struct acc_acl_entry*)m13_malloc(sizeof(struct acc_acl_entry));
 		aclentry->uid = uid;
 		aclentry->gid = gid;
@@ -3000,6 +3015,7 @@ error13_t acc_user_access(	struct access13* ac,
     gid13_t ngrp;
     uid13_t nacl;
     struct acc_acl_entry* acllist, *aclentry;
+    gid13_t* gidarray;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -3024,18 +3040,24 @@ error13_t acc_user_access(	struct access13* ac,
 	_deb_pchk("got %lu entries", ngrp);
 
 	if(ngrp){
-		gid13_t gidarray[ngrp];
+		gidarray = m13_malloc(sizeof(gid13_t)*ngrp);
 
 		acc_pack_gid_list(grouplist, ngrp, gidarray);
 		_deb_pchk("gid list packed", ngrp);
+	} else {
+		gidarray = NULL;
 	}
 
 	//1.
-	_acc_load_acl(	ac, objid,
+	if(_acc_load_acl(	ac, objid,
 					1, &usr.uid,
-					ngrp, ngrp?gidarray:NULL,
+					ngrp, gidarray,
 					&nacl,
-					&acllist);
+					&acllist) != E13_OK){
+		//TODO
+	}
+
+	if(gidarray) m13_free(gidarray);
 
 	_deb_pchk("got %lu acl entries", nacl);
 
@@ -3053,7 +3075,7 @@ error13_t acc_user_access(	struct access13* ac,
 
 	if(aclentry){
 		_deb_pchk("has acl entry");
-		if(perm & aclentry.perm){
+		if(perm & aclentry->perm){
 				_deb_pchk("OK");
 				ret = E13_OK;
 		} else {

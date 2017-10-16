@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1507469850 source:c:\intel\dev\prj\lib13\acc13.c
+1508144301 source:c:\intel\dev\prj\lib13\acc13.c
 	"include/lib13.h"
 
 1419225720 c:\intel\dev\prj\lib13\include\lib13.h
@@ -24,7 +24,7 @@
 	"type13.h"
 	"db13.h"
 
-1507380236 c:\intel\dev\prj\lib13\include\acc13.h
+1508144269 c:\intel\dev\prj\lib13\include\acc13.h
 	"type13.h"
 	"hash13.h"
 	"obj13.h"
@@ -55,7 +55,7 @@
 1359975346 c:\intel\dev\prj\lib13\include\sha256.h
 	"type13.h"
 
-1507357037 c:\intel\dev\prj\lib13\include\obj13.h
+1507988394 c:\intel\dev\prj\lib13\include\obj13.h
 	<assert.h>
 	"error13.h"
 	"type13.h"
@@ -135,7 +135,7 @@
 	"error13.h"
 	"mem13.h"
 
-1507362714 c:\intel\dev\prj\lib13\include\db13.h
+1508141795 c:\intel\dev\prj\lib13\include\db13.h
 	"../../sqlite/sqlite3.h"
 	"type13.h"
 	"const13.h"
@@ -175,7 +175,7 @@
 	<stdio.h>
 	<stdlib.h>
 
-1507382809 source:c:\intel\dev\prj\lib13\db13.c
+1508143352 source:c:\intel\dev\prj\lib13\db13.c
 	<string.h>
 	"include/db13i.h"
 	"include/msg13.h"
@@ -184,6 +184,8 @@
 	"include/bit13.h"
 	"include/day13.h"
 	"include/debug13.h"
+	<stdio.h>
+	<sqlite3.h>
 
 1506517780 c:\intel\dev\prj\lib13\include\db13i.h
 	"db13.h"

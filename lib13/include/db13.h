@@ -43,7 +43,7 @@ typedef uint64_t db_recid_t;
 #define DB_RECID_INVAL ((db_recid_t)-1)
 
 typedef uint64_t db_fieldid_t;
-#define DB_RECID_INVAL ((db_fieldid_t)-1)
+#define DB_FIELDID_INVAL ((db_fieldid_t)-1)
 
 typedef uint8_t db_logicflag_t;
 typedef uint16_t db_colflag_t;

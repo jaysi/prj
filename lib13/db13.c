@@ -2006,25 +2006,22 @@ error13_t db_count(	struct db13* db, db_table_id tid,
             case SQLITE_OK:
 
                 //set handles
-                st->h = stmt;
-                st->db = db;
-                st->magic = DB_STMT_MAGIC;
 
-				switch(sqlite3_step(LITE_ST(st))){
+				switch(sqlite3_step(stmt)){
 				case SQLITE_ROW:
-					i = sqlite3_column_int(LITE_ST(st), 0);
+					i = sqlite3_column_int(stmt, 0);
 					if(i > -1) *nrows = (db_rowid_t)i;
 					else *nrows = 0;
-					sqlite3_finalize(LITE_ST(st));
+					sqlite3_finalize(stmt);
 					break;
 				case SQLITE_DONE:
 				case SQLITE_OK:
 					//everything's true but no real changes!
 					*nrows = DB_ROWID_ZERO;
-                    sqlite3_finalize(LITE_ST(st));
+                    sqlite3_finalize(stmt);
 					break;
 				default:
-					sqlite3_finalize(LITE_ST(st));
+					sqlite3_finalize(stmt);
 					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
 					break;
 

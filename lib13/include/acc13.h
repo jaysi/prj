@@ -89,9 +89,15 @@ struct access13{
 
 //ac PERMISSIONS
 typedef uint8_t acc_perm_t;
-#define ACC_PERM_RD  (0x01<<0)
-#define ACC_PERM_WR  (0x01<<1)
-#define ACC_PERM_EX  (0x01<<2)
+#define ACC_PERM_RD  	(0x01<<0)
+#define ACC_PERM_WR  	(0x01<<1)
+#define ACC_PERM_EX  	(0x01<<2)
+#define ACC_PERM_RSRV1	(0x01<<3)
+#define ACC_PERM_RSRV2	(0x01<<4)
+#define ACC_PERM_USR1	(0x01<<5)
+#define ACC_PERM_USR2	(0x01<<6)
+#define ACC_PERM_USR3	(0x01<<7)
+
 #define ACC_PERM_REC_USER	0x01
 #define ACC_PERM_REC_GROUP	0x02
 
@@ -135,7 +141,7 @@ struct acc_acl_entry{
 
     error13_t acc_user_join_group(struct access13* ac, char* username, uid13_t uid, char* group, gid13_t gid);
     error13_t acc_user_leave_group(struct access13* ac, char* username, uid13_t uid, char* group, gid13_t gid);
-    error13_t acc_user_group_check(struct access13* ac, char* username, uid13_t uid, char* group, gid13_t gid);
+    error13_t acc_user_group_chk(struct access13* ac, char* username, uid13_t uid, char* group, gid13_t gid);
     error13_t acc_user_group_list(struct access13 *ac, char *username, uid13_t uid, gid13_t* ngrp, struct group13** grouplist, int resolve_gid);
     error13_t acc_group_user_list(struct access13 *ac, char *groupname, gid13_t gid, uid13_t* nusr, struct user13** userlist, int resolve_uid);//TODO
 
@@ -144,11 +150,11 @@ struct acc_acl_entry{
 
     error13_t acc_perm_user_chk(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t* perm);
     error13_t acc_perm_user_add(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t perm);
-    error13_t acc_perm_user_rm(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t perm);
+    error13_t acc_perm_user_rm(struct access13* ac, objid13_t objid, char* name, uid13_t uid);
     error13_t acc_perm_user_list(struct access13* ac, char* name, uid13_t uid, struct acc_acl_entry** acllist, int resolve_id);
     error13_t acc_perm_group_chk(struct access13* ac, objid13_t objid, char* name, gid13_t gid, acc_perm_t* perm);
     error13_t acc_perm_group_add(struct access13* ac, objid13_t objid, char* name, gid13_t gid, acc_perm_t perm);
-    error13_t acc_perm_group_rm(struct access13* ac, objid13_t objid, char* name, gid13_t gid, acc_perm_t perm);
+    error13_t acc_perm_group_rm(struct access13* ac, objid13_t objid, char* name, gid13_t gid);
     error13_t acc_perm_group_list(struct access13* ac, char* name, gid13_t gid, struct acc_acl_entry** acllist, int resolve_id);
     error13_t acc_perm_obj_list(struct access13* ac, objid13_t objid, struct acc_acl_entry** acllist, int resolve_id);
 	error13_t acc_acl_list_free(struct acc_acl_entry* acllist);
@@ -156,7 +162,7 @@ struct acc_acl_entry{
 	error13_t acc_user_access(struct access13* ac, objid13_t objid, char* name, uid13_t uid, acc_perm_t perm);
 
 	//helper functions
-	error13_t acc_pack_gid_list(struct group13* grouplist, gid13_t ngrp, gid13_t** gidarray)
+	error13_t acc_pack_gid_list(struct group13* grouplist, gid13_t ngid, gid13_t gidarray[]);
 
 #ifdef __cplusplus
     }

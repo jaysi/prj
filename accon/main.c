@@ -644,18 +644,18 @@ int do_user_join_group(struct access13* ac, int n, char** ary){
         return -1;
 	}
 
-    uid = strtoul(ary[1], NULL, 10);
+    user.uid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_user_chk(ac, uid==ULONG_MAX?ary[1]:NULL, uid, &user);
+    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
 		return -1;
 	}
 
-    gid = strtoul(ary[2], NULL, 10);
+    group.gid = strtoul(ary[2], NULL, 10);
 
-    ret = acc_group_chk(ac, gid==ULONG_MAX?ary[2]:NULL, gid, &group);
+    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[2]:NULL, group.gid, &group);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -673,7 +673,7 @@ int do_user_join_group(struct access13* ac, int n, char** ary){
 		return -1;
 	}
 
-	printf("done\n", uid);
+	printf("done\n");
 
 	return 0;
 }
@@ -689,18 +689,18 @@ int do_user_leave_group(struct access13* ac, int n, char** ary){
         return -1;
 	}
 
-    uid = strtoul(ary[1], NULL, 10);
+    user.uid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_user_chk(ac, uid==ULONG_MAX?ary[1]:NULL, uid, &user);
+    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
 		return -1;
 	}
 
-    gid = strtoul(ary[2], NULL, 10);
+    group.gid = strtoul(ary[2], NULL, 10);
 
-    ret = acc_group_chk(ac, gid==ULONG_MAX?ary[2]:NULL, gid, &group);
+    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[2]:NULL, group.gid, &group);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -718,7 +718,55 @@ int do_user_leave_group(struct access13* ac, int n, char** ary){
 		return -1;
 	}
 
-	printf("done\n", uid);
+	printf("done\n");
+
+	return 0;
+}
+
+int do_user_group_chk(struct access13* ac, int n, char** ary){
+	error13_t ret;
+	struct user13 user;
+	struct group13 group;
+
+	if(n < 3){
+        printf("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+    user.uid = strtoul(ary[1], NULL, 10);
+
+    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+    group.gid = strtoul(ary[2], NULL, 10);
+
+    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[2]:NULL, group.gid, &group);
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+
+	printf("joining to group [gid=%u]...", group.gid);
+
+	ret = acc_user_group_chk(ac, NULL, user.uid, NULL, group.gid);
+
+	if(ret == E13_OK){
+        printf("is a member of group\n");
+	} else if (ret == e13_error(E13_NOTFOUND)){
+		printf("not a member of group\n");
+	} else {
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printf("done\n");
 
 	return 0;
 }
@@ -747,7 +795,7 @@ int do_user_group_list(struct access13* ac, int n, char** ary){
 
 	printf("getting list...");
 
-	ret = acc_user_group_list(ac, NULL, user.uid, &ngrp, &grouplist, 1);
+	ret = acc_user_group_list(ac, NULL, user.uid, &ngid, &grouplist, 1);
 
 	if(ret != E13_OK){
 		printf("failed\n");
@@ -757,7 +805,7 @@ int do_user_group_list(struct access13* ac, int n, char** ary){
 
 	printf("done\n");
 
-	printf("-- group list --\n");
+	printf("-- group list (%lu groups) --\n", ngid);
 
 	group = grouplist;
 	i = 0;
@@ -827,8 +875,167 @@ int do_group_user_list(struct access13* ac, int n, char** ary){
 	return 0;
 }
 
-TODO
+int make_perm(char* str, acc_perm_t* perm){
+
+	int i, len, sign;
+	len = strlen(str);
+	*perm = 0;
+	sign = 0;
+    for(i = 0; i <= len; i++){
+        switch(str[i]){
+		case '+':
+			sign = 1;
+			break;
+		case '-':
+			sign = 2;
+			break;
+		case 'r':
+		case 'R':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_RD;
+			else (*perm) &= ~ACC_PERM_RD;
+			sign = 0;
+			break;
+		case 'w':
+		case 'W':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_WR;
+			else (*perm) &= ~ACC_PERM_WR;
+			sign = 0;
+			break;
+		case 'x':
+		case 'X':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_EX;
+			else (*perm) &= ~ACC_PERM_EX;
+			sign = 0;
+			break;
+		case '1':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_USR1;
+			else (*perm) &= ~ACC_PERM_USR1;
+			sign = 0;
+			break;
+		case '2':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_USR2;
+			else (*perm) &= ~ACC_PERM_USR2;
+			sign = 0;
+			break;
+		case '3':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_USR3;
+			else (*perm) &= ~ACC_PERM_USR3;
+			sign = 0;
+			break;
+
+		default:
+			return -1;
+			break;
+        }
+    }
+    return 0;
+}
+
+int make_perm2(char* str, acc_perm_t* perm){
+
+	int i, len, sign;
+	len = strlen(str);
+	*perm = 0;
+	sign = 1;
+    for(i = 0; i <= len; i++){
+        switch(str[i]){
+		case 'r':
+		case 'R':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_RD;
+			else (*perm) &= ~ACC_PERM_RD;
+			break;
+		case 'w':
+		case 'W':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_WR;
+			else (*perm) &= ~ACC_PERM_WR;
+			break;
+		case 'x':
+		case 'X':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_EX;
+			else (*perm) &= ~ACC_PERM_EX;
+			break;
+		case '1':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_USR1;
+			else (*perm) &= ~ACC_PERM_USR1;
+			break;
+		case '2':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_USR2;
+			else (*perm) &= ~ACC_PERM_USR2;
+			break;
+		case '3':
+			if(!sign) return -1;
+			else if(sign == 1) (*perm) |= ACC_PERM_USR3;
+			else (*perm) &= ~ACC_PERM_USR3;
+			break;
+
+		default:
+			return -1;
+			break;
+        }
+    }
+    return 0;
+}
+
 int do_perm_group_add(struct access13* ac, int n, char** ary){
+
+	error13_t ret;
+	struct group13 group;
+	objid13_t objid;
+	acc_perm_t perm;
+	int i;
+
+	if(n < 4){
+        printf("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+	printf("adding permissions...");
+
+    group.gid = strtoul(ary[1], NULL, 10);
+
+    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[1]:NULL, group.gid, &group);
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	objid = strtoull(ary[2], NULL, 10);
+	if(objid == ULONG_LONG_MAX){
+		printf("failed\ninvalid object id\n");
+		return -1;
+	}
+
+	if(make_perm(ary[3], &perm)){
+		printf("failed\ninvalid permissions\n");
+		return -1;
+	}
+
+	ret = acc_perm_group_add(ac, objid, NULL, group.gid, perm);
+
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printf("done\n");
+
+	return 0;
+}
+
+int do_perm_group_rm(struct access13* ac, int n, char** ary){
 
 	error13_t ret;
 	struct group13 group;
@@ -840,6 +1047,8 @@ int do_perm_group_add(struct access13* ac, int n, char** ary){
         return -1;
 	}
 
+	printf("removing permissions...");
+
     group.gid = strtoul(ary[1], NULL, 10);
 
     ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[1]:NULL, group.gid, &group);
@@ -849,9 +1058,13 @@ int do_perm_group_add(struct access13* ac, int n, char** ary){
 		return -1;
 	}
 
-	printf("getting list...");
+	objid = strtoull(ary[2], NULL, 10);
+	if(objid == ULONG_LONG_MAX){
+		printf("failed\ninvalid object id\n");
+		return -1;
+	}
 
-	ret = acc_group_user_list(ac, NULL, group.gid, &nuid, &userlist, 1);
+	ret = acc_perm_group_rm(ac, objid, NULL, group.gid);
 
 	if(ret != E13_OK){
 		printf("failed\n");
@@ -861,20 +1074,261 @@ int do_perm_group_add(struct access13* ac, int n, char** ary){
 
 	printf("done\n");
 
-	printf("-- user list --\n");
+	return 0;
+}
 
-	user = userlist;
-	i = 0;
-	while(user){
-        printf("No: %i\n", ++i);
-        printf("name: %s\n", user->name);
-        printf("uid: %lu\n\n", user->uid);
-		user = user->next;
+int print_perm(acc_perm_t perm){
+
+	if((perm) & ACC_PERM_RD) printf("+R ");
+	else printf("-R ");
+	if((perm) & ACC_PERM_WR) printf("+W ");
+	else printf("-W ");
+	if((perm) & ACC_PERM_EX) printf("+X ");
+	else printf("-X ");
+	if((perm) & ACC_PERM_RSRV1) printf("+RSRV1 ");
+	else printf("-RSRV1 ");
+	if((perm) & ACC_PERM_RSRV2) printf("+RSRV2 ");
+	else printf("-RSRV2 ");
+	if((perm) & ACC_PERM_USR1) printf("+USR1 ");
+	else printf("-USR1 ");
+	if((perm) & ACC_PERM_USR2) printf("+USR2 ");
+	else printf("-USR2 ");
+	if((perm) & ACC_PERM_USR3) printf("+USR3 ");
+	else printf("-USR3 ");
+
+	return 0;
+}
+
+int do_perm_group_chk(struct access13* ac, int n, char** ary){
+
+	error13_t ret;
+	struct group13 group;
+	objid13_t objid;
+	int i;
+	acc_perm_t perm;
+
+	if(n < 3){
+        printf("bad usage, try help '%s'", ary[0]);
+        return -1;
 	}
 
-	printf("-- user list --\n");
+	printf("checking permissions...");
 
-	acc_user_list_free(userlist);
+    group.gid = strtoul(ary[1], NULL, 10);
+
+    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[1]:NULL, group.gid, &group);
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	objid = strtoull(ary[2], NULL, 10);
+	if(objid == ULONG_LONG_MAX){
+		printf("failed\ninvalid object id\n");
+		return -1;
+	}
+
+	ret = acc_perm_group_chk(ac, objid, NULL, group.gid, &perm);
+
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printf("done\n");
+
+	printf("-- group permissions --\n");
+	print_perm(perm);
+	printf("-- group permissions --\n");
+
+	return 0;
+}
+
+int do_perm_user_add(struct access13* ac, int n, char** ary){
+
+	error13_t ret;
+	struct user13 user;
+	objid13_t objid;
+	acc_perm_t perm;
+	int i;
+
+	if(n < 4){
+        printf("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+	printf("adding permissions...");
+
+    user.uid = strtoul(ary[1], NULL, 10);
+
+    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	objid = strtoull(ary[2], NULL, 10);
+	if(objid == ULONG_LONG_MAX){
+		printf("failed\ninvalid object id\n");
+		return -1;
+	}
+
+	if(make_perm(ary[3], &perm)){
+		printf("failed\ninvalid permissions\n");
+		return -1;
+	}
+
+	ret = acc_perm_user_add(ac, objid, NULL, user.uid, perm);
+
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printf("done\n");
+
+	return 0;
+}
+
+int do_perm_user_rm(struct access13* ac, int n, char** ary){
+
+	error13_t ret;
+	struct user13 user;
+	objid13_t objid;
+	int i;
+
+	if(n < 3){
+        printf("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+	printf("removing permissions...");
+
+    user.uid = strtoul(ary[1], NULL, 10);
+
+    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	objid = strtoull(ary[2], NULL, 10);
+	if(objid == ULONG_LONG_MAX){
+		printf("failed\ninvalid object id\n");
+		return -1;
+	}
+
+	ret = acc_perm_user_rm(ac, objid, NULL, user.uid);
+
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printf("done\n");
+
+	return 0;
+}
+
+int do_perm_user_chk(struct access13* ac, int n, char** ary){
+
+	error13_t ret;
+	struct user13 user;
+	objid13_t objid;
+	int i;
+	acc_perm_t perm;
+
+	if(n < 3){
+        printf("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+	printf("checking permissions...");
+
+    user.uid = strtoul(ary[1], NULL, 10);
+
+    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	objid = strtoull(ary[2], NULL, 10);
+	if(objid == ULONG_LONG_MAX){
+		printf("failed\ninvalid object id\n");
+		return -1;
+	}
+
+	ret = acc_perm_user_chk(ac, objid, NULL, user.uid, &perm);
+
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	printf("done\n");
+
+	printf("-- user permissions --\n");
+	print_perm(perm);
+	printf("-- user permissions --\n");
+
+	return 0;
+}
+
+int do_user_access(struct access13* ac, int n, char** ary){
+
+	error13_t ret;
+	struct user13 user;
+	objid13_t objid;
+	acc_perm_t perm;
+	int i;
+
+	if(n < 4){
+        printf("bad usage, try help '%s'", ary[0]);
+        return -1;
+	}
+
+	printf("checking permissions...");
+
+    user.uid = strtoul(ary[1], NULL, 10);
+
+    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+	if(ret != E13_OK){
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
+
+	objid = strtoull(ary[2], NULL, 10);
+	if(objid == ULONG_LONG_MAX){
+		printf("failed\ninvalid object id\n");
+		return -1;
+	}
+
+	if(make_perm2(ary[3], &perm)){
+		printf("failed\ninvalid permissions\n");
+		return -1;
+	}
+
+	ret = acc_user_access(ac, objid, NULL, user.uid, perm);
+
+	if(ret == E13_OK){
+		printf("access granted!\n");
+	} else if (ret == e13_error(E13_PERM)){
+		printf("sorry, no access!\n");
+	} else {
+		printf("failed\n");
+		printe13(ret, ary[1]);
+		return -1;
+	}
 
 	return 0;
 }
@@ -1101,7 +1555,7 @@ struct _cmd cmd[] = {
             "permgroupadd", "pgadd", NULL
 			},
 			"add group permission",
-			"permgroupadd \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'",
+			"permgrouprm \'groupname\' \'object_id\' \'perm=[+,-](R)ead|(W)rite|e(X)ecute\'",
 			&do_perm_group_add
 
 	},
@@ -1111,7 +1565,7 @@ struct _cmd cmd[] = {
             "permgrouprm", "pgrm", NULL
 			},
 			"remove group permission",
-			"permgrouprm \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'",
+			"permgrouprm \'groupname\'",
 			&do_perm_group_rm
 
 	},
@@ -1121,7 +1575,7 @@ struct _cmd cmd[] = {
             "permgroupcheck", "pgchk", NULL
 			},
 			"check group permission",
-			"permgroupcheck \'groupname\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute|(L)ist\'",
+			"permgroupcheck \'groupname\' \'object_id\'",
 			&do_perm_group_chk
 
 	},
@@ -1131,7 +1585,7 @@ struct _cmd cmd[] = {
             "permuseradd", "puadd", NULL
 			},
 			"add user permission",
-			"permuseradd \'username\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'",
+			"permuseradd \'username\' \'object_id\' \'perm=[+,-](R)ead|(W)rite|e(X)ecute\'",
 			&do_perm_user_add
 
 	},
@@ -1141,7 +1595,7 @@ struct _cmd cmd[] = {
             "permuserrm", "purm", NULL
 			},
 			"remove user permission",
-			"permuserrm \'username\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute\'",
+			"permuserrm \'username\' \'object_id\'",
 			&do_perm_user_rm
 
 	},
@@ -1151,7 +1605,7 @@ struct _cmd cmd[] = {
             "permusercheck", "puchk", NULL
 			},
 			"check user permission",
-			"permusercheck \'username\' \'object_id\' \'perm=(R)ead|(W)rite|e(X)ecute|(L)ist\'",
+			"permusercheck \'username\' \'object_id\'",
 			&do_perm_user_chk
 
 	},
