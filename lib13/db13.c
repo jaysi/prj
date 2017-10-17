@@ -1413,6 +1413,7 @@ bind_data:
             break;
 
         case DB_TY_D13STIME:
+        	_deb_update("updating time %llu...", (int64_t)(i==ncol?iflogic.ival:*val[i]));
             if(sqlite3_bind_int64(LITE_ST(st), i==ncol?ACC_UP_IF_COL:col[i], (int64_t)(i==ncol?iflogic.ival:*val[i])) != SQLITE_OK){
                 return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
             }

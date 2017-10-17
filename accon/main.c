@@ -451,9 +451,11 @@ int do_userchk(struct access13* ac, int n, char** ary){
 	case ACC_USR_STT_REMOVED:
 		sttstr = "REMOVED";
 		break;
+	case ACC_USR_STT_IN:
 	case ACC_USR_STT_LOGIN:
 		sttstr = "LOGGED IN";
 		break;
+	case ACC_USR_STT_OUT:
 	case ACC_USR_STT_LOGOUT:
 		sttstr = "LOGGED OUT";
 		break;
@@ -471,10 +473,10 @@ int do_userchk(struct access13* ac, int n, char** ary){
 	printf("status: %s\n", sttstr);
 
 	d13s_get_jtime(user.lastlogin, t13);
-	printf("last login: %u/%u/%u - %u:%u:%u (%llu)\n", t13[D13_ITEMS_YEAR], t13[D13_ITEMS_MON], t13[D13_ITEMS_DAY], t13[D13_ITEMS_HOUR], t13[D13_ITEMS_MIN], t13[D13_ITEMS_SEC], user.lastlogin);
+	printf("last login: %i/%i/%i - %i:%i:%i (%llu)\n", t13[D13_ITEMS_YEAR], t13[D13_ITEMS_MON], t13[D13_ITEMS_DAY], t13[D13_ITEMS_HOUR], t13[D13_ITEMS_MIN], t13[D13_ITEMS_SEC], user.lastlogin);
 
 	d13s_get_jtime(user.lastlogout, t13);
-	printf("last logout: %u/%u/%u - %u:%u:%u (%llu)\n",
+	printf("last logout: %i/%i/%i - %i:%i%i (%llu)\n",
 			t13[D13_ITEMS_YEAR],
 			t13[D13_ITEMS_MON],
 			t13[D13_ITEMS_DAY],
@@ -529,9 +531,11 @@ int do_userlist(struct access13* ac, int n, char** ary){
 		case ACC_USR_STT_REMOVED:
 			sttstr = "REMOVED";
 			break;
+		case ACC_USR_STT_IN:
 		case ACC_USR_STT_LOGIN:
 			sttstr = "LOGGED IN";
 			break;
+		case ACC_USR_STT_OUT:
 		case ACC_USR_STT_LOGOUT:
 			sttstr = "LOGGED OUT";
 			break;
@@ -546,7 +550,7 @@ int do_userlist(struct access13* ac, int n, char** ary){
 		printf("status: %s\n", sttstr);
 
 	d13s_get_jtime(user->lastlogin, t13);
-	printf("last login: %u/%u/%u - %u:%u:%u (%u)\n",
+	printf("last login: %i/%i/%i - %i:%i:%i (%llu)\n",
 			t13[D13_ITEMS_YEAR],
 			t13[D13_ITEMS_MON],
 			t13[D13_ITEMS_DAY],
@@ -556,7 +560,7 @@ int do_userlist(struct access13* ac, int n, char** ary){
 			user->lastlogin);
 
 	d13s_get_jtime(user->lastlogout, t13);
-	printf("last logout: %u/%u/%u - %u:%u:%u (%u)\n\n",
+	printf("last logout: %i/%i/%i - %i:%i:%i (%llu)\n\n",
 			t13[D13_ITEMS_YEAR],
 			t13[D13_ITEMS_MON],
 			t13[D13_ITEMS_DAY],
@@ -1476,6 +1480,17 @@ struct _cmd cmd[] = {
 			&do_userset
 
 	},
+	{
+			CODE_USERCHK,
+			{
+            "userchk", "uchk", NULL
+			},
+			"check user info",
+			"userchk \'username\'",
+			&do_userset
+
+	},
+
 	{
 			CODE_USERLIST,
 			{

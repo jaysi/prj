@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#undef NDEBUG
+#include "include/debug13.h"
+#define _deb_serial _DebugMsg
+
 #define __true 1
 #define __false 0
 
@@ -477,7 +481,7 @@ error13_t d13s_clock(d13s_time_t* d13stime){
 
     *d13stime = strtoull(buf, &end, 10);
 
-
+    _deb_serial("TIME: %s, CONVERTED: %llu", buf, *d13stime);
 
     return E13_OK;
 }
@@ -501,6 +505,14 @@ error13_t _d13s_break(d13s_time_t stime, int d13time[D13_ITEMS]){
 	*(buf+4) = '\0';
 	d13time[D13_ITEMS_YEAR] = atoi(buf);
 
+	_deb_serial("%0.4i%0.2i%0.2i%0.2i%0.2i%0.2i",
+				d13time[D13_ITEMS_YEAR],
+				d13time[D13_ITEMS_MON],
+				d13time[D13_ITEMS_DAY],
+				d13time[D13_ITEMS_HOUR],
+				d13time[D13_ITEMS_MIN],
+				d13time[D13_ITEMS_SEC]);
+
     return E13_OK;
 }
 
@@ -512,6 +524,7 @@ error13_t d13s_get_gtime(d13s_time_t stime, int gtime[D13_ITEMS]){
 
 error13_t d13s_get_jtime(d13s_time_t t, int jtime[D13_ITEMS]){
     _d13s_break(t, jtime);
+    if(!t) return E13_OK;
 	return d13_g2j(	jtime[D13_ITEMS_YEAR],
 					jtime[D13_ITEMS_MON],
 					jtime[D13_ITEMS_DAY],

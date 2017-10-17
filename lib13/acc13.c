@@ -1305,8 +1305,8 @@ error13_t acc_user_add(struct access13 *ac, char *name, char* pass){
     size[1] = sizeof(uid13_t);
     size[2] = strlen(name) + 1;
     size[3] = ac->hashlen;
-    size[4] = sizeof(uint32_t);
-    size[5] = sizeof(uint32_t);
+    size[4] = sizeof(d13s_time_t);
+    size[5] = sizeof(d13s_time_t);
     size[6] = sizeof(int);
 //    size[4] = sizeof(int);
 	_deb_usr_add("inserting %s, uid = %lu...", name, uid);
@@ -1591,6 +1591,7 @@ error13_t acc_user_list(struct access13 *ac, uid13_t *n, struct user13 **user){
     size_t slen;
     struct user13* next, *last = NULL;
     *n = UID13_NONE;
+    d13s_time_t lastlogin, lastlogout;
 
     if(!_is_init(ac)){
         return e13_error(E13_MISUSE);
@@ -1633,6 +1634,14 @@ error13_t acc_user_list(struct access13 *ac, uid13_t *n, struct user13 **user){
 								&slen, &s);
         }
         if(ret == E13_OK){
+            ret = db_column_int64(&st, db_get_colid_byname(ac->db, tid, "lastlogin"),
+								(int64_t*)&lastlogin);
+        }
+        if(ret == E13_OK){
+            ret = db_column_int64(&st, db_get_colid_byname(ac->db, tid, "lastlogout"),
+								(int64_t*)&lastlogout);
+        }
+        if(ret == E13_OK){
             _deb_usr_list("name ok: %s", s);
             (*n)++;
             _deb_usr_list("n: %u", *n);
@@ -1640,6 +1649,8 @@ error13_t acc_user_list(struct access13 *ac, uid13_t *n, struct user13 **user){
             next->name = (char*)s;
             next->uid = id;
             next->stt = stt;
+            next->lastlogin = lastlogin;
+            next->lastlogout = lastlogout;
             next->next = NULL;
             if(!last){
                 last = next;
