@@ -16,7 +16,8 @@
 #define _deb_get_tid_byname _NullMsg
 #define _deb_insert _NullMsg
 #define _deb_collect _NullMsg
-#define _deb_update _NullMsg
+#define _deb_delete _DebugMsg
+#define _deb_update _DebugMsg
 #define _deb_close	_NullMsg
 #define _deb_collect_final _DebugMsg
 
@@ -2057,7 +2058,7 @@ error13_t db_delete(	struct db13* db, db_table_id tid,
 
 #define RLEN (MAXSQL - len)
 
-    snprintf(sql + len, RLEN, "DELETE * FROM %s", db->table_info[tid].name);
+    snprintf(sql + len, RLEN, "DELETE FROM %s", db->table_info[tid].name);
     len = strlen(sql);
 
     if(nlogic){
@@ -2101,7 +2102,7 @@ error13_t db_delete(	struct db13* db, db_table_id tid,
         break;
     }
 
-    _deb_collect("sql: %s", sql);
+    _deb_delete("sql: %s", sql);
 
     switch(db->driver){
 
@@ -2119,15 +2120,21 @@ error13_t db_delete(	struct db13* db, db_table_id tid,
                 st->h = stmt;
                 st->db = db;
                 st->magic = DB_STMT_MAGIC;
-
+loop:
 				switch(sqlite3_step(LITE_ST(st))){
 
+				case SQLITE_ROW:
+					goto loop;
+					break;
 				case SQLITE_DONE:
 				case SQLITE_OK:
+					_deb_delete("OK");
 					//everything's true but no real changes!
-					if(!sqlite3_changes(LITE(db))) return E13_CONTINUE;
+					//if(!sqlite3_changes(LITE(db))) return E13_CONTINUE;//won't work in non-exist case
+					return E13_OK;
 					break;
 				default:
+					_deb_delete("fails here");
 					return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
 					break;
 
@@ -2136,6 +2143,7 @@ error13_t db_delete(	struct db13* db, db_table_id tid,
                 break;
 
             default:
+            	_deb_delete("fails here");
                 return e13_ierror(&db->e, E13_SYSE, "s", sqlite3_errmsg(LITE(db)));
                 break;
         }

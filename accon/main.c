@@ -14,6 +14,7 @@
 #define PACK2	"'"
 #define DELIM	" "
 
+#define ACC_DBNAME_DEF	"acc13_main.db"
 
 char escape;
 char* pack[3];
@@ -77,12 +78,17 @@ int prompt(char* init_str, char* input){
 int do_open(struct access13* ac, int n, char** ary){
 	error13_t ret;
 	struct db13* db;
+	char* filename;
+
 	if(n < 2){
-        printf("bad usage, try help '%s'", ary[0]);
-        return -1;
+		filename = ACC_DBNAME_DEF;
+//        printf("bad usage, try help '%s'", ary[0]);
+//        return -1;
+	} else {
+		filename = ary[1];
 	}
 
-	printf("openning %s...", ary[1]);
+	printf("openning %s...", filename);
 
 	db = m13_malloc(sizeof(struct db13));
 	if(!db){
@@ -96,17 +102,17 @@ int do_open(struct access13* ac, int n, char** ary){
 		printe13(ret, "do_open()");
 		return -1;
 	}
-	ret = db_open(db, NULL, NULL, NULL, NULL, ary[1]);
+	ret = db_open(db, NULL, NULL, NULL, NULL, filename);
 	if(ret != E13_OK){
 		printf("failed\n");
-		printe13(ret, ary[1]);
+		printe13(ret, filename);
 		return -1;
 	}
 
 	ret = acc_init(ac, db, 0);
 	if(ret != E13_OK){
 		printf("failed\n");
-		printe13(ret, ary[1]);
+		printe13(ret, filename);
 		return -1;
 	}
 
@@ -174,9 +180,9 @@ int do_grouprm(struct access13* ac, int n, char** ary){
 
     id = strtoul(ary[1], NULL, 10);
 
-    printf("removing %s[%u]...", id==ULONG_MAX?ary[1]:"-", id==ULONG_MAX?GID13_INVAL:id);
+    printf("removing %s[%u]...", id==0?ary[1]:"-", id==0?GID13_INVAL:id);
 
-    ret = acc_group_rm(ac, id==ULONG_MAX?ary[1]:NULL, id);
+    ret = acc_group_rm(ac, id==0?ary[1]:NULL, id);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -206,12 +212,12 @@ int do_groupset(struct access13* ac, int n, char** ary){
     else stt = ACC_GRP_STT_ACTIVE;
 
     printf("setting status of %s[%u] to %s...",
-		id==ULONG_MAX?ary[1]:"-",
-		id==ULONG_MAX?GID13_INVAL:id,
+		id==0?ary[1]:"-",
+		id==0?GID13_INVAL:id,
 		stt==ACC_GRP_STT_ACTIVE?"ACTIVE":(stt==ACC_GRP_STT_INACTIVE?"INACTIVE":"REMOVED")
 		);
 
-    ret = acc_group_set_stat(ac, id==ULONG_MAX?ary[1]:NULL, id, stt);
+    ret = acc_group_set_stat(ac, id==0?ary[1]:NULL, id, stt);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -236,9 +242,9 @@ int do_groupchk(struct access13* ac, int n, char** ary){
 
     id = strtoul(ary[1], NULL, 10);
 
-    printf("checking %s[%u]...", id==ULONG_MAX?ary[1]:"-", id==ULONG_MAX?GID13_INVAL:id);
+    printf("checking %s[%u]...", id==0?ary[1]:"-", id==0?GID13_INVAL:id);
 
-    ret = acc_group_chk(ac, id==ULONG_MAX?ary[1]:NULL, id, &group);
+    ret = acc_group_chk(ac, id==0?ary[1]:NULL, id, &group);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -333,9 +339,9 @@ int do_userrm(struct access13* ac, int n, char** ary){
 
     id = strtoul(ary[1], NULL, 10);
 
-    printf("removing %s[%u]...", id==ULONG_MAX?ary[1]:"-", id==ULONG_MAX?UID13_INVAL:id);
+    printf("removing %s[%u]...", id==0?ary[1]:"-", id==0UL?UID13_INVAL:id);
 
-    ret = acc_user_rm(ac, id==ULONG_MAX?ary[1]:NULL, id);
+    ret = acc_user_rm(ac, id==0?ary[1]:NULL, id);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -395,12 +401,12 @@ int do_userset(struct access13* ac, int n, char** ary){
     }
 
     printf("setting status of %s[%u] to %s...",
-		id==ULONG_MAX?ary[1]:"-",
-		id==ULONG_MAX?GID13_INVAL:id,
+		id==0?ary[1]:"-",
+		id==0?GID13_INVAL:id,
 		sttstr
 		);
 
-    ret = acc_user_set_stat(ac, id==ULONG_MAX?ary[1]:NULL, id, stt);
+    ret = acc_user_set_stat(ac, id==0?ary[1]:NULL, id, stt);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -427,9 +433,9 @@ int do_userchk(struct access13* ac, int n, char** ary){
 
     id = strtoul(ary[1], NULL, 10);
 
-    printf("checking %s[%u]...", id==ULONG_MAX?ary[1]:"-", id==ULONG_MAX?UID13_INVAL:id);
+    printf("checking %s[%u]...", id==0?ary[1]:"-", id==0?UID13_INVAL:id);
 
-    ret = acc_user_chk(ac, id==ULONG_MAX?ary[1]:NULL, id, &user);
+    ret = acc_user_chk(ac, id==0?ary[1]:NULL, id, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -605,9 +611,9 @@ int do_logout(struct access13* ac, int n, char** ary){
 
     id = strtoul(ary[1], NULL, 10);
 
-    printf("logging out %s[%u]...", id==ULONG_MAX?ary[1]:"-", id==ULONG_MAX?UID13_INVAL:id);
+    printf("logging out %s[%u]...", id==0?ary[1]:"-", id==0?UID13_INVAL:id);
 
-	ret = acc_user_logout(ac, id==ULONG_MAX?ary[1]:NULL, id);
+	ret = acc_user_logout(ac, id==0?ary[1]:NULL, id);
 
 	if(ret != E13_OK){
 		printf("failed\n");
@@ -646,7 +652,7 @@ int do_user_join_group(struct access13* ac, int n, char** ary){
 
     user.uid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+    ret = acc_user_chk(ac, user.uid==0?ary[1]:NULL, user.uid, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -655,7 +661,7 @@ int do_user_join_group(struct access13* ac, int n, char** ary){
 
     group.gid = strtoul(ary[2], NULL, 10);
 
-    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[2]:NULL, group.gid, &group);
+    ret = acc_group_chk(ac, group.gid==0?ary[2]:NULL, group.gid, &group);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -691,7 +697,7 @@ int do_user_leave_group(struct access13* ac, int n, char** ary){
 
     user.uid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+    ret = acc_user_chk(ac, user.uid==0?ary[1]:NULL, user.uid, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -700,7 +706,7 @@ int do_user_leave_group(struct access13* ac, int n, char** ary){
 
     group.gid = strtoul(ary[2], NULL, 10);
 
-    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[2]:NULL, group.gid, &group);
+    ret = acc_group_chk(ac, group.gid==0?ary[2]:NULL, group.gid, &group);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -735,7 +741,7 @@ int do_user_group_chk(struct access13* ac, int n, char** ary){
 
     user.uid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+    ret = acc_user_chk(ac, user.uid==0?ary[1]:NULL, user.uid, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -744,7 +750,7 @@ int do_user_group_chk(struct access13* ac, int n, char** ary){
 
     group.gid = strtoul(ary[2], NULL, 10);
 
-    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[2]:NULL, group.gid, &group);
+    ret = acc_group_chk(ac, group.gid==0?ary[2]:NULL, group.gid, &group);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -786,7 +792,7 @@ int do_user_group_list(struct access13* ac, int n, char** ary){
 
     user.uid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+    ret = acc_user_chk(ac, user.uid==0?ary[1]:NULL, user.uid, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -838,7 +844,7 @@ int do_group_user_list(struct access13* ac, int n, char** ary){
 
     group.gid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[1]:NULL, group.gid, &group);
+    ret = acc_group_chk(ac, group.gid==0?ary[1]:NULL, group.gid, &group);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -1004,7 +1010,7 @@ int do_perm_group_add(struct access13* ac, int n, char** ary){
 
     group.gid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[1]:NULL, group.gid, &group);
+    ret = acc_group_chk(ac, group.gid==0?ary[1]:NULL, group.gid, &group);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -1012,7 +1018,7 @@ int do_perm_group_add(struct access13* ac, int n, char** ary){
 	}
 
 	objid = strtoull(ary[2], NULL, 10);
-	if(objid == ULONG_LONG_MAX){
+	if(objid == 0ULL){
 		printf("failed\ninvalid object id\n");
 		return -1;
 	}
@@ -1051,7 +1057,7 @@ int do_perm_group_rm(struct access13* ac, int n, char** ary){
 
     group.gid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[1]:NULL, group.gid, &group);
+    ret = acc_group_chk(ac, group.gid==0?ary[1]:NULL, group.gid, &group);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -1059,7 +1065,7 @@ int do_perm_group_rm(struct access13* ac, int n, char** ary){
 	}
 
 	objid = strtoull(ary[2], NULL, 10);
-	if(objid == ULONG_LONG_MAX){
+	if(objid == 0){
 		printf("failed\ninvalid object id\n");
 		return -1;
 	}
@@ -1116,7 +1122,7 @@ int do_perm_group_chk(struct access13* ac, int n, char** ary){
 
     group.gid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_group_chk(ac, group.gid==ULONG_MAX?ary[1]:NULL, group.gid, &group);
+    ret = acc_group_chk(ac, group.gid==0?ary[1]:NULL, group.gid, &group);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -1124,7 +1130,7 @@ int do_perm_group_chk(struct access13* ac, int n, char** ary){
 	}
 
 	objid = strtoull(ary[2], NULL, 10);
-	if(objid == ULONG_LONG_MAX){
+	if(objid == 0){
 		printf("failed\ninvalid object id\n");
 		return -1;
 	}
@@ -1163,7 +1169,7 @@ int do_perm_user_add(struct access13* ac, int n, char** ary){
 
     user.uid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+    ret = acc_user_chk(ac, user.uid==0?ary[1]:NULL, user.uid, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -1171,7 +1177,7 @@ int do_perm_user_add(struct access13* ac, int n, char** ary){
 	}
 
 	objid = strtoull(ary[2], NULL, 10);
-	if(objid == ULONG_LONG_MAX){
+	if(objid == 0){
 		printf("failed\ninvalid object id\n");
 		return -1;
 	}
@@ -1210,7 +1216,7 @@ int do_perm_user_rm(struct access13* ac, int n, char** ary){
 
     user.uid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+    ret = acc_user_chk(ac, user.uid==0?ary[1]:NULL, user.uid, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -1218,7 +1224,7 @@ int do_perm_user_rm(struct access13* ac, int n, char** ary){
 	}
 
 	objid = strtoull(ary[2], NULL, 10);
-	if(objid == ULONG_LONG_MAX){
+	if(objid == 0){
 		printf("failed\ninvalid object id\n");
 		return -1;
 	}
@@ -1253,7 +1259,7 @@ int do_perm_user_chk(struct access13* ac, int n, char** ary){
 
     user.uid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+    ret = acc_user_chk(ac, user.uid==0?ary[1]:NULL, user.uid, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -1261,7 +1267,7 @@ int do_perm_user_chk(struct access13* ac, int n, char** ary){
 	}
 
 	objid = strtoull(ary[2], NULL, 10);
-	if(objid == ULONG_LONG_MAX){
+	if(objid == 0){
 		printf("failed\ninvalid object id\n");
 		return -1;
 	}
@@ -1300,7 +1306,7 @@ int do_user_access(struct access13* ac, int n, char** ary){
 
     user.uid = strtoul(ary[1], NULL, 10);
 
-    ret = acc_user_chk(ac, user.uid==ULONG_MAX?ary[1]:NULL, user.uid, &user);
+    ret = acc_user_chk(ac, user.uid==0?ary[1]:NULL, user.uid, &user);
 	if(ret != E13_OK){
 		printf("failed\n");
 		printe13(ret, ary[1]);
@@ -1308,7 +1314,7 @@ int do_user_access(struct access13* ac, int n, char** ary){
 	}
 
 	objid = strtoull(ary[2], NULL, 10);
-	if(objid == ULONG_LONG_MAX){
+	if(objid == 0){
 		printf("failed\ninvalid object id\n");
 		return -1;
 	}
