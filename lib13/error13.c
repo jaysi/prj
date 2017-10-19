@@ -320,6 +320,7 @@ error13_t e13_copy(struct e13* dst, struct e13* src){
 char* e13_codemsg(error13_t code){
     struct e13_code_strings* e13_str;
 
+    if(code < 0) code *= -1;
     _deb1("codemsg: %i", code);
 
     for(e13_str = e13_strs; e13_str->str; e13_str++)

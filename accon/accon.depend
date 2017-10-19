@@ -1,12 +1,12 @@
 # depslib dependency file v1.0
-1508242149 source:c:\intel\dev\prj\accon\main.c
+1508312318 source:c:\intel\dev\prj\accon\main.c
 	<stdio.h>
 	<stdlib.h>
 	"../lib13/include/acc13.h"
 	"../lib13/include/str13.h"
 	"../lib13/include/db13.h"
 
-1508144269 c:\intel\dev\prj\lib13\include\acc13.h
+1508310454 c:\intel\dev\prj\lib13\include\acc13.h
 	"type13.h"
 	"hash13.h"
 	"obj13.h"

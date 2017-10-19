@@ -468,7 +468,7 @@ int do_userchk(struct access13* ac, int n, char** ary){
 	}
 
 	printf("-- user info --\n");
-	printf("name: %s\n", user.name);
+	//printf("name: %s\n", user.name);
 	printf("uid: %u\n", user.uid);
 	printf("status: %s\n", sttstr);
 
@@ -1487,7 +1487,7 @@ struct _cmd cmd[] = {
 			},
 			"check user info",
 			"userchk \'username\'",
-			&do_userset
+			&do_userchk
 
 	},
 

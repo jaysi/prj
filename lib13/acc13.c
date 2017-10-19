@@ -1309,7 +1309,7 @@ error13_t acc_user_add(struct access13 *ac, char *name, char* pass){
     size[5] = sizeof(d13s_time_t);
     size[6] = sizeof(int);
 //    size[4] = sizeof(int);
-	_deb_usr_add("inserting %s, uid = %lu...", name, uid);
+	_deb_usr_add("inserting %s (passhash=%s), uid = %lu...", name, passhash, uid);
     if((ret = db_insert(ac->db, tid, cols, size, &st)) != E13_OK){
         db_finalize(&st);
 //        m13_free(cols);
@@ -1465,6 +1465,7 @@ error13_t acc_user_chk(struct access13 *ac, char *name, uid13_t id,
     switch((ret = db_step(&st))){
         case E13_CONTINUE:
         _deb_usr_chk("step CONTINUE");
+        user->name = NULL;
         ret = db_column_int(&st, db_get_colid_byname(ac->db, tid, "id"), (int*)&user->uid);
         if(ret == E13_OK){
             _deb_usr_chk("id %u", user->uid);
@@ -1636,10 +1637,12 @@ error13_t acc_user_list(struct access13 *ac, uid13_t *n, struct user13 **user){
         if(ret == E13_OK){
             ret = db_column_int64(&st, db_get_colid_byname(ac->db, tid, "lastlogin"),
 								(int64_t*)&lastlogin);
+			_deb_usr_list("lastlogin: %llu", lastlogin);
         }
         if(ret == E13_OK){
             ret = db_column_int64(&st, db_get_colid_byname(ac->db, tid, "lastlogout"),
 								(int64_t*)&lastlogout);
+			_deb_usr_list("lastlogout: %llu", lastlogout);
         }
         if(ret == E13_OK){
             _deb_usr_list("name ok: %s", s);
